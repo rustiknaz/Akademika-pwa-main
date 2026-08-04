@@ -1,0 +1,8 @@
+{
+  "name": "Urban Glass Dance Studio App",
+  "description": "Dance studio client PWA and admin management app with high-contrast glassmorphism and dynamic accent themes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

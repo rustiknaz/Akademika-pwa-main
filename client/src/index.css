@@ -1,0 +1,268 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Pantone Accent Defaults (Lime) */
+  --accentColor: #CCFF00;
+  --accentTextColor: #000000;
+  --accentGlowRgb: 204, 255, 0;
+  --primary-color: #CCFF00;
+  --primary-text: #000000;
+
+  /* Brand Palette Variables */
+  --color-primary: #CCFF00;
+  --color-orange: #FF5528;
+  --color-violet: #6355D8;
+  --color-light: #FFFFFF;
+  --color-dark: #000000;
+  --color-iron: #CDD2D7;
+  --color-sky: #9DC4D5;
+
+  /* Cloud Dancer (Light Theme) */
+  --bg-main: #FFFFFF;
+  --bg-card: #DDE2E5;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --text-primary: #121214;
+  --text-secondary: #666461;
+
+  /* Standard Tailwind mapping for seamless light/dark adaptivity */
+  --background: 0 0% 100%; /* #FFFFFF */
+  --foreground: 240 6% 7%; /* #121214 */
+  
+  --card: 205 13% 88%; /* #DDE2E5 */
+  --card-foreground: 240 6% 10%;
+  
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 6% 10%;
+  
+  --primary: 72 100% 50%; /* #CCFF00 */
+  --primary-foreground: 240 6% 10%;
+  
+  --secondary: 48 9% 87%; /* #E2E0D8 */
+  --secondary-foreground: 240 6% 10%;
+  
+  --muted: 48 9% 87%;
+  --muted-foreground: 40 2% 39%; /* #666461 */
+  
+  --accent: 48 9% 87%;
+  --accent-foreground: 240 6% 10%;
+  
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 48 9% 87%; /* #E2E0D8 */
+  --input: 48 9% 87%;
+  --ring: 240 6% 10%;
+  
+  --radius: 1rem;
+}
+
+.dark {
+  /* Darkest Hour (Dark Theme) */
+  --bg-main: #000000;
+  --bg-card: #161618;
+  --border-color: rgba(205, 210, 215, 0.12);
+  --text-primary: #FFFFFF;
+  --text-secondary: #CDD2D7;
+
+  /* Standard Tailwind mapping for seamless light/dark adaptivity */
+  --background: 0 0% 0%; /* #000000 True OLED Black */
+  --foreground: 0 0% 100%;
+  
+  --card: 240 4% 9%; /* #161618 */
+  --card-foreground: 0 0% 100%;
+  
+  --popover: 240 4% 9%;
+  --popover-foreground: 0 0% 100%;
+  
+  --primary: 72 100% 50%; /* #CCFF00 default */
+  --primary-foreground: 240 6% 10%;
+  
+  --secondary: 210 10% 80%; /* Iron #CDD2D7 */
+  --secondary-foreground: 0 0% 100%;
+  
+  --muted: 240 5% 12%;
+  --muted-foreground: 210 10% 80%; /* #CDD2D7 */
+  
+  --accent: 240 5% 12%;
+  --accent-foreground: 0 0% 100%;
+  
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  
+  --border: 210 10% 80% / 0.12; /* Iron #CDD2D7 with 12-15% opacity */
+  --input: 210 10% 80% / 0.12;
+  --ring: 72 100% 50%;
+}
+
+/* Accent presets */
+.theme-lime {
+  --accentColor: #CCFF00;
+  --accentTextColor: #000000;
+  --accentGlowRgb: 204, 255, 0;
+  --primary-color: #CCFF00;
+  --primary-text: #000000;
+  --primary: 72 100% 50%; /* #CCFF00 */
+  --primary-foreground: 240 6% 10%;
+}
+
+.theme-orange {
+  --accentColor: #FF5528;
+  --accentTextColor: #FFFFFF;
+  --accentGlowRgb: 255, 85, 40;
+  --primary-color: #FF5528;
+  --primary-text: #FFFFFF;
+  --primary: 13 100% 57%; /* #FF5528 */
+  --primary-foreground: 0 0% 100%;
+}
+
+.theme-violet {
+  --accentColor: #6355D8;
+  --accentTextColor: #FFFFFF;
+  --accentGlowRgb: 99, 85, 216;
+  --primary-color: #6355D8;
+  --primary-text: #FFFFFF;
+  --primary: 246 62% 59%; /* #6355D8 */
+  --primary-foreground: 0 0% 100%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-white dark:bg-black text-foreground font-sans antialiased selection:bg-primary/20 transition-colors duration-300;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  h1, h2, h3 {
+    @apply text-foreground;
+  }
+}
+
+@layer utilities {
+  .step {
+    counter-increment: step;
+  }
+
+  .step:before {
+@apply absolute w-8 h-8 bg-muted rounded-full font-mono font-bold text-center text-base inline-flex items-center justify-center -indent-px border border-border text-foreground;
+    @apply ml-[-50px] mt-[-4px];
+    content: counter(step);
+  }
+  
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .glass-card {
+    @apply bg-background/50 backdrop-blur-sm border border-border/50 shadow-sm transition-all duration-300 hover:bg-background/80 hover:border-border hover:shadow-md;
+  }
+  
+  .rounded-parent,
+  .rounded-card,
+  .rounded-outer,
+  .rounded-3xl {
+    border-radius: 32px !important;
+  }
+
+  .rounded-inner,
+  .rounded-2xl {
+    border-radius: 20px !important;
+  }
+
+  .rounded-btn,
+  .rounded-control {
+    border-radius: 18px !important;
+  }
+
+  .rounded-badge,
+  .rounded-sm-badge {
+    border-radius: 10px !important;
+  }
+}
+
+/* 1. Крупные внешние баннеры и карточки групп (28px - 32px) */
+.ui-banner, .ui-group-card {
+  border-radius: 28px !important;
+}
+
+/* 2. Средние / Вложенные объёмные карточки (Выручка, Продажи, Касса, Каналы) (20px - 24px) */
+.ui-card {
+  border-radius: 20px !important;
+}
+
+/* 3. Кнопки быстрых действий, базовые кнопки и поля ввода (16px) */
+.ui-action-btn, .ui-btn, .ui-input-box {
+  border-radius: 16px !important;
+}
+
+/* 4. Узкие плашки, плашки задач, списка, вместимости зала, ЗП (12px - 14px) */
+.ui-inner-strip, .ui-strip, .ui-row-item {
+  border-radius: 14px !important;
+}
+
+/* 5. Чистые капсулы (Бейджи "0 записей", "30 уроков", Теги, Фильтры, Аватары, Круги) */
+.ui-badge, .ui-tag, .ui-chip {
+  border-radius: 9999px !important;
+}
+
+/* Однострочные поиски и капсульные инпуты */
+input[type="text"].ui-input-pill,
+input[type="search"],
+.ui-pill {
+  border-radius: 9999px !important;
+}
+
+/* Многострочные поля ввода (textarea) - мягкий радиус 16px */
+textarea, .ui-textarea {
+  border-radius: 16px !important;
+}
+
+/* Инпуты и селекты по умолчанию */
+.ui-input, .ui-select {
+  border-radius: 16px !important;
+}
+
+/* Все контейнеры переключателей / табов */
+.ui-tab-container, .ui-segmented-control {
+  border-radius: 9999px !important;
+  padding: 4px !important;
+}
+
+/* Активные табы внутри переключателей */
+.ui-tab-item {
+  border-radius: 9999px !important;
+}
+
+/* Custom Scrollbars */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 9999px !important;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(150, 150, 150, 0.3);
+  border-radius: 9999px !important;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(150, 150, 150, 0.5);
+}
+
+
