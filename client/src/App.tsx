@@ -7,22 +7,14 @@ import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { RoleProvider } from "./context/RoleContext";
 
 function GlobalBackground() {
-  const { bgImage, theme } = useTheme();
-
-  if (!bgImage) return null;
+  const { theme } = useTheme();
 
   return (
-    <>
-      <div 
-        className="fixed inset-0 z-[-1] bg-cover bg-center transition-all duration-500 pointer-events-none" 
-        style={{ backgroundImage: `url(${bgImage})` }} 
-      />
-      <div 
-        className={`fixed inset-0 z-[-1] pointer-events-none transition-all duration-500 ${
-          theme === 'light' ? 'bg-[#DDE2E5]/40 backdrop-blur-[2px]' : 'bg-black/30 backdrop-blur-[2px]'
-        }`} 
-      />
-    </>
+    <div
+      className={`fixed inset-0 z-[-1] pointer-events-none transition-colors duration-300 ${
+        theme === 'light' ? 'bg-white' : 'bg-black'
+      }`}
+    />
   );
 }
 import Home from "@/pages/Home";

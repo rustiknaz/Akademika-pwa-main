@@ -141,7 +141,8 @@ export default function AdminNotifications() {
 
   return (
     <div className={`min-h-screen min-h-[100dvh] flex flex-col px-4 sm:px-6 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] font-sans relative transition-colors duration-300 ${
-      theme === 'light' ? 'bg-[#DDE2E5] text-black' : 'bg-black text-white'
+      // Корневой контейнер фон заменён на прозрачный
+      theme === 'light' ? 'bg-transparent text-black' : 'bg-transparent text-white'
     }`}>
       
       {/* ─── TOP HEADER ─── */}
@@ -186,11 +187,13 @@ export default function AdminNotifications() {
         {/* ════════════════════════════════════════════════════
             BLOCK A: CHANNEL INTEGRATIONS
            ════════════════════════════════════════════════════ */}
-        <section className={`p-6 rounded-[32px] border backdrop-blur-md transition-colors ${
-          theme === 'light'
-            ? 'bg-white/80 border-black/10 text-black shadow-sm'
-            : 'bg-zinc-900/60 border-zinc-800/80 text-white'
-        }`}>
+        <section className={`
+          p-6 rounded-[32px] border backdrop-blur-md transition-colors
+          ${theme === 'light'
+            ? 'bg-black/5 border-black/10 text-black'
+            : 'bg-white/5 border-zinc-800/80 text-white'
+          }
+        `}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30 flex items-center justify-center shrink-0">
@@ -209,9 +212,13 @@ export default function AdminNotifications() {
 
           <div className="space-y-4">
             {/* --- TELEGRAM BOT CARD --- */}
-            <div className={`p-4 rounded-[20px] border transition-colors ${
-              theme === 'light' ? 'bg-zinc-50 border-black/10' : 'bg-zinc-950/60 border-zinc-800/80'
-            }`}>
+            <div className={`
+              p-4 rounded-[20px] border transition-colors
+              ${theme === 'light'
+                ? 'bg-black/5 border-black/10'
+                : 'bg-white/5 border-zinc-800/80'
+              }
+            `}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold text-xs">
@@ -276,9 +283,13 @@ export default function AdminNotifications() {
             </div>
 
             {/* --- WHATSAPP BUSINESS CARD --- */}
-            <div className={`p-4 rounded-[20px] border transition-colors ${
-              theme === 'light' ? 'bg-zinc-50 border-black/10' : 'bg-zinc-950/60 border-zinc-800/80'
-            }`}>
+            <div className={`
+              p-4 rounded-[20px] border transition-colors
+              ${theme === 'light'
+                ? 'bg-black/5 border-black/10'
+                : 'bg-white/5 border-zinc-800/80'
+              }
+            `}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xs">
@@ -344,11 +355,13 @@ export default function AdminNotifications() {
         {/* ════════════════════════════════════════════════════
             BLOCK B: AUTOMATIC TRIGGERS (AUTO-RULES)
            ════════════════════════════════════════════════════ */}
-        <section className={`p-6 rounded-[32px] border backdrop-blur-md transition-colors ${
-          theme === 'light'
-            ? 'bg-white/80 border-black/10 text-black shadow-sm'
-            : 'bg-zinc-900/60 border-zinc-800/80 text-white'
-        }`}>
+        <section className={`
+          p-6 rounded-[32px] border backdrop-blur-md transition-colors
+          ${theme === 'light'
+            ? 'bg-black/5 border-black/10 text-black'
+            : 'bg-white/5 border-zinc-800/80 text-white'
+          }
+        `}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-[#CCFF00]/20 text-[#CCFF00] border border-[#CCFF00]/30 flex items-center justify-center shrink-0">
@@ -373,9 +386,13 @@ export default function AdminNotifications() {
 
           <div className="space-y-4">
             {/* TRIGGER 1: LESSON REMINDER */}
-            <div className={`p-4 rounded-[20px] border transition-colors ${
-              theme === 'light' ? 'bg-zinc-50 border-black/10' : 'bg-zinc-950/60 border-zinc-800/80'
-            }`}>
+            <div className={`
+              p-4 rounded-[20px] border transition-colors
+              ${theme === 'light'
+                ? 'bg-black/5 border-black/10'
+                : 'bg-white/5 border-zinc-800/80'
+              }
+            `}>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <Clock size={15} className="text-[#CCFF00]" />
@@ -447,9 +464,13 @@ export default function AdminNotifications() {
             </div>
 
             {/* TRIGGER 2: PASS EXPIRATION */}
-            <div className={`p-4 rounded-[20px] border transition-colors ${
-              theme === 'light' ? 'bg-zinc-50 border-black/10' : 'bg-zinc-950/60 border-zinc-800/80'
-            }`}>
+            <div className={`
+              p-4 rounded-[20px] border transition-colors
+              ${theme === 'light'
+                ? 'bg-black/5 border-black/10'
+                : 'bg-white/5 border-zinc-800/80'
+              }
+            `}>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <AlertTriangle size={15} className="text-amber-400" />
@@ -520,9 +541,13 @@ export default function AdminNotifications() {
             </div>
 
             {/* TRIGGER 3: CANCELLATION / RESCHEDULE */}
-            <div className={`p-4 rounded-[20px] border transition-colors ${
-              theme === 'light' ? 'bg-zinc-50 border-black/10' : 'bg-zinc-950/60 border-zinc-800/80'
-            }`}>
+            <div className={`
+              p-4 rounded-[20px] border transition-colors
+              ${theme === 'light'
+                ? 'bg-black/5 border-black/10'
+                : 'bg-white/5 border-zinc-800/80'
+              }
+            `}>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <Sparkles size={15} className="text-purple-400" />
@@ -570,11 +595,13 @@ export default function AdminNotifications() {
         {/* ════════════════════════════════════════════════════
             BLOCK C: MANUAL BROADCAST
            ════════════════════════════════════════════════════ */}
-        <section className={`p-6 rounded-[32px] border backdrop-blur-md transition-colors ${
-          theme === 'light'
-            ? 'bg-white/80 border-black/10 text-black shadow-sm'
-            : 'bg-zinc-900/60 border-zinc-800/80 text-white'
-        }`}>
+        <section className={`
+          p-6 rounded-[32px] border backdrop-blur-md transition-colors
+          ${theme === 'light'
+            ? 'bg-black/5 border-black/10 text-black'
+            : 'bg-white/5 border-zinc-800/80 text-white'
+          }
+        `}>
           <div className="flex items-center gap-2.5 mb-4">
             <div className="w-8 h-8 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center justify-center shrink-0">
               <Send size={18} />
@@ -603,12 +630,12 @@ export default function AdminNotifications() {
                     onClick={() => setAudience(aud.id as any)}
                     className={`p-2.5 rounded-[16px] border text-left transition-all cursor-pointer ${
                       audience === aud.id
-? 'bg-[#CCFF00] text-black border-[#CCFF00] font-medium shadow-md'
+                        ? 'bg-[#CCFF00] text-black border-[#CCFF00] font-medium shadow-md'
                         : 'bg-zinc-800/60 text-zinc-200 border-zinc-700/60 hover:bg-zinc-800'
                     }`}
                   >
                     <span className="text-xs font-medium block">{aud.label}</span>
-<span className={`text-xs block opacity-80 ${audience === aud.id ? 'text-black font-bold' : 'text-zinc-400'}`}> tracking-wide
+                    <span className={`text-xs block opacity-80 ${audience === aud.id ? 'text-black font-bold' : 'text-zinc-400'}`}> tracking-wide
                       {aud.count}
                     </span>
                   </button>

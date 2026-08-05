@@ -649,18 +649,18 @@ export default function AdminStudents() {
   }
 
   return (
-    <div className={`min-h-screen min-h-[100dvh] flex flex-col p-6 pb-28 font-sans relative transition-colors duration-300 ${
-      theme === 'light' ? 'bg-[#DDE2E5] text-slate-900' : 'bg-[#09090b] text-white'
+    <div className={`min-h-screen min-h-[100dvh] flex flex-col p-6 pb-28 font-sans relative transition-colors duration-300 bg-transparent ${
+      theme === 'light' ? 'text-black' : 'text-white'
     }`}>
       <header className="mb-8 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Ученики</h1>
+        <h1 className="text-2xl font-semibold text-black dark:text-white">Ученики</h1>
 
         <button 
           onClick={async () => {
             await supabase.auth.signOut();
             setLocation('/Login');
           }}
-          className="p-2.5 text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-[#CCFF00] transition-colors rounded-full hover:bg-black/5 dark:hover:bg-neutral-800 cursor-pointer"
+          className="p-2.5 text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-[#CCFF00] transition-colors rounded-full hover:bg-black/5 dark:hover:bg-neutral-800 cursor-pointer"
           title="Выйти"
         >
           <LogOut size={22} />
@@ -668,37 +668,38 @@ export default function AdminStudents() {
       </header>
 
       {/* Tabs Switcher */}
-      <div className="flex p-1.5 !rounded-[32px] bg-black/5 dark:bg-white/5 border border-black/10 dark:border-zinc-800 transition-colors mb-6 max-w-md w-full">
+      <div className="h-[56px] p-1 bg-[#DDE2E5] dark:bg-[#161618] rounded-full inline-flex items-center gap-1 mb-6 max-w-md w-full transition-colors">
         <button
+          type="button"
           onClick={() => setActiveTab('list')}
-          className={`ui-tab-item flex-1 !rounded-[32px] text-xs py-3.5 transition-all duration-200 cursor-pointer border-none outline-none ${
+          className={
             activeTab === 'list'
-              ? 'shadow-md font-normal bg-[#CCFF00] text-black'
-              : 'font-medium bg-transparent text-stone-500 hover:text-black dark:text-stone-300 dark:hover:text-white'
-          }`}
+              ? "h-full bg-[#CCFF00] text-black font-medium text-sm px-6 rounded-full transition-all shadow-sm flex items-center justify-center"
+              : "h-full text-[#121214]/60 dark:text-white/60 hover:text-[#121214] dark:hover:text-white font-medium text-sm px-6 rounded-full transition-all flex items-center justify-center gap-2"
+          }
         >
           Список учеников
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab('attendance')}
-          className={`ui-tab-item flex-1 !rounded-[32px] text-xs py-3.5 transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer border-none outline-none ${
+          className={
             activeTab === 'attendance'
-              ? 'shadow-md font-normal bg-[#CCFF00] text-black'
-              : 'font-medium bg-transparent text-stone-500 hover:text-black dark:text-stone-300 dark:hover:text-white'
-          }`}
+              ? "h-full bg-[#CCFF00] text-black font-medium text-sm px-6 rounded-full transition-all shadow-sm flex items-center justify-center"
+              : "h-full text-[#121214]/60 dark:text-white/60 hover:text-[#121214] dark:hover:text-white font-medium text-sm px-6 rounded-full transition-all flex items-center justify-center gap-2"
+          }
         >
           <Calendar
-            size={14}
+            size={15}
             className={
               activeTab === 'attendance'
                 ? 'text-black'
-                : 'text-stone-500 dark:text-stone-300'
+                : 'text-[#121214]/60 dark:text-white/60'
             }
-          />{' '}
+          />
           Журнал посещаемости
         </button>
       </div>
-
 
       <div className="flex-1 pb-2 pr-0.5">
         <AnimatePresence mode="wait">
@@ -718,7 +719,6 @@ export default function AdminStudents() {
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Поиск по имени или телефону..."
                   className="ui-input pl-12 pr-5 !rounded-[32px] border border-black/10 dark:border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#CCFF00]"
-             
                 />
               </div>
 

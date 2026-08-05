@@ -93,7 +93,7 @@ export default function BottomNav() {
                     transition={springTransition} 
                   />
                 ) : (
-                  <div className="absolute inset-0 rounded-full bg-white/60 dark:bg-[#2A2B2D] group-hover:bg-white/90 dark:group-hover:bg-white/10 transition-colors duration-300" />
+                  <div className="absolute inset-0 rounded-full bg-transparent group-hover:bg-transparent transition-colors duration-300" />
                 )}
                 <span className={`relative z-10 flex items-center justify-center transition-colors duration-300 ${isStudents ? iconActiveTextColor : 'text-slate-500 dark:text-[#8E8E93] group-hover:text-black dark:group-hover:text-zinc-200'}`}>
                   <Users size={28} className="w-7 h-7 stroke-[2]" />
@@ -112,6 +112,7 @@ export default function BottomNav() {
                     transition={springTransition} 
                   />
                 ) : (
+          
                   <div className="absolute inset-0 rounded-full bg-white/60 dark:bg-[#2A2B2D] group-hover:bg-white/90 dark:group-hover:bg-white/10 transition-colors duration-300" />
                 )}
                 <span className={`relative z-10 flex items-center justify-center transition-colors duration-300 ${isProfileSettings ? iconActiveTextColor : 'text-slate-500 dark:text-[#8E8E93] group-hover:text-black dark:group-hover:text-zinc-200'}`}>

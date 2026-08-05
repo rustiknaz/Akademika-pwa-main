@@ -996,16 +996,16 @@ export default function Admin() {
                 <button
                   type="button"
                   onClick={() => setIsQuickBookOpen(true)}
-                  className="w-full bg-[#DDE2E5] dark:bg-[#161618] hover:bg-[#d0d6da] dark:hover:bg-[#1F1F22] rounded-full p-2 pr-5 flex items-center gap-3.5 transition-all cursor-pointer group text-left outline-none select-none border-none"
+                  className="w-full h-[84px] bg-[#DDE2E5] dark:bg-[#161618] hover:bg-[#d0d6da] dark:hover:bg-[#1F1F22] rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none"
                 >
-                  <div 
+                  <div
                     style={{ backgroundColor: accentColor || '#CCFF00' }}
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-black group-hover:scale-105 transition-transform shrink-0"
+                    className="w-[68px] h-[68px] rounded-full flex items-center justify-center group-hover:scale-105 transition-transform shrink-0"
                   >
-                    <CalendarPlus size={22} className="text-black stroke-[2.2]" />
+                    <CalendarPlus size={28} className="text-black stroke-[2.2] w-7 h-7" />
                   </div>
                   <div className="min-w-0 flex-1 text-left flex flex-col justify-center">
-                    <span className="text-xs md:text-sm font-medium text-[#121214] dark:text-white block leading-tight">
+                    <span className="text-sm md:text-base font-semibold text-[#121214] dark:text-white block leading-snug break-words">
                       Записать
                     </span>
                   </div>
@@ -1015,19 +1015,19 @@ export default function Admin() {
                 <button
                   type="button"
                   onClick={() => setIsSellMembershipOpen(true)}
-                  className="w-full bg-[#DDE2E5] dark:bg-[#161618] hover:bg-[#d0d6da] dark:hover:bg-[#1F1F22] rounded-full p-2 pr-5 flex items-center gap-3.5 transition-all cursor-pointer group text-left outline-none select-none border-none"
+                  className="w-full h-[84px] bg-[#DDE2E5] dark:bg-[#161618] hover:bg-[#d0d6da] dark:hover:bg-[#1F1F22] rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none"
                 >
-                  <div 
+                  <div
                     style={{ backgroundColor: accentColor || '#CCFF00' }}
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-black group-hover:scale-105 transition-transform shrink-0"
+                    className="w-[68px] h-[68px] rounded-full flex items-center justify-center group-hover:scale-105 transition-transform shrink-0"
                   >
-                    <Ticket size={22} className="text-black stroke-[2.2]" />
+                    <Ticket size={28} className="text-black stroke-[2.2] w-7 h-7" />
                   </div>
                   <div className="min-w-0 flex-1 text-left flex flex-col justify-center">
-                    <span className="text-xs md:text-sm font-medium text-[#121214] dark:text-white block leading-snug">
+                    <span className="text-sm md:text-base font-semibold text-[#121214] dark:text-white block leading-snug break-words">
                       Продать
                     </span>
-                    <span className="text-xs md:text-sm font-medium text-[#121214] dark:text-white block leading-snug">
+                    <span className="text-sm md:text-base font-semibold text-[#121214] dark:text-white block leading-snug break-words">
                       абонемент
                     </span>
                   </div>
@@ -1037,19 +1037,19 @@ export default function Admin() {
                 <button
                   type="button"
                   onClick={() => setIsAddPaymentOpen(true)}
-                  className="w-full bg-[#DDE2E5] dark:bg-[#161618] hover:bg-[#d0d6da] dark:hover:bg-[#1F1F22] rounded-full p-2 pr-5 flex items-center gap-3.5 transition-all cursor-pointer group text-left outline-none select-none border-none"
+                  className="w-full h-[84px] bg-[#DDE2E5] dark:bg-[#161618] hover:bg-[#d0d6da] dark:hover:bg-[#1F1F22] rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none"
                 >
-                  <div 
+                  <div
                     style={{ backgroundColor: accentColor || '#CCFF00' }}
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-black group-hover:scale-105 transition-transform shrink-0"
+                    className="w-[68px] h-[68px] rounded-full flex items-center justify-center group-hover:scale-105 transition-transform shrink-0"
                   >
-                    <Wallet size={22} className="text-black stroke-[2.2]" />
+                    <Wallet size={28} className="text-black stroke-[2.2] w-7 h-7" />
                   </div>
                   <div className="min-w-0 flex-1 text-left flex flex-col justify-center">
-                    <span className="text-xs md:text-sm font-medium text-[#121214] dark:text-white block leading-snug">
+                    <span className="text-sm md:text-base font-semibold text-[#121214] dark:text-white block leading-snug break-words">
                       Принять
                     </span>
-                    <span className="text-xs md:text-sm font-medium text-[#121214] dark:text-white block leading-snug">
+                    <span className="text-sm md:text-base font-semibold text-[#121214] dark:text-white block leading-snug break-words">
                       оплату
                     </span>
                   </div>
@@ -1059,24 +1059,25 @@ export default function Admin() {
                 <button
                   type="button"
                   onClick={() => setIsCreateLeadOpen(true)}
-                  className="w-full bg-[#DDE2E5] dark:bg-[#161618] hover:bg-[#d0d6da] dark:hover:bg-[#1F1F22] rounded-full p-2 pr-5 flex items-center gap-3.5 transition-all cursor-pointer group text-left outline-none select-none border-none"
+                  className="w-full h-[84px] bg-[#DDE2E5] dark:bg-[#161618] hover:bg-[#d0d6da] dark:hover:bg-[#1F1F22] rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none"
                 >
-                  <div 
+                  <div
                     style={{ backgroundColor: accentColor || '#CCFF00' }}
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-black group-hover:scale-105 transition-transform shrink-0"
+                    className="w-[68px] h-[68px] rounded-full flex items-center justify-center group-hover:scale-105 transition-transform shrink-0"
                   >
-                    <UserPlus size={22} className="text-black stroke-[2.2]" />
+                    <UserPlus size={28} className="text-black stroke-[2.2] w-7 h-7" />
                   </div>
                   <div className="min-w-0 flex-1 text-left flex flex-col justify-center">
-                    <span className="text-xs md:text-sm font-medium text-[#121214] dark:text-white block leading-snug">
+                    <span className="text-sm md:text-base font-semibold text-[#121214] dark:text-white block leading-snug break-words">
                       Создать
                     </span>
-                    <span className="text-xs md:text-sm font-medium text-[#121214] dark:text-white block leading-snug">
+                    <span className="text-sm md:text-base font-semibold text-[#121214] dark:text-white block leading-snug break-words">
                       лид
                     </span>
                   </div>
                 </button>
               </div>
+         
 
               {/* Widget 2: Операционные задачи */}
               <div className="ui-banner rounded-[32px] bg-[#DDE2E5] dark:bg-[#161618] p-5 md:p-6 shadow-none">

@@ -1,26 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { supabase } from '../lib/supabase';
-import { 
-  ArrowLeft, 
-  Loader2, 
-  Plus, 
-  Trash2, 
-  DollarSign, 
-  Calendar, 
-  Wallet, 
-  Coins, 
-  ArrowUpRight, 
+import {
+  Loader2,
+  Plus,
+  Trash2,
+  DollarSign,
+  Calendar,
+  Wallet,
+  Coins,
+  ArrowUpRight,
   ArrowDownRight,
-  ArrowDownLeft,
   Banknote,
-  TrendingUp,
   CheckCircle,
-  FileText,
   X,
-  User,
-  Info,
-  Clock
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import FloatingActionButton from "../components/FloatingActionButton";
@@ -76,11 +69,13 @@ const paymentOptions: { id: PaymentMethod; label: string; icon: string }[] = [
   { id: 'transfer', label: 'Перевод', icon: '🏦' },
 ];
 
+// PaymentMethodSelector updated only for compatibility, not touched for design in this request.
+
 export function PaymentMethodSelector({
-  value,
+  selectedMethod,
   onChange
 }: {
-  value: PaymentMethod;
+  selectedMethod: PaymentMethod;
   onChange: (m: PaymentMethod) => void;
 }) {
   return (
@@ -90,17 +85,14 @@ export function PaymentMethodSelector({
       </label>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 bg-zinc-950 p-1 rounded-[18px] border border-zinc-800">
         {paymentOptions.map((opt) => {
-          const isActive = value === opt.id;
+          const isActive = selectedMethod === opt.id;
           return (
             <button
               key={opt.id}
               type="button"
               onClick={() => onChange(opt.id)}
-              className={`py-2 px-2 text-xs font-medium rounded-[14px] flex items-center justify-center gap-1 transition-all cursor-pointer border-none${
-                isActive
-? 'bg-[#CCFF00] text-black shadow-md font-medium'
-                  : 'text-zinc-400 hover:text-white bg-transparent'
-              }`}
+              className={`py-2 px-2 text-xs font-medium rounded-[14px] flex items-center justify-center gap-1 transition-all cursor-pointer border-none${isActive ? ' bg-[#CCFF00] text-black shadow-md font-medium' : ' text-zinc-400 hover:text-white bg-transparent'
+                }`}
             >
               <span>{opt.icon}</span>
               <span>{opt.label}</span>
@@ -140,7 +132,7 @@ interface Expense {
   paymentMethod: PaymentMethod;
 }
 
-type DetailItem = 
+type DetailItem =
   | { type: 'income'; data: IncomeTransaction }
   | { type: 'salary'; data: CoachSalary }
   | { type: 'expense'; data: Expense };
@@ -167,16 +159,10 @@ export default function AdminFinance() {
   const [customEndDate, setCustomEndDate] = useState("2026-07-25");
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
-  // Temporary date picker state
-  const [tempStartDate, setTempStartDate] = useState("2026-07-10");
-  const [tempEndDate, setTempEndDate] = useState("2026-07-25");
-
-  // Modal States
   const [isAddIncomeOpen, setIsAddIncomeOpen] = useState(false);
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<DetailItem | null>(null);
 
-  // State for Income
   const [incomeTransactions, setIncomeTransactions] = useState<IncomeTransaction[]>([
     { id: 1, student: "Екатерина Иванова", type: "Абонемент 8 занятий", amount: 6400, date: "2026-07-25", paymentMethod: 'cash' },
     { id: 2, student: "Дмитрий Сидоров", type: "Разовое занятие", amount: 1000, date: "2026-07-25", paymentMethod: 'terminal' },
@@ -187,7 +173,6 @@ export default function AdminFinance() {
     { id: 7, student: "Артем Васильев", type: "Разовое занятие", amount: 1000, date: "2026-07-05", paymentMethod: 'sbp' },
   ]);
 
-  // State for Salaries
   const [coachesSalaries, setCoachesSalaries] = useState<CoachSalary[]>([
     { id: 1, name: "Алексей Петров", classes: 34, rate: 1500, accrued: 51000, paid: false },
     { id: 2, name: "Дарья Смирнова", classes: 28, rate: 1500, accrued: 42000, paid: false },
@@ -195,7 +180,6 @@ export default function AdminFinance() {
     { id: 4, name: "Ирина Волк", classes: 15, rate: 1500, accrued: 22500, paid: false },
   ]);
 
-  // State for Expenses
   const [expenses, setExpenses] = useState<Expense[]>([
     { id: 1, category: "Хозрасходы", amount: 1200, date: "2026-07-25", note: "Вода и стаканчики", paymentMethod: 'cash' },
     { id: 2, category: "Оборудование", amount: 8400, date: "2026-07-21", note: "Коврики для фитнеса (6 шт)", paymentMethod: 'terminal' },
@@ -204,33 +188,25 @@ export default function AdminFinance() {
     { id: 5, category: "Аренда залов", amount: 65000, date: "2026-07-01", note: "Аренда основного зала за Июль", paymentMethod: 'transfer' },
   ]);
 
-  // Form states for new Income
   const [incomeStudent, setIncomeStudent] = useState('');
   const [incomeType, setIncomeType] = useState('Абонемент 8 занятий');
   const [incomeAmount, setIncomeAmount] = useState('');
   const [incomeDate, setIncomeDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [incomePaymentMethod, setIncomePaymentMethod] = useState<PaymentMethod>('cash');
-
-  // Form states for new expense
   const [expenseCategory, setExpenseCategory] = useState('Аренда залов');
   const [expenseAmount, setExpenseAmount] = useState('');
   const [expenseDate, setExpenseDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [expenseNote, setExpenseNote] = useState('');
   const [expensePaymentMethod, setExpensePaymentMethod] = useState<PaymentMethod>('terminal');
-
-  // State for paying salary method
   const [salaryPaymentMethod, setSalaryPaymentMethod] = useState<PaymentMethod>('transfer');
 
-  // Sync with localStorage staff and salary payouts
   useEffect(() => {
     try {
       const savedStaffRaw = localStorage.getItem('studio_staff');
       const savedPayoutsRaw = localStorage.getItem('studio_salary_payouts');
-      
       if (savedStaffRaw) {
         const staffList: any[] = JSON.parse(savedStaffRaw);
         const payouts: any[] = savedPayoutsRaw ? JSON.parse(savedPayoutsRaw) : [];
-        
         const mappedSalaries: CoachSalary[] = staffList.map((m) => {
           const lastPayout = payouts.find((p: any) => p.staffId === m.id);
           return {
@@ -243,7 +219,6 @@ export default function AdminFinance() {
             paymentMethod: lastPayout?.paymentMethod || 'cash'
           };
         });
-        
         if (mappedSalaries.length > 0) {
           setCoachesSalaries(mappedSalaries);
         }
@@ -284,11 +259,10 @@ export default function AdminFinance() {
 
     const payoutAmount = coach.accrued;
 
-    setCoachesSalaries(prev => 
+    setCoachesSalaries(prev =>
       prev.map(c => c.id === coachId ? { ...c, paid: true, accrued: 0, paymentMethod: salaryPaymentMethod } : c)
     );
 
-    // Sync to localStorage
     try {
       const savedStaffRaw = localStorage.getItem('studio_staff');
       if (savedStaffRaw) {
@@ -313,7 +287,6 @@ export default function AdminFinance() {
       console.error("Error updating localStorage on handlePaySalary:", e);
     }
 
-    // If detail modal is open for this coach, update it
     if (selectedDetail && selectedDetail.type === 'salary' && selectedDetail.data.id === coachId) {
       setSelectedDetail({
         type: 'salary',
@@ -422,7 +395,6 @@ export default function AdminFinance() {
     if (periodType === 'month') {
       return { start: "2026-07-01", end: "2026-07-31", label: "за месяц" };
     }
-    // custom
     const formatRu = (dStr: string) => {
       if (!dStr) return '';
       const parts = dStr.split('-');
@@ -442,22 +414,18 @@ export default function AdminFinance() {
   const filteredIncome = incomeTransactions.filter(
     tx => tx.date >= range.start && tx.date <= range.end
   );
-
   const filteredExpenses = expenses.filter(
     exp => exp.date >= range.start && exp.date <= range.end
   );
-
   const totalIncome = filteredIncome.reduce((acc, curr) => acc + curr.amount, 0);
   const totalExpenses = filteredExpenses.reduce((acc, curr) => acc + curr.amount, 0);
   const totalAccruedSalaries = coachesSalaries.reduce((acc, curr) => acc + curr.accrued, 0);
 
-  // Breakdown by payment methods for Income
   const cashIncome = filteredIncome.filter(tx => tx.paymentMethod === 'cash').reduce((acc, curr) => acc + curr.amount, 0);
   const terminalIncome = filteredIncome.filter(tx => tx.paymentMethod === 'terminal').reduce((acc, curr) => acc + curr.amount, 0);
   const sbpIncome = filteredIncome.filter(tx => tx.paymentMethod === 'sbp').reduce((acc, curr) => acc + curr.amount, 0);
   const transferIncome = filteredIncome.filter(tx => tx.paymentMethod === 'transfer').reduce((acc, curr) => acc + curr.amount, 0);
 
-  // Breakdown by payment methods for Expenses
   const cashExpenses = filteredExpenses.filter(exp => exp.paymentMethod === 'cash').reduce((acc, curr) => acc + curr.amount, 0);
   const terminalExpenses = filteredExpenses.filter(exp => exp.paymentMethod === 'terminal').reduce((acc, curr) => acc + curr.amount, 0);
   const sbpExpenses = filteredExpenses.filter(exp => exp.paymentMethod === 'sbp').reduce((acc, curr) => acc + curr.amount, 0);
@@ -466,7 +434,7 @@ export default function AdminFinance() {
   if (loading) {
     return (
       <div className={`h-[100dvh] flex items-center justify-center transition-colors duration-300 ${
-        theme === 'light' ? 'bg-[#DDE2E5] text-slate-900' : 'bg-[#09090b] text-white'
+        theme === 'light' ? 'bg-transparent text-slate-900' : 'bg-[#09090b] text-white'
       }`}>
         <Loader2 className="w-8 h-8 animate-spin" style={{ color: accentColor }} />
       </div>
@@ -475,29 +443,28 @@ export default function AdminFinance() {
 
   return (
     <div className={`min-h-screen min-h-[100dvh] flex flex-col p-6 pb-28 font-sans relative transition-colors duration-300 ${
-      bgImage ? 'bg-transparent text-white' : theme === 'light' ? 'bg-[#DDE2E5] text-slate-900' : 'bg-black text-white'
+      bgImage ? 'bg-transparent text-white' : theme === 'light' ? 'bg-transparent text-slate-900' : 'bg-black text-white'
     }`}>
       <header className="mb-4 shrink-0">
         <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Финансы</h1>
       </header>
 
-      {/* SECTION 1: Category Tab Switcher ("Доходы" | "Зарплаты" | "Расходы") - TOP */}
+      {/* Category Tab Switcher */}
       {currentRole === 'owner' && (
-        <div className="bg-[#CDD2D7] dark:bg-[#18181b]/80 backdrop-blur-md border border-black/10 dark:border-white/10 p-1.5 flex items-stretch justify-between gap-1 rounded-[24px] mb-4 max-w-md w-full shrink-0 shadow-md relative select-none">
+        <div className="h-[56px] bg-[#DDE2E5] dark:bg-[#161618] rounded-full p-1 flex items-center gap-1 mb-4 max-w-md w-full shrink-0 relative select-none">
           {(['income', 'salaries', 'expenses'] as const).map((tab) => {
             const isActive = activeTab === tab;
-            const labels = { income: 'Доходы', salaries: 'Зарплаты', expenses: 'Расходы' };
+            const labels: Record<typeof tab, string> = { income: 'Доходы', salaries: 'Зарплаты', expenses: 'Расходы' };
             return (
               <button
                 key={tab}
                 type="button"
                 onClick={() => setActiveTab(tab)}
-                style={isActive ? { backgroundColor: accentColor, color: activeTextColor } : {}}
-                className={`flex-1 self-stretch flex items-center justify-center px-3 sm:px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-control transition-all border-none outline-none cursor-pointer text-center${
-                  isActive
-                    ? 'shadow-sm'
-                    : 'text-slate-800 dark:text-zinc-300 hover:text-black dark:hover:text-white bg-transparent'
-                }`}
+                className={isActive
+                  ? "h-full bg-[#CCFF00] text-black font-medium text-sm px-6 rounded-full flex items-center justify-center"
+                  : "h-full text-[#121214]/60 dark:text-white/60 hover:text-[#121214] dark:hover:text-white font-medium text-sm px-6 rounded-full flex items-center justify-center gap-2"
+                }
+                style={{ transition: 'all .12s cubic-bezier(.4,0,.2,1)' }}
               >
                 {labels[tab]}
               </button>
@@ -506,7 +473,7 @@ export default function AdminFinance() {
         </div>
       )}
 
-      {/* SECTION 2: Dynamic Analytics Banner (Tab-Dependent, Full-Width) - MIDDLE */}
+      {/* Analytics Banner */}
       <AnimatePresence mode="wait">
         <motion.div
           key={activeTab}
@@ -514,172 +481,90 @@ export default function AdminFinance() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.15 }}
-          className="w-full bg-[#CDD2D7] dark:bg-[#18181b]/80 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-[28px] p-5 md:p-6 shadow-md mb-4 shrink-0"
+          className="w-full bg-[#DDE2E5] dark:bg-[#161618] rounded-full p-2 pr-5 flex items-center gap-3.5 mb-4 shrink-0"
         >
           {activeTab === 'income' && (
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-slate-700 dark:text-zinc-400 uppercase tracking-wider">ДОХОДЫ</span>
-                <span className="p-1.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
-                  <ArrowUpRight size={18} />
-                </span>
+            <>
+              <div className="w-12 h-12 rounded-full bg-[#CCFF00] text-black flex items-center justify-center shrink-0">
+                <Coins size={22} strokeWidth={2.2} />
               </div>
-              <div>
-                <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-[#121214] dark:text-white uppercase tracking-wider">ДОХОДЫ</span>
+                  <ArrowUpRight size={18} className="text-emerald-600" />
+                </div>
+                <div className="font-semibold text-xl text-[#121214] dark:text-white mt-0.5">
                   {totalIncome > 0 ? totalIncome.toLocaleString() : '35 900'} ₽
-                </h2>
-                <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-                  <span className="text-emerald-700 dark:text-emerald-400 font-medium flex items-center gap-1">
+                </div>
+                <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+                  <span className="text-emerald-700/90 dark:text-emerald-400 font-medium flex items-center gap-1">
                     ↗ +12.4% за выбранный период
                   </span>
-                  <span className="text-slate-600 dark:text-zinc-400 font-medium">
+                  <span className="text-[#121214]/60 dark:text-white/60 font-medium">
                     Абонементы: {Math.round(totalIncome > 0 ? totalIncome * 0.82 : 29500).toLocaleString()} ₽ | Разовые: {Math.round(totalIncome > 0 ? totalIncome * 0.18 : 6400).toLocaleString()} ₽
                   </span>
                 </div>
               </div>
-
-              {/* Cash Reconciliation Summary */}
-              <div className="mt-3 pt-3 border-t border-black/10 dark:border-white/10">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold uppercase text-slate-700 dark:text-zinc-400 tracking-wider">
-                    Сводка по кассе {periodType === 'day' ? '• Сверка кассы за день 🎯' : `(${range.label})`}
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 text-xs">
-                  <div 
-                    className={`ui-card p-3 border transition-all ${
-                      periodType === 'day' 
-                        ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-900 dark:text-emerald-300 ring-1 ring-emerald-500/40 shadow-sm' 
-                        : 'bg-white/80 dark:bg-zinc-900/80 border-black/10 dark:border-zinc-800 text-slate-900 dark:text-zinc-300 shadow-sm'
-                    }`}
-                  >
-                    <div className="text-xs text-slate-600 dark:text-zinc-400 font-bold uppercase flex items-center justify-between tracking-wide">
-                      <span>💵 Наличные</span>
-                      {periodType === 'day' && <span className="ui-badge text-xs font-bold text-emerald-800 dark:text-emerald-400 uppercase bg-emerald-500/20 px-2 py-0.5 rounded-full tracking-wide">Касса</span>}
-                    </div>
-                    <div className="text-base font-medium text-slate-900 dark:text-white mt-1">
-                      {cashIncome.toLocaleString()} ₽
-                    </div>
-                  </div>
-
-                  <div className="ui-card p-3 bg-white/80 dark:bg-zinc-900/80 border border-black/10 dark:border-zinc-800 text-slate-900 dark:text-zinc-300 shadow-sm">
-                    <div className="text-xs text-slate-600 dark:text-zinc-400 font-bold uppercase tracking-wide">💳 Карта / Терминал</div>
-                    <div className="text-base font-medium text-slate-900 dark:text-white mt-1">
-                      {terminalIncome.toLocaleString()} ₽
-                    </div>
-                  </div>
-
-                  <div className="ui-card p-3 bg-white/80 dark:bg-zinc-900/80 border border-black/10 dark:border-zinc-800 text-slate-900 dark:text-zinc-300 shadow-sm">
-                    <div className="text-xs text-slate-600 dark:text-zinc-400 font-bold uppercase tracking-wide">⚡ СБП / QR</div>
-                    <div className="text-base font-medium text-slate-900 dark:text-white mt-1">
-                      {sbpIncome.toLocaleString()} ₽
-                    </div>
-                  </div>
-
-                  <div className="ui-card p-3 bg-white/80 dark:bg-zinc-900/80 border border-black/10 dark:border-zinc-800 text-slate-900 dark:text-zinc-300 shadow-sm">
-                    <div className="text-xs text-slate-600 dark:text-zinc-400 font-bold uppercase tracking-wide">🏦 Перевод / Счет</div>
-                    <div className="text-base font-medium text-slate-900 dark:text-white mt-1">
-                      {transferIncome.toLocaleString()} ₽
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            </>
           )}
 
           {activeTab === 'salaries' && (
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">ФОТ И ВЫПЛАТЫ</span>
-                <span className="p-1.5 rounded-xl bg-blue-500/10 text-blue-400">
-                  <Banknote size={18} />
-                </span>
+            <>
+              <div className="w-12 h-12 rounded-full bg-[#CCFF00] text-black flex items-center justify-center shrink-0">
+                <Banknote size={22} strokeWidth={2.2} />
               </div>
-              <div>
-                <h2 className="text-2xl font-semibold text-white">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-[#121214]/70 dark:text-white/60 uppercase tracking-wider">ФОТ И ВЫПЛАТЫ</span>
+                  <span className="flex items-center"><ArrowDownRight size={18} className="text-blue-400" /></span>
+                </div>
+                <div className="font-semibold text-xl text-[#121214] dark:text-white mt-0.5">
                   {totalAccruedSalaries > 0 ? totalAccruedSalaries.toLocaleString() : '178 500'} ₽
-                </h2>
-                <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+                </div>
+                <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
                   <span className="text-blue-400 font-medium flex items-center gap-1">
                     ↙ Выплачено 80% от плана
                   </span>
-                  <span className="text-zinc-400 font-medium">
+                  <span className="text-[#121214]/60 dark:text-white/60 font-medium">
                     Оклады: {Math.round(totalAccruedSalaries > 0 ? totalAccruedSalaries * 0.67 : 120000).toLocaleString()} ₽ | % от групп: {Math.round(totalAccruedSalaries > 0 ? totalAccruedSalaries * 0.33 : 58500).toLocaleString()} ₽
                   </span>
                 </div>
               </div>
-            </div>
+            </>
           )}
 
           {activeTab === 'expenses' && (
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">ВСЕГО РАСХОДОВ</span>
-                <span className="p-1.5 rounded-xl bg-rose-500/10 text-rose-400">
-                  <ArrowDownRight size={18} />
-                </span>
+            <>
+              <div className="w-12 h-12 rounded-full bg-[#CCFF00] text-black flex items-center justify-center shrink-0">
+                <Wallet size={22} strokeWidth={2.2} />
               </div>
-              <div>
-                <h2 className="text-2xl font-semibold text-white">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-[#121214]/70 dark:text-white/60 uppercase tracking-wider">ВСЕГО РАСХОДОВ</span>
+                  <span className="flex items-center"><ArrowDownRight size={18} className="text-rose-400" /></span>
+                </div>
+                <div className="font-semibold text-xl text-[#121214] dark:text-white mt-0.5">
                   {(totalExpenses + (periodType === 'month' ? totalAccruedSalaries : 0)) > 0
-                    ? (totalExpenses + (periodType === 'month' ? totalAccruedSalaries : 0)).toLocaleString() 
+                    ? (totalExpenses + (periodType === 'month' ? totalAccruedSalaries : 0)).toLocaleString()
                     : '273 700'} ₽
-                </h2>
-                <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+                </div>
+                <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
                   <span className="text-rose-400 font-medium flex items-center gap-1">
                     ↘ Детализация расходов
                   </span>
-                  <span className="text-zinc-400 font-medium">
+                  <span className="text-[#121214]/60 dark:text-white/60 font-medium">
                     Аренда: {totalExpenses > 0 ? totalExpenses.toLocaleString() : '95 200'} ₽ | ЗП: {totalAccruedSalaries > 0 ? totalAccruedSalaries.toLocaleString() : '178 500'} ₽ | Прочее: 0 ₽
                   </span>
                 </div>
               </div>
-
-              {/* Expense Methods Breakdown */}
-              <div className="mt-3 pt-3 border-t border-white/10">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold uppercase text-zinc-400 tracking-wider">
-                    Списание по безналу и наличным ({range.label})
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                  <div style={{ borderRadius: '16px' }} className="p-2.5 bg-zinc-900/80 border border-zinc-800 text-zinc-300">
-                    <div className="text-xs text-zinc-400 font-bold uppercase tracking-wide">💵 Наличные</div>
-                    <div className="text-base font-medium text-white mt-1">
-                      {cashExpenses.toLocaleString()} ₽
-                    </div>
-                  </div>
-
-                  <div style={{ borderRadius: '16px' }} className="p-2.5 bg-zinc-900/80 border border-zinc-800 text-zinc-300">
-                    <div className="text-xs text-zinc-400 font-bold uppercase tracking-wide">💳 Терминал</div>
-                    <div className="text-base font-medium text-white mt-1">
-                      {terminalExpenses.toLocaleString()} ₽
-                    </div>
-                  </div>
-
-                  <div style={{ borderRadius: '16px' }} className="p-2.5 bg-zinc-900/80 border border-zinc-800 text-zinc-300">
-                    <div className="text-xs text-zinc-400 font-bold uppercase tracking-wide">⚡ СБП</div>
-                    <div className="text-base font-medium text-white mt-1">
-                      {sbpExpenses.toLocaleString()} ₽
-                    </div>
-                  </div>
-
-                  <div style={{ borderRadius: '16px' }} className="p-2.5 bg-zinc-900/80 border border-zinc-800 text-zinc-300">
-                    <div className="text-xs text-zinc-400 font-bold uppercase tracking-wide">🏦 Перевод / Расч.счет</div>
-                    <div className="text-base font-medium text-white mt-1">
-                      {transferExpenses.toLocaleString()} ₽
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            </>
           )}
         </motion.div>
       </AnimatePresence>
 
-      {/* SECTION 3: PERIOD SWITCHER ("ДЕНЬ" | "НЕДЕЛЯ" | "МЕСЯЦ" | 📅) - BOTTOM (Under Banners) */}
+      {/* PERIOD SWITCHER */}
       {activeTab !== 'salaries' && (
-        <div className="bg-[#CDD2D7] dark:bg-[#18181b]/80 backdrop-blur-md border border-black/10 dark:border-white/10 p-1.5 flex items-stretch justify-between gap-1 rounded-[24px] mb-6 max-w-md w-full shrink-0 min-h-[48px] shadow-md relative select-none">
+        <div className="h-[56px] bg-[#DDE2E5] dark:bg-[#161618] rounded-full p-1 flex items-center gap-1 mb-6 max-w-md w-full shrink-0 min-h-[48px] relative select-none">
           {(['day', 'week', 'month'] as const).map((mode) => {
             const isActive = periodType === mode;
             const labels = { day: 'День', week: 'Неделя', month: 'Месяц' };
@@ -688,52 +573,34 @@ export default function AdminFinance() {
                 key={mode}
                 type="button"
                 onClick={() => setPeriodType(mode)}
-                className={`relative flex-1 self-stretch flex items-center justify-center px-3 sm:px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-control transition-colors border-none outline-none cursor-pointer text-center z-10${
+                className={
                   isActive
-                    ? 'text-slate-900'
-                    : 'text-slate-800 dark:text-zinc-300 hover:text-black dark:hover:text-white bg-transparent'
-                }`}
-                style={isActive ? { color: activeTextColor === '#000000' ? '#000000' : activeTextColor } : {}}
+                    ? "h-full bg-[#CCFF00] text-black font-medium text-sm px-6 rounded-full flex items-center justify-center"
+                    : "h-full text-[#121214]/60 dark:text-white/60 hover:text-[#121214] dark:hover:text-white font-medium text-sm px-6 rounded-full flex items-center justify-center gap-2"
+                }
+                style={{ transition: 'all .12s cubic-bezier(.4,0,.2,1)' }}
               >
-                {isActive && (
-                  <motion.div
-                    layoutId="financePeriodPill"
-                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                    style={{ backgroundColor: accentColor || '#CCFF00' }}
-                    className="absolute inset-0 rounded-control shadow-sm -z-10"
-                  />
-                )}
-                <span className="relative z-10">{labels[mode]}</span>
+                {labels[mode]}
               </button>
             );
           })}
-
-          {/* 4th Segment: Calendar Button */}
           <button
             type="button"
             onClick={() => setIsDatePickerOpen(true)}
-            className={`relative self-stretch px-3.5 sm:px-4 flex items-center justify-center transition-colors border-none outline-none cursor-pointer shrink-0 z-10 rounded-control ${
+            className={
               periodType === 'custom'
-? 'text-slate-900 shadow-sm font-medium'
-                : 'text-slate-800 dark:text-zinc-300 hover:text-black dark:hover:text-white bg-transparent'
-            }`}
-            style={periodType === 'custom' ? { color: activeTextColor === '#000000' ? '#000000' : activeTextColor } : {}}
+                ? "h-full bg-[#CCFF00] text-black font-medium text-sm px-6 rounded-full flex items-center justify-center"
+                : "h-full text-[#121214]/60 dark:text-white/60 hover:text-[#121214] dark:hover:text-white font-medium text-sm px-6 rounded-full flex items-center justify-center gap-2"
+            }
+            style={{ transition: 'all .12s cubic-bezier(.4,0,.2,1)' }}
             title="Выбрать свой период"
           >
-            {periodType === 'custom' && (
-              <motion.div
-                layoutId="financePeriodPill"
-                transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                style={{ backgroundColor: accentColor || '#CCFF00' }}
-                className="absolute inset-0 rounded-control shadow-sm -z-10"
-              />
-            )}
-            <Calendar size={18} className="relative z-10" />
+            <Calendar size={18} />
           </button>
         </div>
       )}
 
-      {/* Floating Action Button (FAB) for adding items */}
+      {/* FAB */}
       {activeTab !== 'salaries' && (
         <FloatingActionButton
           onClick={() => {
@@ -744,7 +611,7 @@ export default function AdminFinance() {
         />
       )}
 
-      {/* Main content container */}
+      {/* Main content */}
       <div className="flex-1 pb-4">
         <AnimatePresence mode="wait">
           {activeTab === 'income' && (
@@ -760,15 +627,14 @@ export default function AdminFinance() {
                 <h3 style={{ color: accentColor }} className="text-sm font-bold uppercase tracking-wider">
                   Доходы {periodType !== 'month' && `(${range.label})`}
                 </h3>
-                <span className="text-xs font-medium text-slate-700 dark:text-zinc-800 bg-white border border-black/10 px-3 py-1 rounded-control shadow-xs">
+                <span className="text-xs font-medium text-[#121214]/60 dark:text-white/60 bg-black/5 dark:bg-white/5 border border-black/10 px-3 py-1 rounded-full shadow-xs">
                   Всего: {filteredIncome.length} транзакций
                 </span>
               </div>
-
               {filteredIncome.length === 0 ? (
-                <div style={{ borderRadius: '16px' }} className="p-8 text-center bg-white dark:bg-[#18181b]/60 border border-black/10 dark:border-zinc-800/60 border-dashed rounded-xl shadow-xs">
-                  <p className="text-sm font-medium text-slate-400 dark:text-zinc-400">Нет доходов за выбранный период</p>
-                  <button 
+                <div style={{ borderRadius: '16px' }} className="p-8 text-center bg-black/5 dark:bg-white/5 border border-black/10 dark:border-zinc-800/60 border-dashed rounded-xl shadow-xs">
+                  <p className="text-sm font-medium text-[#121214]/50 dark:text-white/60">Нет доходов за выбранный период</p>
+                  <button
                     onClick={() => setPeriodType('month')}
                     className="mt-3 text-xs font-medium text-[#CCFF00] hover:underline cursor-pointer bg-transparent border-none"
                   >
@@ -778,27 +644,27 @@ export default function AdminFinance() {
               ) : (
                 <div className="space-y-2.5">
                   {filteredIncome.map((tx) => (
-                    <button 
-                      key={tx.id} 
+                    <button
+                      key={tx.id}
                       onClick={() => setSelectedDetail({ type: 'income', data: tx })}
                       style={{ borderRadius: '20px' }}
-                      className="w-full text-left p-3.5 !bg-[#18181b] hover:bg-zinc-900 border border-zinc-800/80 flex items-center justify-between shadow-lg shadow-black/10 transition-all active:scale-[0.99] cursor-pointer"
+                      className="w-full text-left p-4 bg-black/5 dark:bg-white/5 hover:bg-[#DEE2E5] dark:hover:bg-[#23232B] flex items-center justify-between transition-all active:scale-[0.99] cursor-pointer"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20 shrink-0">
-                          <Coins size={18} />
+                        <div className="w-12 h-12 rounded-full bg-[#CCFF00] text-black flex items-center justify-center shrink-0">
+                          <Coins size={22} strokeWidth={2.2} />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-white truncate">{tx.student}</p>
+                          <p className="text-sm font-medium text-[#121214] dark:text-white truncate">{tx.student}</p>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs text-zinc-400 font-medium truncate">{tx.type}</span>
+                            <span className="text-xs text-[#121214]/60 dark:text-white/50 font-medium truncate">{tx.type}</span>
                             <PaymentMethodBadge method={tx.paymentMethod} />
                           </div>
                         </div>
                       </div>
                       <div className="text-right shrink-0 ml-3">
                         <p className="text-sm font-medium text-[#CCFF00] leading-none">+{tx.amount.toLocaleString()} ₽</p>
-                        <p className="text-[10px] text-zinc-500 font-mono mt-1">
+                        <p className="text-[10px] text-[#121214]/50 dark:text-white/50 font-mono mt-1">
                           {new Date(tx.date).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' })}
                         </p>
                       </div>
@@ -819,41 +685,37 @@ export default function AdminFinance() {
               className="space-y-4"
             >
               <div className="flex justify-between items-center mb-1">
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider text-zinc-400">Расчет выплат</h3>
-                <span className="text-xs font-mono text-zinc-400">Тариф: 1 500 ₽ / урок</span>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-[#121214]/70 dark:text-white/60">Расчет выплат</h3>
+                <span className="text-xs font-mono text-[#121214]/60 dark:text-white/50">Тариф: 1 500 ₽ / урок</span>
               </div>
-
               <div className="space-y-2.5">
                 {coachesSalaries.map((coach) => (
-                  <button 
-                    key={coach.id} 
+                  <button
+                    key={coach.id}
                     onClick={() => setSelectedDetail({ type: 'salary', data: coach })}
                     style={{ borderRadius: '20px' }}
-                    className="w-full text-left p-4 !bg-[#18181b] hover:bg-zinc-900 border border-zinc-800/80 flex flex-col gap-3.5 shadow-lg shadow-black/10 transition-all active:scale-[0.99] cursor-pointer"
+                    className="w-full text-left p-4 bg-black/5 dark:bg-white/5 hover:bg-[#DEE2E5] dark:hover:bg-[#23232B] flex items-center justify-between transition-all active:scale-[0.99] cursor-pointer"
                   >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-lg font-medium border border-zinc-700 shrink-0 text-white">
-                          {coach.name.split(' ').map(n => n[0]).join('')}
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-white">{coach.name}</p>
-                          <p className="text-xs text-zinc-400 mt-0.5 font-medium">Отработано: {coach.classes} занятий</p>
-                        </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-[#CCFF00] text-black flex items-center justify-center shrink-0 text-lg font-semibold">
+                        {coach.name.split(' ').map(n => n[0]).join('')}
                       </div>
-                      
-                      <div className="text-right">
-                        {coach.paid ? (
-                          <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium rounded-control">
-                            <CheckCircle size={12} /> Выплачено
-                          </div>
-                        ) : (
-                          <div className="text-right">
-                            <p className="text-base font-medium text-[#CCFF00] leading-none">{coach.accrued.toLocaleString()} ₽</p>
-                            <p className="text-[10px] text-zinc-500 mt-1">К выплате</p>
-                          </div>
-                        )}
+                      <div>
+                        <p className="text-sm font-medium text-[#121214] dark:text-white">{coach.name}</p>
+                        <p className="text-xs text-[#121214]/60 dark:text-white/50 mt-0.5 font-medium">Отработано: {coach.classes} занятий</p>
                       </div>
+                    </div>
+                    <div className="text-right">
+                      {coach.paid ? (
+                        <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-medium rounded-full">
+                          <CheckCircle size={14} /> Выплачено
+                        </div>
+                      ) : (
+                        <div className="text-right">
+                          <p className="text-base font-medium text-[#CCFF00] leading-none">{coach.accrued.toLocaleString()} ₽</p>
+                          <p className="text-[10px] text-[#121214]/50 dark:text-white/50 mt-1">К выплате</p>
+                        </div>
+                      )}
                     </div>
                   </button>
                 ))}
@@ -871,19 +733,17 @@ export default function AdminFinance() {
               className="space-y-4"
             >
               <div className="flex justify-between items-center mb-1">
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider text-zinc-400 pl-1">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-[#121214]/70 dark:text-white/60 pl-1">
                   Расходы {periodType !== 'month' && `(${range.label})`}
                 </h3>
-                <span className="text-xs font-medium text-slate-700 dark:text-zinc-800 bg-white border border-black/10 px-3 py-1 rounded-control shadow-xs">
+                <span className="text-xs font-medium text-[#121214]/60 dark:text-white/60 bg-black/5 dark:bg-white/5 border border-black/10 px-3 py-1 rounded-full shadow-xs">
                   Всего: {filteredExpenses.length} расходов
                 </span>
               </div>
-
-              {/* Expenses List */}
               {filteredExpenses.length === 0 ? (
-                <div style={{ borderRadius: '16px' }} className="p-8 text-center bg-white dark:bg-[#18181b]/60 border border-black/10 dark:border-zinc-800/60 border-dashed rounded-xl shadow-xs">
-                  <p className="text-sm font-medium text-slate-400 dark:text-zinc-400">Нет расходов за выбранный период</p>
-                  <button 
+                <div style={{ borderRadius: '16px' }} className="p-8 text-center bg-black/5 dark:bg-white/5 border border-black/10 dark:border-zinc-800/60 border-dashed rounded-xl shadow-xs">
+                  <p className="text-sm font-medium text-[#121214]/50 dark:text-white/60">Нет расходов за выбранный период</p>
+                  <button
                     onClick={() => setPeriodType('month')}
                     className="mt-3 text-xs font-medium text-[#CCFF00] hover:underline cursor-pointer bg-transparent border-none"
                   >
@@ -893,29 +753,28 @@ export default function AdminFinance() {
               ) : (
                 <div className="space-y-2.5">
                   {filteredExpenses.map((exp) => (
-                    <button 
-                      key={exp.id} 
+                    <button
+                      key={exp.id}
                       onClick={() => setSelectedDetail({ type: 'expense', data: exp })}
                       style={{ borderRadius: '20px' }}
-                      className="w-full text-left p-3.5 !bg-[#18181b] hover:bg-zinc-900 border border-zinc-800/80 flex items-center justify-between shadow-lg shadow-black/10 transition-all active:scale-[0.99] cursor-pointer group"
+                      className="w-full text-left p-4 bg-black/5 dark:bg-white/5 hover:bg-[#DEE2E5] dark:hover:bg-[#23232B] flex items-center justify-between transition-all active:scale-[0.99] cursor-pointer group"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-400 border border-rose-500/20 shrink-0">
-                          <Wallet size={18} />
+                        <div className="w-12 h-12 rounded-full bg-[#CCFF00] text-black flex items-center justify-center shrink-0">
+                          <Wallet size={22} strokeWidth={2.2} />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-white truncate">{exp.category}</p>
+                          <p className="text-sm font-medium text-[#121214] dark:text-white truncate">{exp.category}</p>
                           <div className="flex items-center gap-2 mt-1">
-                            {exp.note && <span className="text-xs text-zinc-400 font-bold truncate tracking-wide">{exp.note}</span>}
+                            {exp.note && <span className="text-xs text-[#121214]/60 dark:text-white/50 font-bold truncate tracking-wide">{exp.note}</span>}
                             <PaymentMethodBadge method={exp.paymentMethod} />
                           </div>
                         </div>
                       </div>
-                      
                       <div className="flex items-center gap-3 shrink-0 ml-3">
                         <div className="text-right">
                           <p className="text-sm font-medium text-rose-400 leading-none">-{exp.amount.toLocaleString()} ₽</p>
-                          <p className="text-[10px] text-zinc-500 font-mono mt-1">
+                          <p className="text-[10px] text-[#121214]/50 dark:text-white/50 font-mono mt-1">
                             {new Date(exp.date).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' })}
                           </p>
                         </div>
@@ -932,11 +791,11 @@ export default function AdminFinance() {
       {/* Modal: Add Income */}
       <AnimatePresence>
         {isAddIncomeOpen && (
-          <div 
+          <div
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
             onClick={() => setIsAddIncomeOpen(false)}
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
@@ -955,11 +814,10 @@ export default function AdminFinance() {
                   <X size={15} />
                 </button>
               </div>
-
               <form onSubmit={handleAddIncome} className="space-y-4">
                 <div>
                   <label className="text-xs font-bold uppercase tracking-wider text-zinc-500 pl-2">Ученик</label>
-                  <input 
+                  <input
                     type="text"
                     required
                     placeholder="Имя и фамилия ученика"
@@ -968,10 +826,9 @@ export default function AdminFinance() {
                     className="w-full !rounded-[16px] bg-zinc-950 border border-zinc-800 text-white px-4 py-3 text-xs font-medium focus:outline-none focus:border-[#CCFF00] transition-colors mt-1"
                   />
                 </div>
-
                 <div>
                   <label className="text-xs font-bold uppercase tracking-wider text-zinc-500 pl-2">Назначение платежа</label>
-                  <select 
+                  <select
                     value={incomeType}
                     onChange={(e) => setIncomeType(e.target.value)}
                     className="w-full h-11 px-4 !rounded-[16px] bg-zinc-950 border border-zinc-800 text-white text-xs font-medium focus:outline-none focus:border-[#CCFF00] transition-colors mt-1 appearance-none cursor-pointer"
@@ -984,18 +841,16 @@ export default function AdminFinance() {
                     <option value="Другое">Другое поступление</option>
                   </select>
                 </div>
-
                 <div>
-                  <PaymentMethodSelector 
-                    selectedMethod={incomePaymentMethod} 
-                    onChange={setIncomePaymentMethod} 
+                  <PaymentMethodSelector
+                    selectedMethod={incomePaymentMethod}
+                    onChange={setIncomePaymentMethod}
                   />
                 </div>
-
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs font-bold uppercase tracking-wider text-zinc-500 pl-2">Сумма (₽)</label>
-                    <input 
+                    <input
                       type="number"
                       required
                       placeholder="6400"
@@ -1006,7 +861,7 @@ export default function AdminFinance() {
                   </div>
                   <div>
                     <label className="text-xs font-bold uppercase tracking-wider text-zinc-500 pl-2">Дата</label>
-                    <input 
+                    <input
                       type="date"
                       required
                       value={incomeDate}
@@ -1015,7 +870,6 @@ export default function AdminFinance() {
                     />
                   </div>
                 </div>
-
                 <button
                   type="submit"
                   className="w-full py-3 mt-2 !bg-[#CCFF00] hover:bg-[#B5E600] text-black font-bold text-xs uppercase tracking-wider !rounded-full transition-colors text-center cursor-pointer shadow-lg shadow-[#CCFF00]/10"
@@ -1031,11 +885,11 @@ export default function AdminFinance() {
       {/* Modal: Add Expense */}
       <AnimatePresence>
         {isAddExpenseOpen && (
-          <div 
+          <div
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
             onClick={() => setIsAddExpenseOpen(false)}
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
@@ -1054,11 +908,10 @@ export default function AdminFinance() {
                   <X size={15} />
                 </button>
               </div>
-
               <form onSubmit={handleAddExpense} className="space-y-4">
                 <div>
                   <label className="text-xs font-bold uppercase tracking-wider text-zinc-500 pl-2">Категория</label>
-                  <select 
+                  <select
                     value={expenseCategory}
                     onChange={(e) => setExpenseCategory(e.target.value)}
                     className="w-full h-11 px-4 !rounded-[16px] bg-zinc-950 border border-zinc-800 text-white text-xs font-medium focus:outline-none focus:border-[#CCFF00] transition-colors mt-1 appearance-none cursor-pointer"
@@ -1071,18 +924,16 @@ export default function AdminFinance() {
                     <option value="Другое">Другое</option>
                   </select>
                 </div>
-
                 <div>
-                  <PaymentMethodSelector 
-                    selectedMethod={expensePaymentMethod} 
-                    onChange={setExpensePaymentMethod} 
+                  <PaymentMethodSelector
+                    selectedMethod={expensePaymentMethod}
+                    onChange={setExpensePaymentMethod}
                   />
                 </div>
-
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs font-bold uppercase tracking-wider text-zinc-500 pl-2">Сумма (₽)</label>
-                    <input 
+                    <input
                       type="number"
                       required
                       placeholder="5000"
@@ -1093,7 +944,7 @@ export default function AdminFinance() {
                   </div>
                   <div>
                     <label className="text-xs font-bold uppercase tracking-wider text-zinc-500 pl-2">Дата</label>
-                    <input 
+                    <input
                       type="date"
                       required
                       value={expenseDate}
@@ -1102,10 +953,9 @@ export default function AdminFinance() {
                     />
                   </div>
                 </div>
-
                 <div>
                   <label className="text-xs font-bold uppercase tracking-wider text-zinc-500 pl-2">Комментарий</label>
-                  <input 
+                  <input
                     type="text"
                     placeholder="Например: аренда малого зала"
                     value={expenseNote}
@@ -1113,7 +963,6 @@ export default function AdminFinance() {
                     className="w-full !rounded-[16px] bg-zinc-950 border border-zinc-800 text-white px-4 py-3 text-xs font-medium focus:outline-none focus:border-[#CCFF00] transition-colors mt-1"
                   />
                 </div>
-
                 <button
                   type="submit"
                   className="w-full py-3 mt-2 !bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs uppercase tracking-wider !rounded-full transition-colors text-center cursor-pointer shadow-lg shadow-rose-500/10"
@@ -1129,11 +978,11 @@ export default function AdminFinance() {
       {/* Modal: Detailed Item Information */}
       <AnimatePresence>
         {selectedDetail && (
-          <div 
+          <div
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
             onClick={() => setSelectedDetail(null)}
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
@@ -1155,17 +1004,14 @@ export default function AdminFinance() {
               <div className="flex-1 overflow-y-auto pr-1 mb-4 space-y-5 text-center">
                 {selectedDetail.type === 'income' && (
                   <div className="space-y-5">
-                    <div className="w-16 h-16 !rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20 mx-auto">
-                      <Coins size={30} />
+                    <div className="w-16 h-16 !rounded-full bg-[#CCFF00] text-black flex items-center justify-center mx-auto">
+                      <Coins size={30} strokeWidth={2.2} />
                     </div>
-
                     <div>
                       <p className="text-3xl font-bold text-[#CCFF00]">+{selectedDetail.data.amount.toLocaleString()} ₽</p>
                       <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest mt-1">Успешное пополнение</p>
                     </div>
-
                     <div className="h-px bg-zinc-800/60" />
-
                     <div className="space-y-3.5 text-left bg-zinc-950/40 p-4 !rounded-[16px] border border-zinc-800/30">
                       <div className="flex justify-between items-center">
                         <span className="text-xs font-medium text-zinc-400">Способ оплаты:</span>
@@ -1191,17 +1037,14 @@ export default function AdminFinance() {
 
                 {selectedDetail.type === 'expense' && (
                   <div className="space-y-5">
-                    <div className="w-16 h-16 !rounded-full bg-rose-500/10 flex items-center justify-center text-rose-400 border border-rose-500/20 mx-auto">
-                      <Wallet size={30} />
+                    <div className="w-16 h-16 !rounded-full bg-[#CCFF00] text-black flex items-center justify-center mx-auto">
+                      <Wallet size={30} strokeWidth={2.2} />
                     </div>
-
                     <div>
                       <p className="text-3xl font-bold text-rose-400">-{selectedDetail.data.amount.toLocaleString()} ₽</p>
                       <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest mt-1">Категория расхода</p>
                     </div>
-
                     <div className="h-px bg-zinc-800/60" />
-
                     <div className="space-y-3.5 text-left bg-zinc-950/40 p-4 !rounded-[16px] border border-zinc-800/30">
                       <div className="flex justify-between items-center">
                         <span className="text-xs font-medium text-zinc-400">Способ списания:</span>
@@ -1231,21 +1074,21 @@ export default function AdminFinance() {
 
                 {selectedDetail.type === 'salary' && (
                   <div className="space-y-5">
-                    <div className="w-16 h-16 !rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400 border border-purple-500/20 mx-auto text-xl font-semibold">
+                    <div className="w-16 h-16 !rounded-full bg-[#CCFF00] text-black flex items-center justify-center mx-auto text-xl font-semibold">
                       {selectedDetail.data.name.split(' ').map(n => n[0]).join('')}
                     </div>
 
                     <div>
                       {selectedDetail.data.paid ? (
-                        <div>
+                        <>
                           <p className="text-3xl font-bold text-emerald-400">Выплачено</p>
                           <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest mt-1">Долгов нет</p>
-                        </div>
+                        </>
                       ) : (
-                        <div>
+                        <>
                           <p className="text-3xl font-bold text-[#CCFF00]">{selectedDetail.data.accrued.toLocaleString()} ₽</p>
                           <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest mt-1">Ожидает выплаты</p>
-                        </div>
+                        </>
                       )}
                     </div>
 
@@ -1277,9 +1120,9 @@ export default function AdminFinance() {
                         <label className="text-xs font-bold uppercase tracking-wider text-zinc-500 pl-2 block mb-1">
                           Выберите способ выплаты:
                         </label>
-                        <PaymentMethodSelector 
-                          selectedMethod={salaryPaymentMethod} 
-                          onChange={setSalaryPaymentMethod} 
+                        <PaymentMethodSelector
+                          selectedMethod={salaryPaymentMethod}
+                          onChange={setSalaryPaymentMethod}
                         />
                       </div>
                     )}
@@ -1287,7 +1130,6 @@ export default function AdminFinance() {
                 )}
               </div>
 
-              {/* Action and Close Buttons Container */}
               <div className="shrink-0 space-y-3 mt-auto">
                 {selectedDetail.type === 'expense' && (
                   <button
@@ -1297,7 +1139,6 @@ export default function AdminFinance() {
                     Удалить запись
                   </button>
                 )}
-
                 {selectedDetail.type === 'salary' && (
                   <>
                     {!selectedDetail.data.paid ? (
@@ -1314,7 +1155,6 @@ export default function AdminFinance() {
                     )}
                   </>
                 )}
-
                 <button
                   onClick={() => setSelectedDetail(null)}
                   className="w-full py-3 !bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xs uppercase tracking-wider !rounded-full transition-colors text-center cursor-pointer"
@@ -1327,7 +1167,7 @@ export default function AdminFinance() {
         )}
       </AnimatePresence>
 
-      {/* Modal: Date Range Picker (Interactive Mesh Grid Calendar Modal) */}
+      {/* Date Range Modal */}
       <FinanceCalendarModal
         isOpen={isDatePickerOpen}
         onClose={() => setIsDatePickerOpen(false)}
