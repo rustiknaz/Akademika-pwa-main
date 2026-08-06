@@ -712,15 +712,18 @@ export default function AdminStudents() {
               transition={{ duration: 0.2, ease: "easeOut" }}
               className="w-full h-full flex flex-col"
             >
-              <div className="mb-6 relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-                <Input 
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Поиск по имени или телефону..."
-                  className="ui-input pl-12 pr-5 !rounded-[32px] border border-black/10 dark:border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#CCFF00]"
-                />
+              <div className="mb-6">
+                <div className="bg-[#CDD2D7]/50 dark:bg-[#18181b]/80 rounded-full px-4 py-2.5 flex items-center gap-3 border border-black/5">
+                  <Search className="text-slate-400" size={20} />
+                  <Input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Поиск по имени или телефону..."
+                    className="bg-transparent outline-none text-sm w-full text-black dark:text-white placeholder:text-slate-500 border-none shadow-none px-0 py-0"
+                  />
+                </div>
               </div>
+      
 
               <div className="ui-card bg-white dark:bg-[#18181b] shadow-md border border-black/10 dark:border-zinc-800/80 overflow-hidden mb-6">
                 <Table>

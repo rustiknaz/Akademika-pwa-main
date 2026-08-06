@@ -718,7 +718,8 @@ export function DirectionsAndGroupsManager() {
                 <div
                   key={dir.id}
                   onClick={() => setSelectedDetail({ type: 'direction', item: dir })}
-                  className="ui-group-card w-full text-left !bg-[#18181b] border !border-zinc-800 p-4 flex flex-col gap-3 relative shadow-lg shadow-black/10 transition-all duration-200 cursor-pointer hover:border-white/20 hover:bg-white/[0.04] hover:scale-[1.01]"
+                  style={{ borderRadius: '42px' }}
+                  className="w-full text-left !bg-[#18181b] border !border-zinc-800 p-4 flex flex-col gap-3 relative shadow-lg shadow-black/10 transition-all duration-200 cursor-pointer hover:border-white/20 hover:bg-white/[0.04] hover:scale-[1.01] !rounded-[42px] overflow-hidden"
                 >
                   <div className="flex justify-between items-start gap-2">
                     <div>
@@ -790,7 +791,8 @@ export function DirectionsAndGroupsManager() {
                 <div
                   key={group.id}
                   onClick={() => setSelectedDetail({ type: 'group', item: group })}
-                  className="ui-group-card w-full text-left !bg-[#18181b] border !border-zinc-800 p-4 flex flex-col gap-3 relative shadow-lg shadow-black/10 transition-all duration-200 cursor-pointer hover:border-white/20 hover:bg-white/[0.04] hover:scale-[1.01]"
+                  style={{ borderRadius: '42px' }}
+                  className="w-full text-left !bg-[#18181b] border !border-zinc-800 p-4 flex flex-col gap-3 relative shadow-lg shadow-black/10 transition-all duration-200 cursor-pointer hover:border-white/20 hover:bg-white/[0.04] hover:scale-[1.01] !rounded-[42px] overflow-hidden"
                 >
                   <div className="flex justify-between items-start gap-2">
                     <div className="space-y-1.5">
@@ -890,8 +892,8 @@ export function DirectionsAndGroupsManager() {
                 <div
                   key={age.id}
                   onClick={() => setSelectedDetail({ type: 'age', item: age })}
-                  style={{ borderRadius: '20px' }}
-                  className="w-full text-left !bg-[#18181b] border !border-zinc-800 p-4 flex flex-col gap-3 relative shadow-lg shadow-black/10 transition-all duration-200 cursor-pointer hover:border-white/20 hover:bg-white/[0.04] hover:scale-[1.01]"
+                  style={{ borderRadius: '42px' }}
+                  className="w-full text-left !bg-[#18181b] border !border-zinc-800 p-4 flex flex-col gap-3 relative shadow-lg shadow-black/10 transition-all duration-200 cursor-pointer hover:border-white/20 hover:bg-white/[0.04] hover:scale-[1.01] !rounded-[42px] overflow-hidden"
                 >
                   <div className="flex justify-between items-start gap-2">
                     <div className="flex items-center gap-3">
@@ -953,8 +955,8 @@ export function DirectionsAndGroupsManager() {
                 <div
                   key={lvl.id}
                   onClick={() => setSelectedDetail({ type: 'level', item: lvl })}
-                  style={{ borderRadius: '20px' }}
-                  className="w-full text-left !bg-[#18181b] border !border-zinc-800 p-4 flex flex-col gap-3 relative shadow-lg shadow-black/10 transition-all duration-200 cursor-pointer hover:border-white/20 hover:bg-white/[0.04] hover:scale-[1.01]"
+                  style={{ borderRadius: '42px' }}
+                  className="w-full text-left !bg-[#18181b] border !border-zinc-800 p-4 flex flex-col gap-3 relative shadow-lg shadow-black/10 transition-all duration-200 cursor-pointer hover:border-white/20 hover:bg-white/[0.04] hover:scale-[1.01] !rounded-[42px] overflow-hidden"
                 >
                   <div className="flex justify-between items-start gap-2">
                     <div className="flex items-center gap-3">

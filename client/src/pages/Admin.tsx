@@ -956,8 +956,11 @@ export default function Admin() {
               {/* Widget 1: Финансовая сводка */}
               <div 
                 onClick={() => setLocation('/admin/finance')}
-                style={{ backgroundColor: accentColor || '#CCFF00' }}
-                className="ui-banner rounded-[32px] p-5 md:p-6 shadow-none overflow-hidden cursor-pointer transition-all duration-300 hover:brightness-105 active:scale-[0.99]" 
+                style={{
+                  backgroundColor: accentColor || '#CCFF00',
+                  borderRadius: '42px'
+                }}
+                className="p-5 md:p-6 shadow-none overflow-hidden cursor-pointer transition-all duration-300 hover:brightness-105 active:scale-[0.99]" 
               >
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -989,6 +992,9 @@ export default function Admin() {
                   <span className="text-slate-900 font-medium">+12% к прошлой пятнице</span>
                 </div>
               </div>
+         
+         
+         
 
               {/* Quick Action Pills */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-1 md:px-0">
@@ -1080,7 +1086,10 @@ export default function Admin() {
          
 
               {/* Widget 2: Операционные задачи */}
-              <div className="ui-banner rounded-[32px] bg-[#DDE2E5] dark:bg-[#161618] p-5 md:p-6 shadow-none">
+              <div
+                style={{ borderRadius: '42px' }}
+                className="bg-[#DDE2E5] dark:bg-[#161618] p-5 md:p-6 shadow-none overflow-hidden !rounded-[42px]"
+              >
                 <span className="text-slate-700 dark:text-zinc-400 text-xs font-bold uppercase tracking-wider">Операционные задачи</span>
                 
                 <div className="flex flex-col gap-3 mt-4">
@@ -1119,7 +1128,10 @@ export default function Admin() {
               </div>
 
               {/* Widget 3: Активные записи */}
-              <div className="ui-banner rounded-[32px] bg-[#DDE2E5] dark:bg-[#161618] p-5 md:p-6 shadow-none">
+              <div
+                style={{ borderRadius: '42px' }}
+                className="bg-[#DDE2E5] dark:bg-[#161618] p-5 md:p-6 shadow-none overflow-hidden !rounded-[42px]"
+              >
                 <div className="flex justify-between items-center mb-4">
                   <div>
                     <span className="text-slate-700 dark:text-zinc-400 text-xs font-bold uppercase tracking-wider">Активные записи</span>
@@ -1131,6 +1143,7 @@ export default function Admin() {
                     {todayMainBookings.length} ЗАПИСЕЙ
                   </span>
                 </div>
+           
 
                 {/* Sub widget lists */}
                 <div className="space-y-3">

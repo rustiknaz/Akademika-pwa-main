@@ -168,6 +168,8 @@ export default function Schedule() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<'all' | 'my' | 'evening' | 'mclasses'>('all');
+  // New: добавляем tab для DAY/WEEK
+  const [activeTab, setActiveTab] = useState<'day' | 'week'>('day');
 
   useEffect(() => {
     async function checkUser() {
@@ -225,7 +227,7 @@ export default function Schedule() {
         .eq('status', 'booked');
 
       if (error) throw error;
-      setBookings(new Set(data?.map(b => b.class_id) || []));
+      setBookings(new Set(data?.map((b: any) => b.class_id) || []));
     } catch (err) {
       console.error('Error fetching bookings:', err);
     }
@@ -514,6 +516,34 @@ export default function Schedule() {
           </div>
         </div>
 
+        {/* Новый стиль таба: День / Неделя */}
+        <div className="mb-4">
+          <div className="bg-[#CDD2D7] dark:bg-[#18181b]/80 backdrop-blur-md rounded-full p-1.5 flex items-center justify-between w-full shadow-md">
+            <button
+              className={`${
+                activeTab === 'day'
+                  ? 'bg-[#CCFF00] text-black font-bold text-xs uppercase tracking-wider rounded-full px-3 py-2.5 shadow-md flex-1 text-center'
+                  : 'bg-transparent text-slate-800 dark:text-zinc-300 font-bold text-xs uppercase tracking-wider py-2.5 flex-1 text-center'
+              }`}
+              onClick={() => setActiveTab('day')}
+              type="button"
+            >
+              День
+            </button>
+            <button
+              className={`${
+                activeTab === 'week'
+                  ? 'bg-[#CCFF00] text-black font-bold text-xs uppercase tracking-wider rounded-full px-3 py-2.5 shadow-md flex-1 text-center'
+                  : 'bg-transparent text-slate-800 dark:text-zinc-300 font-bold text-xs uppercase tracking-wider py-2.5 flex-1 text-center'
+              }`}
+              onClick={() => setActiveTab('week')}
+              type="button"
+            >
+              Неделя
+            </button>
+          </div>
+        </div>
+
         {/* Backdrop Overlay when calendar is open */}
         {calendarOpen && (
           <div 
@@ -559,13 +589,13 @@ export default function Schedule() {
                 initialFocus
                 className="bg-transparent text-white p-0"
                 classNames={{
-caption_label: "text-sm font-bold text-white uppercase tracking-wider",
+                  caption_label: "text-sm font-bold text-white uppercase tracking-wider",
                   nav_button: "h-8 w-8 bg-white/5 hover:bg-white/10 text-white rounded-full border border-white/10 flex items-center justify-center p-0 opacity-100",
-head_cell: "text-zinc-400 font-bold text-xs uppercase w-9 rounded-md",
+                  head_cell: "text-zinc-400 font-bold text-xs uppercase w-9 rounded-md",
                   cell: "h-9 w-9 text-center text-sm p-0 relative bg-transparent",
-day: "h-9 w-9 p-0 font-medium text-white rounded-chip hover:bg-white/10 hover:text-white flex items-center justify-center aria-selected:opacity-100",
-day_selected: "font-normal rounded-chip shadow-md",
-day_today: "border border-white/40 text-white font-medium bg-transparent rounded-chip",
+                  day: "h-9 w-9 p-0 font-medium text-white rounded-chip hover:bg-white/10 hover:text-white flex items-center justify-center aria-selected:opacity-100",
+                  day_selected: "font-normal rounded-chip shadow-md",
+                  day_today: "border border-white/40 text-white font-medium bg-transparent rounded-chip",
                   day_outside: "text-white/20 opacity-30",
                 }}
                 modifiersStyles={{
@@ -592,6 +622,7 @@ day_today: "border border-white/40 text-white font-medium bg-transparent rounded
           </Popover>
         </div>
 
+ 
         {/* Horizontal Week Calendar Strip */}
         <div 
           className="flex overflow-x-auto scrollbar-none gap-2.5 py-3 px-6 -mx-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] items-center"
@@ -612,8 +643,8 @@ day_today: "border border-white/40 text-white font-medium bg-transparent rounded
                 } : {}}
                 className={`w-12 h-12 flex flex-col items-center justify-center rounded-full transition-all duration-200 cursor-pointer snap-center shrink-0 flex-shrink-0 ${
                   isSelected
-? "scale-105 font-normal border"
-: "bg-[#CDD2D7] border border-black/10 text-black font-medium"
+                    ? "scale-105 font-normal border"
+                    : "bg-[#CDD2D7] border border-black/10 text-black font-medium"
                 }`}
               >
                 <span className={`text-xs uppercase tracking-wider font-bold leading-none${
@@ -650,8 +681,8 @@ day_today: "border border-white/40 text-white font-medium bg-transparent rounded
                 } : {}}
                 className={`shrink-0 px-4 py-2 text-xs uppercase tracking-wider rounded-chip transition-all duration-200 cursor-pointer ${
                   isActive
-? "font-normal shadow-md"
-: "bg-[#CDD2D7] border border-black/10 text-black font-medium hover:bg-[#CDD2D7]/90"
+                    ? "font-normal shadow-md"
+                    : "bg-[#CDD2D7] border border-black/10 text-black font-medium hover:bg-[#CDD2D7]/90"
                 }`}
               >
                 {tag.label}
