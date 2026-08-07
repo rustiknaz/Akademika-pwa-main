@@ -107,7 +107,7 @@ export default function BottomNav() {
         <div className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-[95] flex flex-col items-center pointer-events-none">
           <nav
             id="urban-glass-admin-nav"
-            className="relative z-[95] p-3 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl border border-white/20 shadow-lg flex gap-3 items-center rounded-full w-max pointer-events-auto transition-colors duration-300"
+            className="relative z-[95] p-3 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-lg flex gap-3 items-center rounded-full w-max pointer-events-auto transition-colors duration-300 border-none"
           >
             {/* Главная */}
             <Link
@@ -214,7 +214,7 @@ export default function BottomNav() {
   return (
     <nav
       id="urban-glass-client-nav"
-      className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 p-3 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl border border-white/20 shadow-lg flex gap-3 items-center z-[95] rounded-full w-max pointer-events-auto transition-colors duration-300"
+      className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 p-3 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-lg flex gap-3 items-center z-[95] rounded-full w-max pointer-events-auto transition-colors duration-300 border-none"
     >
       <Link
         href="/"

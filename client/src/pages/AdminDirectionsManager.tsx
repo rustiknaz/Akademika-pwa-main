@@ -630,45 +630,48 @@ export function DirectionsAndGroupsManager() {
         </div>
       </header>
 
-      {/* Stats Summary Cards (Пилюли быстрых действий c эталонным стилем с главной) */}
-      <div className="grid grid-cols-2 gap-3 mb-2 shrink-0">
-        {/* Directions summary pill (эталонный стиль) */}
-        <button
-          type="button"
-          onClick={() => setActiveTab('directions')}
-          className="w-full bg-[#DDE2E5] dark:bg-[#161618] hover:bg-[#d0d6da] dark:hover:bg-[#1F1F22] rounded-full p-2 pr-5 flex items-center gap-3.5 transition-all cursor-pointer group text-left outline-none select-none border-none"
-        >
-          <span className="w-12 h-12 rounded-full flex items-center justify-center text-black group-hover:scale-105 transition-transform shrink-0 bg-[#CCFF00]">
-            <Layers size={22} strokeWidth={2.2} />
-          </span>
-          <div>
-            <span className="text-xs font-bold text-black dark:text-white uppercase tracking-wider block">
+      {/* Акцентный баннер сводки */}
+      <div
+        style={{
+          backgroundColor: accentColor || '#CCFF00',
+          borderRadius: '42px',
+        }}
+        className="w-full text-black p-5 sm:p-6 mb-4 flex items-center justify-between shadow-lg relative overflow-hidden min-h-[140px]"
+      >
+        <div className="flex items-center gap-3.5 flex-1">
+          <div className="w-12 h-12 rounded-full bg-white/90 dark:bg-black/10 flex items-center justify-center shrink-0 shadow-sm">
+            <Layers size={22} className="text-black" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-black/70 leading-tight">
               Направления
             </span>
-            <span className="text-sm font-medium text-black dark:text-white">{directions.length} дисциплин</span>
+            <span className="text-base sm:text-lg font-black text-black leading-tight">
+              {directions.length} дисциплин
+            </span>
           </div>
-        </button>
+        </div>
 
-        {/* Groups summary pill (эталонный стиль) */}
-        <button
-          type="button"
-          onClick={() => setActiveTab('groups')}
-          className="w-full bg-[#DDE2E5] dark:bg-[#161618] hover:bg-[#d0d6da] dark:hover:bg-[#1F1F22] rounded-full p-2 pr-5 flex items-center gap-3.5 transition-all cursor-pointer group text-left outline-none select-none border-none"
-        >
-          <span className="w-12 h-12 rounded-full flex items-center justify-center text-black group-hover:scale-105 transition-transform shrink-0 bg-[#CCFF00]">
-            <Calendar size={22} strokeWidth={2.2} />
-          </span>
-          <div>
-            <span className="text-xs font-bold text-black dark:text-white uppercase tracking-wider block">
+        <div className="w-px h-10 bg-black/15 mx-2" />
+
+        <div className="flex items-center gap-3.5 flex-1 justify-end sm:justify-start pl-2">
+          <div className="w-12 h-12 rounded-full bg-white/90 dark:bg-black/10 flex items-center justify-center shrink-0 shadow-sm">
+            <Calendar size={22} className="text-black" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-black/70 leading-tight">
               Группы
             </span>
-            <span className="text-sm font-medium text-black dark:text-white">{groups.length} активных</span>
+            <span className="text-base sm:text-lg font-black text-black leading-tight">
+              {groups.length} активных
+            </span>
           </div>
-        </button>
+        </div>
       </div>
+ 
 
-      {/* Верхний переключатель-капсула (Urban Glass v2.4 4 Segments) */}
-      <div className="ui-tab-container bg-[#CDD2D7] dark:bg-[#18181b]/80 backdrop-blur-md border border-black/10 dark:border-white/10 !rounded-full p-1.5 flex items-center justify-between w-full my-4 shadow-md shrink-0">
+      {/* Переключатель вкладок — увеличенная высота */}
+      <div className="ui-tab-container bg-[#CDD2D7] dark:bg-[#18181b]/80 backdrop-blur-md border border-black/10 dark:border-white/10 !rounded-full h-16 py-2 px-2 flex items-center justify-between w-full my-4 shadow-md shrink-0">
         {[
           { id: 'groups', label: 'ГРУППЫ' },
           { id: 'directions', label: 'НАПРАВЛЕНИЯ' },
@@ -681,11 +684,23 @@ export function DirectionsAndGroupsManager() {
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id as any)}
-              style={isActive ? { backgroundColor: accentColor, color: activeTextColor === 'text-black' || activeTextColor === '#000000' ? '#000000' : '#000000' } : {}}
+              style={
+                isActive
+                  ? {
+                      backgroundColor: accentColor,
+                      color:
+                        activeTextColor === 'text-black' ||
+                        activeTextColor === '#000000'
+                          ? '#000000'
+                          : '#000000',
+                      height: "100%",
+                    }
+                  : { height: "100%" }
+              }
               className={
                 isActive
-? "ui-tab-item bg-[#CCFF00] text-black font-bold text-xs sm:text-xs uppercase tracking-wider rounded-full px-3 py-2.5 transition-all shadow-md border-none outline-none cursor-pointer flex-1 text-center"
-: "ui-tab-item text-slate-800 dark:text-zinc-300 hover:text-black dark:hover:text-white font-bold text-xs sm:text-xs uppercase tracking-wider px-2 py-2.5 transition-colors cursor-pointer border-none outline-none bg-transparent flex-1 text-center"
+                  ? "ui-tab-item bg-[#CCFF00] text-black font-bold text-xs sm:text-xs uppercase tracking-wider rounded-full px-4 transition-all shadow-md border-none outline-none cursor-pointer flex-1 text-center h-full"
+                  : "ui-tab-item text-slate-800 dark:text-zinc-300 hover:text-black dark:hover:text-white font-bold text-xs sm:text-xs uppercase tracking-wider px-2 transition-colors cursor-pointer border-none outline-none bg-transparent flex-1 text-center h-full"
               }
             >
               {tab.label}

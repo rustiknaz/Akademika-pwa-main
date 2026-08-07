@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { supabase } from '../lib/supabase';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Loader2, User, Search, Plus, Calendar, Award, Check, LogOut, Phone, ChevronLeft, ChevronRight } from "lucide-react";
@@ -20,7 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { useTheme } from '@/context/ThemeContext';
 import FloatingActionButton from "../components/FloatingActionButton";
 
-import { 
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -120,11 +112,11 @@ function ModalDatePicker({
   }
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-4 animate-in fade-in duration-200"
       onClick={onClose}
     >
-      <div 
+      <div
         className="!bg-[#09090b] border !border-zinc-850 !rounded-[24px] p-5 max-w-sm w-full shadow-2xl shadow-black/80 flex flex-col text-white animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
@@ -133,7 +125,7 @@ function ModalDatePicker({
           <h3 className="text-sm font-bold text-white tracking-wide">
             {viewDate.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }).replace(/\s*г\./, '').toLowerCase()}
           </h3>
-          
+
           <div className="flex gap-2">
             <button
               onClick={() => setViewDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))}
@@ -164,16 +156,16 @@ function ModalDatePicker({
           {cells.map((cell, idx) => {
             const isSel = isSameDay(cell.date, selectedDate);
             const isTod = isDateToday(cell.date);
-            
+
             return (
               <div key={idx} className="h-10 flex items-center justify-center">
                 <button
                   onClick={() => handleSelect(cell.date)}
                   className={`text-xs transition-all cursor-pointer ${
                     isSel
-? 'w-9 h-9 flex items-center justify-center !rounded-full bg-[#CCFF00] text-black font-bold font-mono text-sm shadow-[0_0_10px_rgba(204,255,0,0.4)]'
+                      ? 'w-9 h-9 flex items-center justify-center !rounded-full bg-[#CCFF00] text-black font-bold font-mono text-sm shadow-[0_0_10px_rgba(204,255,0,0.4)]'
                       : isTod
-? 'w-9 h-9 flex items-center justify-center border border-[#CCFF00]/40 text-white font-medium rounded-xl bg-[#CCFF00]/5'
+                        ? 'w-9 h-9 flex items-center justify-center border border-[#CCFF00]/40 text-white font-medium rounded-xl bg-[#CCFF00]/5'
                         : cell.isCurrentMonth
                           ? 'w-9 h-9 flex items-center justify-center text-white hover:bg-zinc-900 rounded-xl'
                           : 'w-9 h-9 flex items-center justify-center text-stone-600 hover:bg-zinc-900/50 rounded-xl'
@@ -226,11 +218,11 @@ function RewardsModal({
   if (!isOpen) return null;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-4 animate-in fade-in duration-200"
       onClick={onClose}
     >
-      <div 
+      <div
         className="!bg-[#18181b] border !border-zinc-800 !rounded-[24px] p-6 max-w-md w-full shadow-2xl shadow-black/80 flex flex-col text-white animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
@@ -301,7 +293,7 @@ function RewardsModal({
                 <div className="w-10 h-10 rounded-full flex items-center justify-center text-xl mb-1.5 bg-neutral-800 border border-zinc-700/50">
                   {achievement.icon}
                 </div>
-                
+
                 <span className="text-xs font-bold text-white leading-tight line-clamp-1 tracking-wide">
                   {achievement.name}
                 </span>
@@ -339,7 +331,7 @@ export default function AdminStudents() {
   const [isCreating, setIsCreating] = useState(false);
   const [cancelingIds, setCancelingIds] = useState<Set<number>>(new Set());
   const [selectedStudentForDrawer, setSelectedStudentForDrawer] = useState<any | null>(null);
-  
+
   const [selectedSubForDatePicker, setSelectedSubForDatePicker] = useState<{ id: number; expiresAt: string | null; studentName: string } | null>(null);
   const [selectedStudentForRewards, setSelectedStudentForRewards] = useState<any | null>(null);
 
@@ -570,9 +562,9 @@ export default function AdminStudents() {
       if (!subId) {
         const { error } = await supabase
           .from('subscriptions')
-          .insert([{ 
-            user_id: userId, 
-            visits_left: amount, 
+          .insert([{
+            user_id: userId,
+            visits_left: amount,
             expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
           }]);
         if (error) throw error;
@@ -627,14 +619,14 @@ export default function AdminStudents() {
   const handleAwardStudent = (studentName: string, awardTitle?: string) => {
     toast({
       title: "Награда вручена!",
-      description: awardTitle 
+      description: awardTitle
         ? `Ученику ${studentName} вручена награда "${awardTitle}" за отличные успехи!`
         : `Ученику ${studentName} вручена награда за отличные успехи!`,
     });
   };
 
-  const filteredStudents = students.filter(s => 
-    s.full_name?.toLowerCase().includes(search.toLowerCase()) || 
+  const filteredStudents = students.filter(s =>
+    s.full_name?.toLowerCase().includes(search.toLowerCase()) ||
     s.phone?.includes(search)
   );
 
@@ -654,52 +646,8 @@ export default function AdminStudents() {
     }`}>
       <header className="mb-8 flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-black dark:text-white">Ученики</h1>
-
-        <button 
-          onClick={async () => {
-            await supabase.auth.signOut();
-            setLocation('/Login');
-          }}
-          className="p-2.5 text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-[#CCFF00] transition-colors rounded-full hover:bg-black/5 dark:hover:bg-neutral-800 cursor-pointer"
-          title="Выйти"
-        >
-          <LogOut size={22} />
-        </button>
+        {/* Кнопка выхода удалена по инструкции */}
       </header>
-
-      {/* Tabs Switcher */}
-      <div className="h-[56px] p-1 bg-[#DDE2E5] dark:bg-[#161618] rounded-full inline-flex items-center gap-1 mb-6 max-w-md w-full transition-colors">
-        <button
-          type="button"
-          onClick={() => setActiveTab('list')}
-          className={
-            activeTab === 'list'
-              ? "h-full bg-[#CCFF00] text-black font-medium text-sm px-6 rounded-full transition-all shadow-sm flex items-center justify-center"
-              : "h-full text-[#121214]/60 dark:text-white/60 hover:text-[#121214] dark:hover:text-white font-medium text-sm px-6 rounded-full transition-all flex items-center justify-center gap-2"
-          }
-        >
-          Список учеников
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab('attendance')}
-          className={
-            activeTab === 'attendance'
-              ? "h-full bg-[#CCFF00] text-black font-medium text-sm px-6 rounded-full transition-all shadow-sm flex items-center justify-center"
-              : "h-full text-[#121214]/60 dark:text-white/60 hover:text-[#121214] dark:hover:text-white font-medium text-sm px-6 rounded-full transition-all flex items-center justify-center gap-2"
-          }
-        >
-          <Calendar
-            size={15}
-            className={
-              activeTab === 'attendance'
-                ? 'text-black'
-                : 'text-[#121214]/60 dark:text-white/60'
-            }
-          />
-          Журнал посещаемости
-        </button>
-      </div>
 
       <div className="flex-1 pb-2 pr-0.5">
         <AnimatePresence mode="wait">
@@ -719,118 +667,97 @@ export default function AdminStudents() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Поиск по имени или телефону..."
-                    className="bg-transparent outline-none text-sm w-full text-black dark:text-white placeholder:text-slate-500 border-none shadow-none px-0 py-0"
+                    className="bg-transparent outline-none text-sm w-full text-black dark:text-white placeholder:text-slate-500 border-none shadow-none px-0 py-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:ring-0 focus:outline-none border-none"
                   />
                 </div>
               </div>
-      
 
-              <div className="ui-card bg-white dark:bg-[#18181b] shadow-md border border-black/10 dark:border-zinc-800/80 overflow-hidden mb-6">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="hover:bg-transparent border-b border-black/10 dark:border-zinc-850 bg-slate-50/80 dark:bg-zinc-900/60">
-                      <TableHead className="font-medium text-slate-600 dark:text-stone-400">Ученик</TableHead>
-                      <TableHead className="font-medium text-slate-600 dark:text-stone-400">Остаток</TableHead>
-                      <TableHead className="font-medium text-slate-600 dark:text-stone-400">Срок действия</TableHead>
-                      <TableHead className="font-medium text-slate-600 dark:text-stone-400">Действия</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredStudents.length > 0 ? (
-                      filteredStudents.map((student) => {
-                        const sub = student.subscriptions?.[0];
-                        const visits = sub?.visits_left ?? 0;
-                        const isExpired = sub?.expires_at ? new Date(sub.expires_at).getTime() < Date.now() : false;
-                        
-let statusBadgeClass = "bg-[#CCFF00] text-black font-medium";
-                        if (visits <= 0 || isExpired) {
-statusBadgeClass = "bg-rose-500 text-white font-medium";
-                        } else if (visits >= 1 && visits <= 3) {
-statusBadgeClass = "bg-amber-400 text-black font-medium";
-                        }
+              {/* --- СПИСОК КАРТОЧЕК-ПИЛЮЛЬ УЧЕНИКОВ --- */}
+              <div className="space-y-2.5 mb-6">
+                {filteredStudents.length > 0 ? (
+                  filteredStudents.map((student) => {
+                    const sub = student.subscriptions?.[0];
+                    const visits = sub?.visits_left ?? 0;
+                    const isExpired = sub?.expires_at ? new Date(sub.expires_at).getTime() < Date.now() : false;
 
-                        return (
-                          <TableRow key={student.id} className="border-b border-black/5 dark:border-zinc-800/80 hover:bg-black/5 dark:hover:bg-[#09090b]/40 transition-colors">
-                            <TableCell 
-                              className="cursor-pointer select-none group" 
-                              onClick={() => setSelectedStudentForDrawer(student)}
-                            >
-                              <div className="flex flex-col">
-                                <span className="text-sm font-medium text-slate-900 dark:text-white group-hover:text-lime-600 dark:group-hover:text-[#CCFF00] transition-colors">{student.full_name || 'Без имени'}</span>
-                                {student.phone && <span className="text-xs text-slate-500 font-medium">{student.phone}</span>}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center justify-start">
-                                <input 
-                                  key={sub ? `sub-${sub.id}-${sub.visits_left}` : 'no-sub'}
-                                  type="number"
-                                  defaultValue={sub?.visits_left ?? 0}
-                                  onBlur={(e) => sub && handleUpdateVisitsManually(sub.id, e.target.value)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter' && sub) {
-                                      handleUpdateVisitsManually(sub.id, (e.target as HTMLInputElement).value);
-                                    }
-                                  }}
-                                  className={`w-9 h-9 flex items-center justify-center !rounded-full font-bold text-center font-mono transition-colors duration-300 border-none p-0 focus-visible:ring-1 focus-visible:ring-[#CCFF00]/40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none${statusBadgeClass}`}
-                                />
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              {sub ? (
-                                <button
-                                  onClick={() => setSelectedSubForDatePicker({ id: sub.id, expiresAt: sub.expires_at, studentName: student.full_name || 'Без имени' })}
-                                  className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-[#09090b] hover:bg-slate-50 dark:hover:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-full text-xs font-bold text-slate-900 dark:text-white shadow-sm transition-all select-none cursor-pointer group"
-                                >
-                                  <Calendar 
-                                    size={13} 
-                                    className="text-slate-500 dark:text-zinc-400 group-hover:text-black dark:group-hover:text-[#CCFF00] transition-colors" 
-                                  />
-                                  <span className="group-hover:text-black dark:group-hover:text-[#CCFF00] transition-colors">
-                                    {sub.expires_at 
-                                      ? new Date(sub.expires_at).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })
-                                      : '—'}
-                                  </span>
-                                </button>
-                              ) : (
-                                <span className="text-slate-400 font-medium">—</span>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex gap-1.5 items-center">
-                                {[1, 8, 16].map(num => (
-                                  <Button 
-                                    key={num}
-                                    size="sm" 
-                                    variant="outline"
-                                    onClick={() => handleUpdateVisits(student.id, sub?.id || null, num)}
-                                    className="h-8 px-2.5 text-xs border border-slate-300 dark:border-zinc-800 bg-white dark:bg-[#09090b] text-slate-900 dark:text-[#CCFF00] rounded-full font-bold hover:bg-[#CCFF00] hover:text-black hover:border-transparent transition-all active:scale-95 shadow-sm"
-                                  >
-                                    +{num}
-                                  </Button>
-                                ))}
-                                <Button 
-                                  size="sm"
-                                  onClick={() => setSelectedStudentForRewards(student)}
-                                  className="h-8 px-3 text-xs bg-amber-100 text-amber-900 hover:bg-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:hover:bg-amber-900/40 border border-amber-300 dark:border-amber-900/60 rounded-full font-bold flex items-center gap-1 transition-all active:scale-95 shadow-sm"
-                                >
-                                  <Award size={14} /> Награда
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })
+                    // Аватар — крупный 48x48 (w-12 h-12)
+                    const avatar = student.avatar_url ? (
+                      <img
+                        src={student.avatar_url}
+                        alt={student.full_name || ''}
+                        className="w-12 h-12 rounded-full object-cover"
+                        referrerPolicy="no-referrer"
+                      />
                     ) : (
-                      <TableRow>
-                        <TableCell colSpan={4} className="text-center py-12 text-slate-500 font-medium">
-                          Ученики не найдены
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
+                      <div className="w-12 h-12 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-black dark:text-white select-none text-lg font-bold">
+                        {student.full_name?.trim()[0]?.toUpperCase()
+                          || <User size={24} className="text-zinc-400" />
+                        }
+                      </div>
+                    );
+
+                    // Кружок остатка
+                    let badgeClass = "w-8 h-8 rounded-full bg-[#CCFF00] text-black font-bold flex items-center justify-center text-base font-mono";
+                    if (visits <= 0 || isExpired) {
+                      badgeClass = "w-8 h-8 rounded-full bg-rose-500 text-white font-bold flex items-center justify-center text-base font-mono";
+                    } else if (visits >= 1 && visits <= 3) {
+                      badgeClass = "w-8 h-8 rounded-full bg-amber-400 text-black font-bold flex items-center justify-center text-base font-mono";
+                    }
+
+                    // Дата действия абонемента
+                    const expiryDate = sub?.expires_at
+                      ? new Date(sub.expires_at).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })
+                      : '—';
+
+                    return (
+                      <button
+                        key={student.id}
+                        type="button"
+                        className="w-full bg-[#CDD2D7]/50 dark:bg-[#18181b]/80 rounded-full px-4 py-3 flex items-center justify-between gap-3 mb-0 shadow-sm focus:outline-none transition group active:scale-[.98] cursor-pointer"
+                        onClick={() => setSelectedStudentForDrawer(student)}
+                        style={{ transition: 'box-shadow .2s, background .15s' }}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          {avatar}
+                          <span className="font-semibold text-sm text-black dark:text-white truncate max-w-[140px] group-hover:text-lime-600 dark:group-hover:text-[#CCFF00]">
+                            {student.full_name || 'Без имени'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className={badgeClass}>{visits}</span>
+                          <button
+                            onClick={e => {
+                              e.stopPropagation();
+                              if (sub) {
+                                setSelectedSubForDatePicker({
+                                  id: sub.id,
+                                  expiresAt: sub.expires_at,
+                                  studentName: student.full_name || 'Без имени'
+                                });
+                              }
+                            }}
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-[#09090b] hover:bg-slate-50 dark:hover:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-full text-xs font-bold text-slate-900 dark:text-white shadow-sm transition-all select-none cursor-pointer group/expiry"
+                            tabIndex={-1}
+                          >
+                            <Calendar
+                              size={13}
+                              className="text-slate-500 dark:text-zinc-400 group-hover/expiry:text-black dark:group-hover/expiry:text-[#CCFF00] transition-colors"
+                            />
+                            <span className="group-hover/expiry:text-black dark:group-hover/expiry:text-[#CCFF00] transition-colors">
+                              {expiryDate}
+                            </span>
+                          </button>
+                        </div>
+                      </button>
+                    );
+                  })
+                ) : (
+                  <div className="text-center py-12 text-slate-500 font-medium">
+                    Ученики не найдены
+                  </div>
+                )}
               </div>
+              {/* --- /СПИСОК КАРТОЧЕК-ПИЛЮЛЬ УЧЕНИКОВ --- */}
             </motion.div>
           ) : (
             <motion.div
@@ -842,46 +769,58 @@ statusBadgeClass = "bg-amber-400 text-black font-medium";
               className="w-full h-full flex flex-col"
             >
               <div className="bg-white dark:bg-[#18181b] rounded-card shadow-md border border-black/10 dark:border-zinc-800/80 overflow-hidden mb-6">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="hover:bg-transparent border-b border-black/10 dark:border-zinc-850 bg-slate-100/80 dark:bg-zinc-900/60">
-                      <TableHead className="font-medium text-slate-600 dark:text-stone-400">Ученик</TableHead>
-                      <TableHead className="font-medium text-slate-600 dark:text-stone-400">Занятие</TableHead>
-                      <TableHead className="font-medium text-slate-600 dark:text-stone-400">Баланс</TableHead>
-                      <TableHead className="font-medium text-slate-600 dark:text-stone-400">Действие</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
+                {/* Таблица посещаемости остается без изменений */}
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-700">
+                  <thead>
+                    <tr className="hover:bg-transparent border-b border-black/10 dark:border-zinc-850 bg-slate-100/80 dark:bg-zinc-900/60">
+                      <th className="font-medium text-slate-600 dark:text-stone-400 text-left px-4 py-3">
+                        Ученик
+                      </th>
+                      <th className="font-medium text-slate-600 dark:text-stone-400 text-left px-4 py-3">
+                        Занятие
+                      </th>
+                      <th className="font-medium text-slate-600 dark:text-stone-400 text-left px-4 py-3">
+                        Баланс
+                      </th>
+                      <th className="font-medium text-slate-600 dark:text-stone-400 text-left px-4 py-3">
+                        Действие
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
                     {activeBookings.length > 0 ? (
                       activeBookings.map((booking) => {
                         const sub = booking.profiles?.subscriptions?.[0];
                         const hasVisits = sub && sub.visits_left > 0;
                         const isCanceling = cancelingIds.has(booking.id);
-                        
+
                         return (
-                          <TableRow key={booking.id} className="border-b border-black/5 dark:border-zinc-800/80 hover:bg-black/5 dark:hover:bg-[#09090b]/40 transition-colors">
-                            <TableCell>
+                          <tr
+                            key={booking.id}
+                            className="border-b border-black/5 dark:border-zinc-800/80 hover:bg-black/5 dark:hover:bg-[#09090b]/40 transition-colors"
+                          >
+                            <td className="px-4 py-3">
                               <div className="flex flex-col">
                                 <span className="font-medium text-slate-900 dark:text-white">{booking.profiles?.full_name}</span>
                                 <span className="text-xs text-slate-500 font-medium">{booking.profiles?.phone}</span>
                               </div>
-                            </TableCell>
-                            <TableCell>
+                            </td>
+                            <td className="px-4 py-3">
                               <div className="flex flex-col">
                                 <span className="font-medium text-slate-900 dark:text-white">{booking.classes?.title}</span>
                                 <span className="text-xs text-slate-600 dark:text-[#E2FF63]/70 font-medium">
                                   {new Date(booking.classes?.start_time).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
                                 </span>
                               </div>
-                            </TableCell>
-                            <TableCell>
+                            </td>
+                            <td className="px-4 py-3">
                               <span className={`font-mono font-medium text-sm${hasVisits ? 'text-slate-900 dark:text-[#CCFF00]' : 'text-slate-400 dark:text-stone-600'}`}>
                                 {sub?.visits_left ?? 0}
                               </span>
-                            </TableCell>
-                            <TableCell>
+                            </td>
+                            <td className="px-4 py-3">
                               <div className="flex gap-2">
-                                <Button 
+                                <Button
                                   size="sm"
                                   disabled={!hasVisits}
                                   onClick={() => handleMarkAttendance(booking)}
@@ -889,7 +828,7 @@ statusBadgeClass = "bg-amber-400 text-black font-medium";
                                 >
                                   <Check size={14} className="mr-1" /> Пришел
                                 </Button>
-                                <Button 
+                                <Button
                                   size="sm"
                                   disabled={isCanceling}
                                   onClick={() => handleCancelBooking(booking)}
@@ -898,19 +837,19 @@ statusBadgeClass = "bg-amber-400 text-black font-medium";
                                   {isCanceling ? "..." : "Отмена"}
                                 </Button>
                               </div>
-                            </TableCell>
-                          </TableRow>
+                            </td>
+                          </tr>
                         );
                       })
                     ) : (
-                      <TableRow>
-                        <TableCell colSpan={4} className="text-center py-12 text-slate-500 font-medium">
+                      <tr>
+                        <td colSpan={4} className="text-center py-12 text-slate-500 font-medium">
                           Нет активных записей на сегодня
-                        </TableCell>
-                      </TableRow>
+                        </td>
+                      </tr>
                     )}
-                  </TableBody>
-                </Table>
+                  </tbody>
+                </table>
               </div>
             </motion.div>
           )}
@@ -921,7 +860,7 @@ statusBadgeClass = "bg-amber-400 text-black font-medium";
         {selectedStudentForDrawer && (
           <>
             {/* Backdrop overlay */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -930,7 +869,7 @@ statusBadgeClass = "bg-amber-400 text-black font-medium";
             />
 
             {/* Drawer panel */}
-            <motion.div 
+            <motion.div
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
@@ -942,7 +881,7 @@ statusBadgeClass = "bg-amber-400 text-black font-medium";
               <div className="w-12 h-1 bg-zinc-700 rounded-full mx-auto mb-4 shrink-0" />
 
               {/* Close button */}
-              <button 
+              <button
                 onClick={() => setSelectedStudentForDrawer(null)}
                 className="absolute top-4 right-4 p-2 text-zinc-500 hover:text-white rounded-full hover:bg-zinc-800 transition-colors z-10"
               >
@@ -950,7 +889,7 @@ statusBadgeClass = "bg-amber-400 text-black font-medium";
               </button>
 
               {/* Edit button */}
-              <button 
+              <button
                 onClick={() => {
                   toast({
                     title: "Редактирование профиля",
@@ -972,9 +911,9 @@ statusBadgeClass = "bg-amber-400 text-black font-medium";
                     {/* Avatar */}
                     <div className="w-14 h-14 !rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-white overflow-hidden shrink-0">
                       {selectedStudentForDrawer.avatar_url ? (
-                        <img 
-                          src={selectedStudentForDrawer.avatar_url} 
-                          alt={selectedStudentForDrawer.full_name || 'Avatar'} 
+                        <img
+                          src={selectedStudentForDrawer.avatar_url}
+                          alt={selectedStudentForDrawer.full_name || 'Avatar'}
                           className="w-full h-full object-cover"
                           referrerPolicy="no-referrer"
                         />
@@ -991,7 +930,7 @@ statusBadgeClass = "bg-amber-400 text-black font-medium";
                         {selectedStudentForDrawer.full_name || 'Без имени'}
                       </h2>
                       {selectedStudentForDrawer.phone && (
-                        <a 
+                        <a
                           href={`tel:${selectedStudentForDrawer.phone}`}
                           className="!rounded-full bg-zinc-900 border border-zinc-800 px-3 py-1 flex items-center gap-2 text-sm text-zinc-300 w-fit select-none m-0 ml-0"
                         >
@@ -1025,7 +964,7 @@ statusBadgeClass = "bg-amber-400 text-black font-medium";
 
                   {/* Action Buttons */}
                   <div className="flex gap-3 mt-2">
-                    <button 
+                    <button
                       onClick={() => {
                         toast({
                           title: "Заморозка абонемента",
@@ -1037,7 +976,7 @@ statusBadgeClass = "bg-amber-400 text-black font-medium";
                     >
                       Заморозить
                     </button>
-                    <button 
+                    <button
                       onClick={() => {
                         toast({
                           title: "История посещений",
@@ -1106,37 +1045,37 @@ statusBadgeClass = "bg-amber-400 text-black font-medium";
           <form onSubmit={handleAddStudent} className="space-y-5 pt-4">
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Имя Фамилия</label>
-              <Input 
-                required 
-                value={newStudent.full_name} 
+              <Input
+                required
+                value={newStudent.full_name}
                 onChange={(e) => setNewStudent({...newStudent, full_name: e.target.value})}
-                placeholder="Иван Иванов" 
-                className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#CCFF00]/30 bg-black/40 text-white placeholder:text-stone-600 text-sm font-medium px-5 focus-visible:border-[#CCFF00]" 
+                placeholder="Иван Иванов"
+                className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#CCFF00]/30 bg-black/40 text-white placeholder:text-stone-600 text-sm font-medium px-5 focus-visible:border-[#CCFF00]"
               />
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Телефон</label>
-              <Input 
-                required 
-                value={newStudent.phone} 
+              <Input
+                required
+                value={newStudent.phone}
                 onChange={(e) => setNewStudent({...newStudent, phone: e.target.value.replace(/\D/g, '')})}
-                placeholder="79001234567" 
-                className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#CCFF00]/30 bg-black/40 text-white placeholder:text-stone-600 text-sm font-medium px-5 focus-visible:border-[#CCFF00]" 
+                placeholder="79001234567"
+                className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#CCFF00]/30 bg-black/40 text-white placeholder:text-stone-600 text-sm font-medium px-5 focus-visible:border-[#CCFF00]"
               />
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Начальный баланс (занятий)</label>
-              <Input 
-                required 
-                type="number" 
-                value={newStudent.initial_visits} 
+              <Input
+                required
+                type="number"
+                value={newStudent.initial_visits}
                 onChange={(e) => setNewStudent({...newStudent, initial_visits: parseInt(e.target.value)})}
-                className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#CCFF00]/30 bg-[#09090b]/40 bg-black/40 text-white text-sm font-medium px-5 focus-visible:border-[#CCFF00]" 
+                className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#CCFF00]/30 bg-[#09090b]/40 bg-black/40 text-white text-sm font-medium px-5 focus-visible:border-[#CCFF00]"
               />
             </div>
             <DialogFooter className="pt-4">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isCreating}
                 className="w-full bg-[#CCFF00] hover:bg-[#B5E600] text-black rounded-full h-12 font-bold text-sm tracking-wide shadow-md shadow-[#CCFF00]/10 border-none"
               >
@@ -1155,7 +1094,7 @@ statusBadgeClass = "bg-amber-400 text-black font-medium";
         />
       )}
 
-      <ModalDatePicker 
+      <ModalDatePicker
         isOpen={selectedSubForDatePicker !== null}
         onClose={() => setSelectedSubForDatePicker(null)}
         expiresAt={selectedSubForDatePicker?.expiresAt || null}
@@ -1166,7 +1105,7 @@ statusBadgeClass = "bg-amber-400 text-black font-medium";
         }}
       />
 
-      <RewardsModal 
+      <RewardsModal
         isOpen={selectedStudentForRewards !== null}
         onClose={() => setSelectedStudentForRewards(null)}
         studentName={selectedStudentForRewards?.full_name || ''}
