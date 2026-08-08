@@ -660,15 +660,25 @@ export default function AdminStudents() {
             >
               <div className="mb-6">
                 <div className="bg-white/50 dark:bg-black/30 backdrop-blur-md rounded-full px-4 py-2.5 flex items-center gap-3 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border-none">
-                  <Search className="text-slate-400" size={20} />
+                  <Search className="text-zinc-400 dark:text-slate-200" size={20} />
                   <Input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Поиск по имени или телефону..."
-                    className="bg-transparent outline-none text-sm w-full text-black dark:text-white placeholder:text-slate-500 border-none shadow-none px-0 py-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:ring-0 focus:outline-none"
+                    className="
+                      bg-transparent
+                      outline-none
+                      text-sm
+                      w-full
+                      text-slate-900 dark:text-white
+                      placeholder:text-zinc-300 dark:placeholder:text-slate-200
+                      border-none shadow-none px-0 py-0
+                      focus-visible:ring-0 focus-visible:ring-offset-0 focus:ring-0 focus:outline-none
+                    "
                   />
                 </div>
               </div>
+        
 
               {/* --- СПИСОК КАРТОЧЕК-ПИЛЮЛЬ УЧЕНИКОВ --- */}
               <div className="space-y-2.5 mb-6">
@@ -678,18 +688,18 @@ export default function AdminStudents() {
                     const visits = sub?.visits_left ?? 0;
                     const isExpired = sub?.expires_at ? new Date(sub.expires_at).getTime() < Date.now() : false;
 
-                    // Аватар — крупный 48x48 (w-12 h-12)
+                    // Аватар — КРУПНЫЙ, NAV-BAR-СТИЛЬ
                     const avatar = student.avatar_url ? (
                       <img
                         src={student.avatar_url}
                         alt={student.full_name || ''}
-                        className="w-12 h-12 rounded-full object-cover"
+                        className="w-[68px] h-[68px] rounded-full object-cover flex items-center justify-center text-xl font-bold shrink-0"
                         referrerPolicy="no-referrer"
                       />
                     ) : (
-                      <div className="w-12 h-12 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-black dark:text-white select-none text-lg font-bold">
+                      <div className="w-[68px] h-[68px] rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-black dark:text-white select-none text-xl font-bold shrink-0">
                         {student.full_name?.trim()[0]?.toUpperCase()
-                          || <User size={24} className="text-zinc-400" />
+                          || <User size={32} className="text-zinc-400" />
                         }
                       </div>
                     );
@@ -711,40 +721,48 @@ export default function AdminStudents() {
                       <button
                         key={student.id}
                         type="button"
-                        className="w-full bg-white/50 dark:bg-black/30 backdrop-blur-md rounded-full px-4 py-3 flex items-center justify-between gap-3 mb-0 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border-none focus:outline-none transition group active:scale-[.98] cursor-pointer"
+                        className="
+                          w-full h-[92px]
+                          bg-white/40 dark:bg-black/40 backdrop-blur-md
+                          border border-white/20 dark:border-white/10
+                          rounded-full px-4 
+                          flex items-center gap-3
+                          shadow-[0_10px_30px_rgba(0,0,0,0.08)]
+                          focus:outline-none transition group active:scale-[.98] cursor-pointer
+                        "
                         onClick={() => setSelectedStudentForDrawer(student)}
                         style={{ transition: 'box-shadow .2s, background .15s' }}
                       >
-                        <div className="flex items-center gap-3 min-w-0">
-                          {avatar}
-                          <span className="font-semibold text-sm text-black dark:text-white truncate max-w-[140px] group-hover:text-lime-600 dark:group-hover:text-[#CCFF00]">
+                        {avatar}
+                        <div className="flex items-center gap-3 flex-1 min-w-0 h-[68px]">
+                          <span className="font-semibold text-base text-black dark:text-white truncate max-w-[160px] group-hover:text-lime-600 dark:group-hover:text-[#CCFF00]">
                             {student.full_name || 'Без имени'}
                           </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className={badgeClass}>{visits}</span>
-                          <button
-                            onClick={e => {
-                              e.stopPropagation();
-                              if (sub) {
-                                setSelectedSubForDatePicker({
-                                  id: sub.id,
-                                  expiresAt: sub.expires_at,
-                                  studentName: student.full_name || 'Без имени'
-                                });
-                              }
-                            }}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-white/60 dark:bg-black/25 backdrop-blur-md hover:bg-white/70 dark:hover:bg-black/30 border-none rounded-full text-xs font-bold text-slate-900 dark:text-white shadow-[0_6px_20px_rgba(0,0,0,0.08)] transition-all select-none cursor-pointer group/expiry"
-                            tabIndex={-1}
-                          >
-                            <Calendar
-                              size={13}
-                              className="text-slate-500 dark:text-zinc-400 group-hover/expiry:text-black dark:group-hover/expiry:text-[#CCFF00] transition-colors"
-                            />
-                            <span className="group-hover/expiry:text-black dark:group-hover/expiry:text-[#CCFF00] transition-colors">
-                              {expiryDate}
-                            </span>
-                          </button>
+                          <div className="flex items-center gap-2 ml-auto">
+                            <span className={badgeClass}>{visits}</span>
+                            <button
+                              onClick={e => {
+                                e.stopPropagation();
+                                if (sub) {
+                                  setSelectedSubForDatePicker({
+                                    id: sub.id,
+                                    expiresAt: sub.expires_at,
+                                    studentName: student.full_name || 'Без имени'
+                                  });
+                                }
+                              }}
+                              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/60 dark:bg-black/25 backdrop-blur-md hover:bg-white/70 dark:hover:bg-black/30 border-none rounded-full text-xs font-bold text-slate-900 dark:text-white shadow-[0_6px_20px_rgba(0,0,0,0.08)] transition-all select-none cursor-pointer group/expiry"
+                              tabIndex={-1}
+                            >
+                              <Calendar
+                                size={13}
+                                className="text-slate-500 dark:text-zinc-400 group-hover/expiry:text-black dark:group-hover/expiry:text-[#CCFF00] transition-colors"
+                              />
+                              <span className="group-hover/expiry:text-black dark:group-hover/expiry:text-[#CCFF00] transition-colors">
+                                {expiryDate}
+                              </span>
+                            </button>
+                          </div>
                         </div>
                       </button>
                     );

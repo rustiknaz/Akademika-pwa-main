@@ -1,0 +1,16 @@
+# Правила и архитектура проекта TET-A
+
+## Стек
+- Frontend: React, Vite, Tailwind CSS, PWA
+- Backend / Database: Supabase
+
+## Карта маршрутизации (Routes)
+- URL `/` -> `client/src/pages/Home.tsx`
+- URL `/admin` -> `client/src/pages/Admin.tsx`
+- URL `/admin/finance` -> `client/src/pages/Finance.tsx`
+- URL `/admin/notifications` -> `client/src/pages/Notifications.tsx`
+
+## Правила работы
+1. Для редактирования страницы `/admin` использовать ТОЛЬКО `client/src/pages/Admin.tsx`.
+2. Избегать создания дублирующих блоков и заглушек.
+3. Сохранять единые стили Tailwind CSS.

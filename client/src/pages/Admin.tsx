@@ -78,13 +78,24 @@ export default function Admin() {
   const [isSellMembershipOpen, setIsSellMembershipOpen] = useState(false);
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(false);
-  const [view, setView] = useState<'home' | 'active' | 'history' | 'classes'>(() => {
+    const [view, setView] = useState<'home' | 'active' | 'history' | 'classes'>(() => {
     if (location === '/admin/schedule') return 'classes';
     return 'home';
   });
 
+  // Banner slide state
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveSlide(prev => (prev + 1) % 2);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     if (location === '/admin/schedule') {
+
       setView(prev => (prev === 'classes' || prev === 'history' || prev === 'active') ? prev : 'classes');
     } else if (location === '/Admin') {
       setView('home');
@@ -941,7 +952,7 @@ export default function Admin() {
 
       {/* Main Content */}
       <div className="flex-1 px-3 pb-32">
-        <AnimatePresence mode="wait">
+                <AnimatePresence mode="wait">
           
           {/* TAB: Главная (Dashboard) */}
           {view === 'home' && (
@@ -953,99 +964,120 @@ export default function Admin() {
               transition={{ duration: 0.15 }}
               className="space-y-6 pb-20"
             >
-              <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-4">
-                <div className="min-w-full snap-center flex-shrink-0">
-                  <div 
-                    onClick={() => setLocation('/admin/finance')}
-                    style={{
-                      backgroundColor: accentColor || '#CCFF00',
-                      borderRadius: '42px'
-                    }}
-                    className="p-5 md:p-6 shadow-none overflow-hidden cursor-pointer transition-all duration-300 hover:brightness-105 active:scale-[0.99]" 
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <span className="text-slate-900/80 text-xs font-bold uppercase tracking-wider">Финансовая сводка</span>
-                        <h3 className="text-slate-900 text-xs font-medium mt-0.5">Показатели за сегодня</h3>
-                      </div>
-                      <div 
-                        className="w-9 h-9 rounded-full bg-slate-900/10 flex items-center justify-center text-slate-900 shadow-xs shrink-0"
-                      >
-                        <Award size={18} className="text-slate-900" />
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4 my-4 pl-1">
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-black/60 text-xs font-bold uppercase tracking-wider">Выручка</span>
-                        <span className="text-black text-2xl md:text-3xl font-bold font-mono">₽14 500</span>
-                      </div>
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-black/60 text-xs font-bold uppercase tracking-wider">Продажи</span>
-                        <span className="text-black text-2xl md:text-3xl font-bold font-mono">
-                          3 <span className="text-sm md:text-base text-black/70 font-medium">абон.</span>
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-3.5 text-xs text-slate-900 font-bold flex justify-between px-1 tracking-wide">
-                      <span>Средний чек: <strong className="text-slate-900 font-medium">₽4 833</strong></span>
-                      <span className="text-slate-900 font-medium">+12% к прошлой пятнице</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="min-w-full snap-center flex-shrink-0">
-                  {/* Widget 2: Операционные задачи */}
-                  <div
-                    style={{ borderRadius: '42px' }}
-                    className="bg-[#DDE2E5] dark:bg-[#161618] p-5 md:p-6 shadow-none overflow-hidden !rounded-[42px]"
-                  >
-                    <span className="text-slate-700 dark:text-zinc-400 text-xs font-bold uppercase tracking-wider">Операционные задачи</span>
-                    
-                    <div className="flex flex-col gap-3 mt-4">
-                      {/* Task 1 Card */}
-                      <div className="w-full bg-white/60 dark:bg-zinc-800/60 rounded-full p-2 pl-2.5 pr-4 flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-9 h-9 rounded-full bg-brand-orange/15 flex items-center justify-center text-brand-orange shrink-0">
-                            <AlertTriangle size={16} className="text-brand-orange" />
-                          </div>
-                          <div className="min-w-0">
-                            <h4 className="text-xs font-medium text-slate-900 dark:text-white truncate">Заканчиваются абонементы</h4>
-                            <p className="text-xs text-slate-600 dark:text-zinc-400 font-bold truncate tracking-wide">Осталось 1 или меньше занятий</p>
-                          </div>
+              {/* Единый Переключающийся Баннер (Financial / Operations) */}
+              <div className="relative h-[184px] w-full overflow-hidden rounded-[42px] cursor-pointer shadow-lg group">
+                <AnimatePresence mode="wait">
+                  {activeSlide === 0 ? (
+                    <motion.div
+                      key="finance-slide"
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 1.02 }}
+                      transition={{ duration: 0.4 }}
+                      onClick={() => setLocation('/admin/finance')}
+                      className="absolute inset-0 p-6 flex flex-col justify-between bg-[#CCFF00]"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-black/60">ФИНАНСОВАЯ СВОДКА</span>
+                          <h3 className="text-sm font-bold text-black mt-0.5">Показатели за сегодня</h3>
                         </div>
-                        <span className="text-brand-orange text-xs font-bold font-mono bg-brand-orange/10 px-3 py-1 rounded-full shrink-0">
-                          {expiringSubsCount}
-                        </span>
+                        <div className="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center">
+                          <Award size={20} className="text-black" />
+                        </div>
                       </div>
 
-                      {/* Task 2 Card */}
-                      <div className="w-full bg-white/60 dark:bg-zinc-800/60 rounded-full p-2 pl-2.5 pr-4 flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-9 h-9 rounded-full bg-brand-orange/15 flex items-center justify-center text-brand-orange shrink-0">
-                            <User size={16} className="text-brand-orange" />
-                          </div>
-                          <div className="min-w-0">
-                            <h4 className="text-xs font-medium text-slate-900 dark:text-white truncate">Должники</h4>
-                            <p className="text-xs text-slate-600 dark:text-zinc-400 font-bold truncate tracking-wide">Нужно продлить абонемент</p>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-[10px] font-black uppercase tracking-wider text-black/50">ВЫРУЧКА</span>
+                          <span className="text-3xl font-black text-black">₽14 500</span>
+                        </div>
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-[10px] font-black uppercase tracking-wider text-black/50">ПРОДАЖИ</span>
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-3xl font-black text-black">3</span>
+                            <span className="text-sm font-bold text-black/60">абон.</span>
                           </div>
                         </div>
-                        <span className="text-brand-orange text-xs font-bold font-mono bg-brand-orange/10 px-3 py-1 rounded-full shrink-0">
-                          {debtorsCount}
-                        </span>
                       </div>
-                    </div>
-                  </div>
+
+                      <div className="flex justify-between items-center pt-2 border-t border-black/5 text-[11px] font-bold text-black/70 uppercase tracking-wide">
+                        <span>Средний чек: <span className="text-black">₽4 833</span></span>
+                        <span className="text-black/80">+12% к прошлой пятнице</span>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="ops-slide"
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 1.02 }}
+                      transition={{ duration: 0.4 }}
+                      onClick={() => setLocation('/admin/notifications')}
+                      className="absolute inset-0 p-6 flex flex-col bg-[#DDE2E5]"
+                    >
+                      <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 mb-4">ОПЕРАЦИОННЫЕ ЗАДАЧИ</span>
+                      
+                      <div className="flex flex-col gap-2.5">
+                        {/* Task 1 */}
+                        <div className="bg-white rounded-full p-2 pl-3 pr-4 flex items-center justify-between shadow-sm">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-[#FF4500]/10 flex items-center justify-center text-[#FF4500]">
+                              <AlertTriangle size={16} />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-[11px] font-bold text-slate-800 leading-tight">Заканчиваются абонементы</span>
+                              <span className="text-[10px] font-bold text-slate-400">Осталось 1 или меньше занятий</span>
+                            </div>
+                          </div>
+                          <span className="bg-[#FF4500]/10 text-[#FF4500] text-[11px] font-black px-3 py-1 rounded-full">{expiringSubsCount}</span>
+                        </div>
+
+                        {/* Task 2 */}
+                        <div className="bg-white rounded-full p-2 pl-3 pr-4 flex items-center justify-between shadow-sm">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-[#FF4500]/10 flex items-center justify-center text-[#FF4500]">
+                              <User size={16} />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-[11px] font-bold text-slate-800 leading-tight">Должники</span>
+                              <span className="text-[10px] font-bold text-slate-400">Нужно продлить абонемент</span>
+                            </div>
+                          </div>
+                          <span className="bg-[#FF4500]/10 text-[#FF4500] text-[11px] font-black px-3 py-1 rounded-full">{debtorsCount}</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Dots indicator inside banner */}
+                <div className="absolute bottom-4 right-6 flex gap-1.5 z-10">
+                  {[0, 1].map((idx) => (
+                    <div 
+                      key={idx} 
+                      className={`h-1 rounded-full transition-all duration-300 ${
+                        activeSlide === idx 
+                          ? 'w-4 bg-black/40' 
+                          : 'w-1 bg-black/10'
+                      }`} 
+                    />
+                  ))}
                 </div>
               </div>
 
               {/* Quick Action Pills */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-1 md:px-0">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full">
                 {/* 1. Записать */}
                 <button
                   type="button"
                   onClick={() => setIsQuickBookOpen(true)}
-                  className="w-full h-[84px] bg-[#DDE2E5] dark:bg-[#161618] hover:bg-[#d0d6da] dark:hover:bg-[#1F1F22] rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none"
+                  className={`
+                    w-full h-[84px] whitespace-nowrap
+                    bg-white/40 backdrop-blur-md border border-white/20
+                    dark:bg-black/40 dark:backdrop-blur-md dark:border dark:border-white/10
+                    rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none
+                  `}
                 >
                   <div
                     style={{ backgroundColor: accentColor || '#CCFF00' }}
@@ -1054,7 +1086,7 @@ export default function Admin() {
                     <CalendarPlus size={28} className="text-black stroke-[2.2] w-7 h-7" />
                   </div>
                   <div className="min-w-0 flex-1 text-left flex flex-col justify-center">
-                    <span className="text-sm md:text-base font-semibold text-[#121214] dark:text-white block leading-snug break-words">
+                    <span className="text-sm md:text-base font-semibold text-slate-900 dark:text-white block leading-snug whitespace-nowrap">
                       Записать
                     </span>
                   </div>
@@ -1064,7 +1096,12 @@ export default function Admin() {
                 <button
                   type="button"
                   onClick={() => setIsSellMembershipOpen(true)}
-                  className="w-full h-[84px] bg-[#DDE2E5] dark:bg-[#161618] hover:bg-[#d0d6da] dark:hover:bg-[#1F1F22] rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none"
+                  className={`
+                    w-full h-[84px] whitespace-nowrap
+                    bg-white/40 backdrop-blur-md border border-white/20
+                    dark:bg-black/40 dark:backdrop-blur-md dark:border dark:border-white/10
+                    rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none
+                  `}
                 >
                   <div
                     style={{ backgroundColor: accentColor || '#CCFF00' }}
@@ -1073,10 +1110,10 @@ export default function Admin() {
                     <Ticket size={28} className="text-black stroke-[2.2] w-7 h-7" />
                   </div>
                   <div className="min-w-0 flex-1 text-left flex flex-col justify-center">
-                    <span className="text-sm md:text-base font-semibold text-[#121214] dark:text-white block leading-snug break-words">
+                    <span className="text-sm md:text-base font-semibold text-slate-900 dark:text-white block leading-snug whitespace-nowrap">
                       Продать
                     </span>
-                    <span className="text-sm md:text-base font-semibold text-[#121214] dark:text-white block leading-snug break-words">
+                    <span className="text-sm md:text-base font-semibold text-slate-900 dark:text-white block leading-snug whitespace-nowrap">
                       абонемент
                     </span>
                   </div>
@@ -1086,7 +1123,12 @@ export default function Admin() {
                 <button
                   type="button"
                   onClick={() => setIsAddPaymentOpen(true)}
-                  className="w-full h-[84px] bg-[#DDE2E5] dark:bg-[#161618] hover:bg-[#d0d6da] dark:hover:bg-[#1F1F22] rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none"
+                  className={`
+                    w-full h-[84px] whitespace-nowrap
+                    bg-white/40 backdrop-blur-md border border-white/20
+                    dark:bg-black/40 dark:backdrop-blur-md dark:border dark:border-white/10
+                    rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none
+                  `}
                 >
                   <div
                     style={{ backgroundColor: accentColor || '#CCFF00' }}
@@ -1095,10 +1137,10 @@ export default function Admin() {
                     <Wallet size={28} className="text-black stroke-[2.2] w-7 h-7" />
                   </div>
                   <div className="min-w-0 flex-1 text-left flex flex-col justify-center">
-                    <span className="text-sm md:text-base font-semibold text-[#121214] dark:text-white block leading-snug break-words">
+                    <span className="text-sm md:text-base font-semibold text-slate-900 dark:text-white block leading-snug whitespace-nowrap">
                       Принять
                     </span>
-                    <span className="text-sm md:text-base font-semibold text-[#121214] dark:text-white block leading-snug break-words">
+                    <span className="text-sm md:text-base font-semibold text-slate-900 dark:text-white block leading-snug whitespace-nowrap">
                       оплату
                     </span>
                   </div>
@@ -1108,7 +1150,12 @@ export default function Admin() {
                 <button
                   type="button"
                   onClick={() => setIsCreateLeadOpen(true)}
-                  className="w-full h-[84px] bg-[#DDE2E5] dark:bg-[#161618] hover:bg-[#d0d6da] dark:hover:bg-[#1F1F22] rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none"
+                  className={`
+                    w-full h-[84px] whitespace-nowrap
+                    bg-white/40 backdrop-blur-md border border-white/20
+                    dark:bg-black/40 dark:backdrop-blur-md dark:border dark:border-white/10
+                    rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none
+                  `}
                 >
                   <div
                     style={{ backgroundColor: accentColor || '#CCFF00' }}
@@ -1117,15 +1164,18 @@ export default function Admin() {
                     <UserPlus size={28} className="text-black stroke-[2.2] w-7 h-7" />
                   </div>
                   <div className="min-w-0 flex-1 text-left flex flex-col justify-center">
-                    <span className="text-sm md:text-base font-semibold text-[#121214] dark:text-white block leading-snug break-words">
+                    <span className="text-sm md:text-base font-semibold text-slate-900 dark:text-white block leading-snug whitespace-nowrap">
                       Создать
                     </span>
-                    <span className="text-sm md:text-base font-semibold text-[#121214] dark:text-white block leading-snug break-words">
+                    <span className="text-sm md:text-base font-semibold text-slate-900 dark:text-white block leading-snug whitespace-nowrap">
                       лид
                     </span>
                   </div>
                 </button>
               </div>
+
+         
+         
          
 
 
