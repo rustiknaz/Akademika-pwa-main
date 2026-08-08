@@ -168,8 +168,18 @@
   .rounded-card,
   .rounded-outer,
   .rounded-3xl {
-    border-radius: 32px !important;
+    border-radius: 42px !important;
   }
+
+/* When a background image is active, keep the page root transparent so the image shines through.
+   Target only page-level wrappers with the .page-root helper, not card/UI elements. */
+.theme-bg-active html,
+.theme-bg-active body,
+.theme-bg-active #root,
+.theme-bg-active .page-root {
+  background-color: transparent !important;
+  background-image: none !important;
+}
 
   .rounded-inner,
   .rounded-2xl {

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, Sparkles, MessageCircle, Heart, Trophy, Music, Bell, MapPin, Globe, ChevronLeft, Star, X, Check, ArrowUpRight, ChevronDown } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Calendar, Sparkles, MessageCircle, Heart, Trophy, Music, Bell, MapPin, Globe, ChevronLeft, Star, X, Check, ArrowUpRight, ChevronDown, AlertTriangle, User } from 'lucide-react';
 import { useLocation, Link } from 'wouter';
 import BottomNav from '@/components/BottomNav';
 import NewsBanner from '@/components/NewsBanner';
 import Banner from '@/components/Banner';
-import HeroCarousel from '@/components/HeroCarousel';
+// HeroCarousel removed; replaced by unified top carousel
 import { supabase } from '../lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getReviews, saveReviews } from '../lib/reviews';
@@ -26,6 +26,11 @@ export default function Home() {
   const [selectedNotification, setSelectedNotification] = useState<any | null>(null);
   const [isNextLessonOpen, setIsNextLessonOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState<any | null>(null);
+  const [expiringSubsCount, setExpiringSubsCount] = useState<number>(3);
+  const [debtorsCount, setDebtorsCount] = useState<number>(1);
+  const carouselRef = useRef<HTMLDivElement | null>(null);
+  const [activeSlide, setActiveSlide] = useState<number>(0);
+  const [isCarouselPaused, setIsCarouselPaused] = useState<boolean>(false);
   
   // Feedback System states
   const [showFeedbackPrompt, setShowFeedbackPrompt] = useState(false);
@@ -80,6 +85,28 @@ export default function Home() {
       }
     }
   }, [loading, user]);
+
+  // Autoscroll carousel between two slides every 4s (pauses on interaction)
+  useEffect(() => {
+    if (isCarouselPaused) return;
+    const id = setInterval(() => {
+      setActiveSlide(prev => {
+        const next = (prev + 1) % 2;
+        if (carouselRef.current) {
+          carouselRef.current.scrollTo({ left: carouselRef.current.clientWidth * next, behavior: 'smooth' });
+        }
+        return next;
+      });
+    }, 4000);
+    return () => clearInterval(id);
+  }, [isCarouselPaused]);
+
+  const scrollToSlide = (index: number) => {
+    if (carouselRef.current) {
+      carouselRef.current.scrollTo({ left: carouselRef.current.clientWidth * index, behavior: 'smooth' });
+      setActiveSlide(index);
+    }
+  };
 
   useEffect(() => {
     const targetTime = nextBooking 
@@ -142,7 +169,7 @@ export default function Home() {
       if (bError) throw bError;
       if (!bookingsData || bookingsData.length === 0) return;
 
-      const classIds = bookingsData.map(b => b.class_id);
+      const classIds = bookingsData.map((b: any) => b.class_id);
 
       const { data: classesData, error: cError } = await supabase
         .from('classes')
@@ -181,16 +208,14 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-main flex items-center justify-center">
+      <div className="min-h-screen bg-transparent flex items-center justify-center">
         <div className="text-secondary-custom font-medium">Загрузка...</div>
       </div>
     );
   }
 
   return (
-    <div className={`min-h-screen font-sans text-primary-custom pb-32 relative overflow-hidden ${
-      bgImage ? 'bg-transparent' : 'bg-main'
-    }`}>
+    <div className="min-h-screen font-sans text-primary-custom pb-32 relative overflow-hidden bg-transparent" style={{ backgroundColor: 'transparent' }}>
       <header className="px-6 pt-12 pb-2">
         <div className="flex items-center justify-between mb-8 pt-3 px-1 gap-4 relative">
           {/* Левая часть: Блок динамического приветствия по времени суток (Трёхстрочная типографика) */}
@@ -373,8 +398,94 @@ export default function Home() {
         )}
       </div>
         
-        {/* Главный Единый Верхний Слайдер (Hero Carousel) */}
-        <HeroCarousel onSelectPromo={(cardData) => setSelectedCard(cardData)} />
+        {/* Главный Единый Верхний Слайдер: объединённый Financial + Operations carousel */}
+        <div className="w-full">
+          <div
+            ref={carouselRef}
+            onMouseEnter={() => setIsCarouselPaused(true)}
+            onMouseLeave={() => setIsCarouselPaused(false)}
+            onTouchStart={() => setIsCarouselPaused(true)}
+            onTouchEnd={() => setIsCarouselPaused(false)}
+            className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-4 p-4 -mx-4"
+            style={{ scrollSnapType: 'x mandatory' }}
+          >
+            {/* Slide 1: Financial Summary */}
+            <div className="min-w-full snap-center flex-shrink-0">
+              <div
+                className="p-4 rounded-[28px] bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/10 dark:border-white/10 shadow-lg h-40 flex flex-col justify-between"
+                onClick={() => setSelectedCard({ id: 'financial', title: 'Финансовая сводка' })}
+              >
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-white/75">ФИНАНСОВАЯ СВОДКА</span>
+                  <h3 className="text-lg font-semibold text-white mt-1">Доходы за месяц</h3>
+                  <p className="text-sm text-white/70 mt-1">Баланс: <span className="font-bold text-white">₽{subscription?.visits_left ? (subscription.visits_left * 500).toString() : '0'}</span></p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="text-xs text-white/60">Операции: <span className="font-medium text-white">12</span></div>
+                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                    <ArrowUpRight size={16} className="text-white/70" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Slide 2: Operational Tasks (real block from Admin.tsx) */}
+            <div className="min-w-full snap-center flex-shrink-0">
+              <div
+                style={{ borderRadius: '42px' }}
+                className="bg-[#DDE2E5] dark:bg-[#161618] p-5 md:p-6 shadow-none overflow-hidden !rounded-[42px]"
+              >
+                <span className="text-slate-700 dark:text-zinc-400 text-xs font-bold uppercase tracking-wider">Операционные задачи</span>
+                
+                <div className="flex flex-col gap-3 mt-4">
+                  {/* Task 1 Card */}
+                  <div className="w-full bg-white/60 dark:bg-zinc-800/60 rounded-full p-2 pl-2.5 pr-4 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-9 h-9 rounded-full bg-brand-orange/15 flex items-center justify-center text-brand-orange shrink-0">
+                        <AlertTriangle size={16} className="text-brand-orange" />
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="text-xs font-medium text-slate-900 dark:text-white truncate">Заканчиваются абонементы</h4>
+                        <p className="text-xs text-slate-600 dark:text-zinc-400 font-bold truncate tracking-wide">Осталось 1 или меньше занятий</p>
+                      </div>
+                    </div>
+                    <span className="text-brand-orange text-xs font-bold font-mono bg-brand-orange/10 px-3 py-1 rounded-full shrink-0">
+                      {expiringSubsCount}
+                    </span>
+                  </div>
+
+                  {/* Task 2 Card */}
+                  <div className="w-full bg-white/60 dark:bg-zinc-800/60 rounded-full p-2 pl-2.5 pr-4 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-9 h-9 rounded-full bg-brand-orange/15 flex items-center justify-center text-brand-orange shrink-0">
+                        <User size={16} className="text-brand-orange" />
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="text-xs font-medium text-slate-900 dark:text-white truncate">Должники</h4>
+                        <p className="text-xs text-slate-600 dark:text-zinc-400 font-bold truncate tracking-wide">Нужно продлить абонемент</p>
+                      </div>
+                    </div>
+                    <span className="text-brand-orange text-xs font-bold font-mono bg-brand-orange/10 px-3 py-1 rounded-full shrink-0">
+                      {debtorsCount}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Dots */}
+          <div className="flex items-center justify-center gap-2 mt-3">
+            {[0,1].map(i => (
+              <button
+                key={i}
+                onClick={() => scrollToSlide(i)}
+                className={`${activeSlide === i ? 'w-2.5 h-2.5 bg-white' : 'w-2 h-2 bg-white/40'} rounded-full transition-all`}
+                aria-label={`Перейти к слайду ${i+1}`}
+              />
+            ))}
+          </div>
+        </div>
       </header>
  
       <motion.main 
@@ -421,20 +532,20 @@ export default function Home() {
           </motion.div>
 
           {/* ЗАГЛУШКА ПОД БУДУЩИЙ БАННЕР (ПРАВАЯ КОЛОНКА) */}
-          <div className="h-36 bg-[#CDD2D7]/95 backdrop-blur-xl border border-black/10 text-zinc-950 p-4 rounded-[32px] flex flex-col justify-between overflow-hidden">
+          <div className="h-36 bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/10 text-white p-4 rounded-[32px] flex flex-col justify-between overflow-hidden">
             <div>
-              <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-black/60">
-                <Sparkles size={12} className="text-black/60 shrink-0" />
+              <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-white/75">
+                <Sparkles size={12} className="text-white/75 shrink-0" />
                 <span>Анонс</span>
               </div>
-              <h3 className="text-sm font-medium text-black leading-tight line-clamp-2 mt-1">
+              <h3 className="text-sm font-medium text-white leading-tight line-clamp-2 mt-1">
                 Скоро новые классы
               </h3>
-              <p className="text-xs font-medium text-zinc-700 mt-0.5">
+              <p className="text-xs font-medium text-white/70 mt-0.5">
                 Следи за событиями
               </p>
             </div>
-            <div className="self-end w-8 h-8 rounded-full bg-black/10 text-black hover:bg-black/20 flex items-center justify-center shrink-0 transition-colors">
+            <div className="self-end w-8 h-8 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center shrink-0 transition-colors">
               <ArrowUpRight size={16} />
             </div>
           </div>
@@ -504,23 +615,25 @@ export default function Home() {
             setComment("");
             setShowFeedbackPrompt(true);
           }}
-          className="w-full h-[160px] bg-[#CDD2D7] rounded-[32px] p-4 flex flex-col justify-between shrink-0 group relative text-left select-none overflow-hidden border border-black/10 text-zinc-950"
+          className="w-full h-[160px] bg-white/10 dark:bg-black/20 rounded-[32px] p-4 flex flex-col justify-between shrink-0 group relative text-left select-none overflow-hidden border border-white/10 text-white"
         >
           {/* Верхняя строка: Kicker Header + Status */}
           <div className="flex justify-between items-center">
-            <span className="text-xs font-bold text-zinc-800 uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles size={12} className="text-zinc-950" />
+            <span className="text-xs font-bold text-white/75 uppercase tracking-wider flex items-center gap-1.5">
+              <Sparkles size={12} className="text-white/75" />
               ОЦЕНКА ПРОШЕДШЕГО УРОКА
             </span>
-            <span className="text-xs font-bold text-zinc-800 bg-black/5 px-2 py-0.5 rounded-full uppercase tracking-wider border border-black/10">
+            <span className="text-xs font-bold text-white/75 bg-white/10 px-2 py-0.5 rounded-full uppercase tracking-wider border border-white/10">
               Завершено 15 мин назад
             </span>
           </div>
 
           {/* Средняя строка: Направление */}
           <div className="my-auto min-w-0">
-            <h3 className="text-base font-medium text-black leading-tight truncate">High Heels Pro с Кристиной</h3>
-            <p className="text-xs text-zinc-700 font-medium line-clamp-1 mt-0.5">Как тебе сегодняшняя тренировка? Твое мнение важно для нас!</p>
+            <h3 className="text-base font-medium text-white leading-tight truncate">High Heels Pro с Кристиной</h3>
+            <p className="text-xs text-white/70 font-medium line-clamp-1 mt-0.5">
+              Как тебе сегодняшняя тренировка? Твое мнение важно для нас!
+            </p>
           </div>
 
           {/* Нижнее действие: Неоновая кнопка */}
@@ -546,10 +659,10 @@ export default function Home() {
             whileTap={{ scale: 0.92 }}
             className="flex flex-col items-center cursor-pointer select-none"
           >
-            <div className="w-14 h-14 rounded-full bg-[#CDD2D7] flex items-center justify-center shadow-sm cursor-pointer hover:brightness-95 active:scale-95 transition-all">
-              <MessageCircle className="w-5 h-5 text-black/80 stroke-[1.5]" />
+            <div className="w-14 h-14 rounded-full bg-white/10 dark:bg-black/20 flex items-center justify-center shadow-sm cursor-pointer hover:brightness-95 active:scale-95 transition-all">
+              <MessageCircle className="w-5 h-5 text-white/80 stroke-[1.5]" />
             </div>
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-700 mt-1.5 text-center">Чат</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-white/80 mt-1.5 text-center">Чат</span>
           </motion.a>
 
           {/* 2. Маршрут */}
@@ -560,10 +673,10 @@ export default function Home() {
             whileTap={{ scale: 0.92 }}
             className="flex flex-col items-center cursor-pointer select-none"
           >
-            <div className="w-14 h-14 rounded-full bg-[#CDD2D7] flex items-center justify-center shadow-sm cursor-pointer hover:brightness-95 active:scale-95 transition-all">
-              <MapPin className="w-5 h-5 text-black/80 stroke-[1.5]" />
+            <div className="w-14 h-14 rounded-full bg-white/10 dark:bg-black/20 flex items-center justify-center shadow-sm cursor-pointer hover:brightness-95 active:scale-95 transition-all">
+              <MapPin className="w-5 h-5 text-white/80 stroke-[1.5]" />
             </div>
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-700 mt-1.5 text-center">Маршрут</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-white/80 mt-1.5 text-center">Маршрут</span>
           </motion.a>
 
           {/* 3. Музыка */}
@@ -574,10 +687,10 @@ export default function Home() {
             whileTap={{ scale: 0.92 }}
             className="flex flex-col items-center cursor-pointer select-none"
           >
-            <div className="w-14 h-14 rounded-full bg-[#CDD2D7] flex items-center justify-center shadow-sm cursor-pointer hover:brightness-95 active:scale-95 transition-all">
-              <Music className="w-5 h-5 text-black/80 stroke-[1.5]" />
+            <div className="w-14 h-14 rounded-full bg-white/10 dark:bg-black/20 flex items-center justify-center shadow-sm cursor-pointer hover:brightness-95 active:scale-95 transition-all">
+              <Music className="w-5 h-5 text-white/80 stroke-[1.5]" />
             </div>
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-700 mt-1.5 text-center">Музыка</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-white/80 mt-1.5 text-center">Музыка</span>
           </motion.a>
 
           {/* 4. Сайт */}
@@ -588,10 +701,10 @@ export default function Home() {
             whileTap={{ scale: 0.92 }}
             className="flex flex-col items-center cursor-pointer select-none"
           >
-            <div className="w-14 h-14 rounded-full bg-[#CDD2D7] flex items-center justify-center shadow-sm cursor-pointer hover:brightness-95 active:scale-95 transition-all">
-              <Globe className="w-5 h-5 text-black/80 stroke-[1.5]" />
+            <div className="w-14 h-14 rounded-full bg-white/10 dark:bg-black/20 flex items-center justify-center shadow-sm cursor-pointer hover:brightness-95 active:scale-95 transition-all">
+              <Globe className="w-5 h-5 text-white/80 stroke-[1.5]" />
             </div>
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-700 mt-1.5 text-center">Сайт</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-white/80 mt-1.5 text-center">Сайт</span>
           </motion.a>
         </motion.div>
       </motion.main>
@@ -796,7 +909,7 @@ export default function Home() {
               {/* Scrollable Content */}
               <div className="px-6 py-5 overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-36 flex-1 space-y-6">
                 {/* Details Grid */}
-                <div className="grid grid-cols-2 gap-3.5 bg-main border border-custom p-4 rounded-[20px]">
+                <div className="grid grid-cols-2 gap-3.5 bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/10 dark:border-white/10 p-4 rounded-[20px]">
                   <div className="space-y-1">
                     <span className="text-xs font-bold text-secondary-custom opacity-80 uppercase tracking-wider block">Дата и время</span>
                     <p className="text-xs font-medium text-primary-custom">
@@ -820,7 +933,7 @@ export default function Home() {
                 </div>
 
                 {/* What to bring */}
-                <div className="space-y-1.5 bg-main border border-custom p-4 rounded-[20px]">
+                <div className="space-y-1.5 bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/10 dark:border-white/10 p-4 rounded-[20px]">
                   <span className="text-xs font-bold text-secondary-custom opacity-80 uppercase tracking-wider block">Что взять с собой:</span>
                   <p className="text-xs text-secondary-custom font-medium leading-relaxed">
                     Рекомендуется надеть удобную тренировочную форму (топ, спортивные брюки или наколенники для партера) и чистую сменную обувь на каблуке. Возьмите с собой бутылку воды и отличное настроение!
@@ -850,7 +963,7 @@ export default function Home() {
                           description: "Наш администратор свяжется с вами для переноса записи.",
                         });
                       }}
-                      className="bg-main hover:bg-card-custom border border-custom text-secondary-custom hover:text-primary-custom font-medium text-xs py-3 rounded-[16px] transition-all text-center flex items-center justify-center cursor-pointer"
+                      className="bg-white/10 dark:bg-black/20 hover:bg-white/20 dark:hover:bg-black/30 border border-white/10 dark:border-white/10 text-secondary-custom hover:text-primary-custom font-medium text-xs py-3 rounded-[16px] transition-all text-center flex items-center justify-center cursor-pointer"
                     >
                       Перенести
                     </motion.button>

@@ -26,39 +26,27 @@ import NotFound from "@/pages/not-found";
 
 // Custom GlobalBackground with dynamic image and color support
 function GlobalBackground() {
-  const { theme } = useTheme();
+  const { theme, bgImage } = useTheme();
   const [bgStyle, setBgStyle] = useState<React.CSSProperties>({});
 
   useEffect(() => {
-    // Get background settings from localStorage
-    const preset = localStorage.getItem("app_bg");
-    const customBg = localStorage.getItem("app_custom_bg");
-    let backgroundImage = "";
-    let backgroundColor =
-      theme === "light" ? "#ffffff" : "#000000";
-
-    if (preset && preset !== "none" && preset !== "custom") {
-      // For preset images: app_bg = url
-      backgroundImage = `url(${preset})`;
-    } else if (preset === "custom" && customBg) {
-      backgroundImage = `url(${customBg})`;
-    }
+    const backgroundImage = bgImage ? `url(${bgImage})` : "";
+    const backgroundColor = bgImage ? "transparent" : (theme === "light" ? "#ffffff" : "#000000");
 
     setBgStyle({
       position: "fixed",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      zIndex: -1,
+      inset: 0,
+      zIndex: -10,
       backgroundColor,
       backgroundImage,
       backgroundSize: "cover",
       backgroundPosition: "center",
+      backgroundAttachment: "fixed",
       backgroundRepeat: "no-repeat",
-      transition: "background 0.3s"
+      transition: "background 0.3s",
+      mixBlendMode: "normal"
     });
-  }, [theme]);
+  }, [theme, bgImage]);
 
   return (
     <div
@@ -94,47 +82,14 @@ function Router() {
 }
 
 function App() {
-  // Глобальное применение сохраненного фона приложения
-  useEffect(() => {
-    const applySavedBg = () => {
-      const bgType = localStorage.getItem('app_bg_type');
-      const bgCustom = localStorage.getItem('app_bg_custom');
-
-      if (bgType === 'custom' && bgCustom) {
-        document.body.style.backgroundImage = `url(${bgCustom})`;
-        document.body.style.backgroundSize = 'cover';
-        document.body.style.backgroundPosition = 'center';
-        document.body.style.backgroundAttachment = 'fixed';
-      } else if (bgType && bgType !== 'none') {
-        document.body.style.backgroundImage =
-          bgType.startsWith('url') || bgType.startsWith('linear')
-            ? bgType
-            : `url(${bgType})`;
-        document.body.style.backgroundSize = 'cover';
-        document.body.style.backgroundPosition = 'center';
-        document.body.style.backgroundAttachment = 'fixed';
-      } else {
-        document.body.style.backgroundImage = '';
-      }
-    };
-
-    applySavedBg();
-
-    window.addEventListener('theme-bg-changed', applySavedBg);
-    window.addEventListener('storage', applySavedBg);
-
-    return () => {
-      window.removeEventListener('theme-bg-changed', applySavedBg);
-      window.removeEventListener('storage', applySavedBg);
-    };
-  }, []);
+  // Background is handled by GlobalBackground (reads from ThemeContext)
 
   // min-h-screen/w-full/relative/overflow-x-hidden/overflow-y-auto - на основном контейнере
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <RoleProvider>
-          <div className="min-h-screen w-full relative overflow-x-hidden overflow-y-auto">
+          <div className="min-h-screen w-full relative overflow-x-hidden overflow-y-auto" style={{ backgroundColor: 'transparent' }}>
             <GlobalBackground />
             <TooltipProvider>
               <Toaster />

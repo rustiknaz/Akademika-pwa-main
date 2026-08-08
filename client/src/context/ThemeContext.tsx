@@ -123,6 +123,21 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, [theme, bgImage]);
 
+  // Apply background image state class when bgImage is set
+  useEffect(() => {
+    if (bgImage) {
+      document.documentElement.style.backgroundColor = 'transparent';
+      document.body.style.backgroundColor = 'transparent';
+      document.body.style.backgroundImage = '';
+      document.documentElement.classList.add('theme-bg-active');
+    } else {
+      document.documentElement.style.backgroundColor = theme === 'dark' ? '#000000' : '#FFFFFF';
+      document.body.style.backgroundColor = theme === 'dark' ? '#000000' : '#FFFFFF';
+      document.body.style.backgroundImage = '';
+      document.documentElement.classList.remove('theme-bg-active');
+    }
+  }, [bgImage, theme]);
+
   useEffect(() => {
     document.documentElement.classList.remove("theme-lime", "theme-orange", "theme-violet");
     document.documentElement.classList.add(`theme-${accent}`);

@@ -153,8 +153,8 @@ export default function EditClass() {
 
   if (loading || !isAdmin) {
     return (
-      <div className={`min-h-screen flex items-center justify-center transition-colors duration-300 ${
-        theme === 'light' ? 'bg-[#DDE2E5] text-slate-900' : 'bg-black text-white'
+      <div className={`min-h-screen page-root flex items-center justify-center transition-colors duration-300 bg-transparent ${
+        theme === 'light' ? 'text-slate-900' : 'text-white'
       }`}>
         <Loader2 className="w-8 h-8 animate-spin" style={{ color: accentColor }} />
       </div>
@@ -162,9 +162,7 @@ export default function EditClass() {
   }
 
   return (
-    <div className={`min-h-screen p-6 pb-28 font-sans transition-colors duration-300 ${
-      theme === 'light' ? 'bg-[#DDE2E5] text-slate-900' : 'bg-black text-white'
-    }`}>
+    <div className="min-h-screen page-root p-6 pb-28 font-sans transition-colors duration-300 bg-transparent text-slate-900 dark:text-white">
       <header className="mb-8 flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-white">Редактирование занятия</h1>
         <button 

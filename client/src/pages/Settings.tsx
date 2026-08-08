@@ -205,8 +205,8 @@ export default function ClientSettings() {
 
   if (loading) {
     return (
-      <div className={`min-h-screen h-screen h-[100dvh] flex items-center justify-center transition-colors duration-300 ${
-        currentTheme === 'light' ? 'bg-white text-black' : 'bg-black text-white'
+      <div className={`min-h-screen h-screen h-[100dvh] page-root flex items-center justify-center transition-colors duration-300 ${
+        currentTheme === 'light' ? 'bg-transparent text-black' : 'bg-transparent text-white'
       }`}>
         <Loader2 className="w-8 h-8 animate-spin" style={{ color: accentColor }} />
       </div>
@@ -216,9 +216,7 @@ export default function ClientSettings() {
   const phoneDisplay = profile.phone || user?.email?.replace('@dance.local', '') || '';
 
   return (
-    <div className={`min-h-screen h-screen h-[100dvh] flex flex-col overflow-hidden px-6 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] font-sans relative transition-colors duration-300 ${
-      bgImage ? 'bg-transparent text-black dark:text-white' : currentTheme === 'light' ? 'bg-white text-black' : 'bg-black text-white'
-    }`}>
+    <div className={`min-h-screen h-screen h-[100dvh] page-root flex flex-col overflow-hidden px-6 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] font-sans relative transition-colors duration-300 bg-transparent text-black dark:text-white`}>
       {/* Soft dynamic background glows (only in dark mode) */}
       {currentTheme === 'dark' && (
         <>

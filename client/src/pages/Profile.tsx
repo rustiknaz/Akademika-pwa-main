@@ -457,7 +457,7 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="h-screen h-[100dvh] flex items-center justify-center bg-main">
+      <div className="h-screen h-[100dvh] page-root flex items-center justify-center bg-transparent">
         <Loader2 className="w-8 h-8 animate-spin text-accent-primary" />
       </div>
     );
@@ -466,7 +466,7 @@ export default function Profile() {
   const phoneDisplay = profile.phone || user?.email?.replace('@dance.local', '') || '';
 
   return (
-    <div className="h-screen h-[100dvh] flex flex-col overflow-hidden bg-main px-6 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] selection:bg-accent-primary/15 selection:text-accent-primary font-sans text-primary-custom relative">
+    <div className="h-screen h-[100dvh] page-root flex flex-col overflow-hidden bg-transparent px-6 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] selection:bg-accent-primary/15 selection:text-accent-primary font-sans text-primary-custom relative">
       {/* PROFILE MAIN SCREEN */}
       <header className="pt-4 pb-4 flex-shrink-0 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-primary-custom">

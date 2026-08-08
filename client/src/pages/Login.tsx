@@ -57,7 +57,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-main flex items-center justify-center p-6 selection:bg-accent-primary/10 selection:text-accent-primary text-primary-custom">
+    <div className="min-h-screen page-root bg-transparent flex items-center justify-center p-6 selection:bg-accent-primary/10 selection:text-accent-primary text-primary-custom">
       <Card className="w-full max-w-md border border-custom shadow-[0_10px_35px_rgba(0,0,0,0.08)] bg-card-custom rounded-outer overflow-hidden">
         <CardHeader className="bg-main pb-8 pt-10 px-8 relative overflow-hidden border-b border-custom">
           <div className="absolute top-0 right-0 w-32 h-32 bg-accent-primary rounded-full blur-[60px] opacity-15 -mr-8 -mt-8"></div>

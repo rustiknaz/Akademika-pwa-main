@@ -178,15 +178,15 @@ export default function AddClass() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen page-root flex items-center justify-center bg-transparent">
         <Loader2 className="w-8 h-8 animate-spin text-[#CCFF00]" />
       </div>
     );
   }
 
   return (
-    <div className={`min-h-screen p-6 pb-28 font-sans transition-colors duration-300 ${
-      theme === 'light' ? 'bg-[#DDE2E5] text-slate-900' : 'bg-black text-white'
+    <div className={`min-h-screen page-root p-6 pb-28 font-sans transition-colors duration-300 ${
+      theme === 'light' ? 'bg-transparent text-slate-900' : 'bg-transparent text-white'
     }`}>
       <header className="mb-8 flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-white">Новое занятие</h1>

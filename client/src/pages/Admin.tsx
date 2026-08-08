@@ -871,8 +871,8 @@ export default function Admin() {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center transition-colors duration-300 ${
-        theme === 'light' ? 'bg-white text-slate-900' : 'bg-[#09090b] text-zinc-100'
+      <div className={`min-h-screen page-root flex items-center justify-center transition-colors duration-300 ${
+        theme === 'light' ? 'bg-transparent text-slate-900' : 'bg-transparent text-zinc-100'
       }`}>
         <Loader2 className="w-8 h-8 animate-spin" style={{ color: accentColor }} />
       </div>
@@ -880,8 +880,8 @@ export default function Admin() {
   }
 
   return (
-    <div className={`min-h-screen min-h-[100dvh] flex flex-col relative font-sans transition-colors duration-300 ${
-      theme === 'light' ? 'bg-white text-slate-900' : 'bg-black text-white'
+    <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col relative font-sans transition-colors duration-300 ${
+      theme === 'light' ? 'bg-transparent text-slate-900' : 'bg-transparent text-white'
     }`}>
       {/* Urban Glass Header */}
       <AdminHeader
@@ -953,48 +953,91 @@ export default function Admin() {
               transition={{ duration: 0.15 }}
               className="space-y-6 pb-20"
             >
-              {/* Widget 1: Финансовая сводка */}
-              <div 
-                onClick={() => setLocation('/admin/finance')}
-                style={{
-                  backgroundColor: accentColor || '#CCFF00',
-                  borderRadius: '42px'
-                }}
-                className="p-5 md:p-6 shadow-none overflow-hidden cursor-pointer transition-all duration-300 hover:brightness-105 active:scale-[0.99]" 
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <span className="text-slate-900/80 text-xs font-bold uppercase tracking-wider">Финансовая сводка</span>
-                    <h3 className="text-slate-900 text-xs font-medium mt-0.5">Показатели за сегодня</h3>
-                  </div>
+              <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-4">
+                <div className="min-w-full snap-center flex-shrink-0">
                   <div 
-                    className="w-9 h-9 rounded-full bg-slate-900/10 flex items-center justify-center text-slate-900 shadow-xs shrink-0"
+                    onClick={() => setLocation('/admin/finance')}
+                    style={{
+                      backgroundColor: accentColor || '#CCFF00',
+                      borderRadius: '42px'
+                    }}
+                    className="p-5 md:p-6 shadow-none overflow-hidden cursor-pointer transition-all duration-300 hover:brightness-105 active:scale-[0.99]" 
                   >
-                    <Award size={18} className="text-slate-900" />
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <span className="text-slate-900/80 text-xs font-bold uppercase tracking-wider">Финансовая сводка</span>
+                        <h3 className="text-slate-900 text-xs font-medium mt-0.5">Показатели за сегодня</h3>
+                      </div>
+                      <div 
+                        className="w-9 h-9 rounded-full bg-slate-900/10 flex items-center justify-center text-slate-900 shadow-xs shrink-0"
+                      >
+                        <Award size={18} className="text-slate-900" />
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4 my-4 pl-1">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-black/60 text-xs font-bold uppercase tracking-wider">Выручка</span>
+                        <span className="text-black text-2xl md:text-3xl font-bold font-mono">₽14 500</span>
+                      </div>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-black/60 text-xs font-bold uppercase tracking-wider">Продажи</span>
+                        <span className="text-black text-2xl md:text-3xl font-bold font-mono">
+                          3 <span className="text-sm md:text-base text-black/70 font-medium">абон.</span>
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-3.5 text-xs text-slate-900 font-bold flex justify-between px-1 tracking-wide">
+                      <span>Средний чек: <strong className="text-slate-900 font-medium">₽4 833</strong></span>
+                      <span className="text-slate-900 font-medium">+12% к прошлой пятнице</span>
+                    </div>
                   </div>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-4 my-4 pl-1">
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-black/60 text-xs font-bold uppercase tracking-wider">Выручка</span>
-                    <span className="text-black text-2xl md:text-3xl font-bold font-mono">₽14 500</span>
+                <div className="min-w-full snap-center flex-shrink-0">
+                  {/* Widget 2: Операционные задачи */}
+                  <div
+                    style={{ borderRadius: '42px' }}
+                    className="bg-[#DDE2E5] dark:bg-[#161618] p-5 md:p-6 shadow-none overflow-hidden !rounded-[42px]"
+                  >
+                    <span className="text-slate-700 dark:text-zinc-400 text-xs font-bold uppercase tracking-wider">Операционные задачи</span>
+                    
+                    <div className="flex flex-col gap-3 mt-4">
+                      {/* Task 1 Card */}
+                      <div className="w-full bg-white/60 dark:bg-zinc-800/60 rounded-full p-2 pl-2.5 pr-4 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-9 h-9 rounded-full bg-brand-orange/15 flex items-center justify-center text-brand-orange shrink-0">
+                            <AlertTriangle size={16} className="text-brand-orange" />
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-medium text-slate-900 dark:text-white truncate">Заканчиваются абонементы</h4>
+                            <p className="text-xs text-slate-600 dark:text-zinc-400 font-bold truncate tracking-wide">Осталось 1 или меньше занятий</p>
+                          </div>
+                        </div>
+                        <span className="text-brand-orange text-xs font-bold font-mono bg-brand-orange/10 px-3 py-1 rounded-full shrink-0">
+                          {expiringSubsCount}
+                        </span>
+                      </div>
+
+                      {/* Task 2 Card */}
+                      <div className="w-full bg-white/60 dark:bg-zinc-800/60 rounded-full p-2 pl-2.5 pr-4 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-9 h-9 rounded-full bg-brand-orange/15 flex items-center justify-center text-brand-orange shrink-0">
+                            <User size={16} className="text-brand-orange" />
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-medium text-slate-900 dark:text-white truncate">Должники</h4>
+                            <p className="text-xs text-slate-600 dark:text-zinc-400 font-bold truncate tracking-wide">Нужно продлить абонемент</p>
+                          </div>
+                        </div>
+                        <span className="text-brand-orange text-xs font-bold font-mono bg-brand-orange/10 px-3 py-1 rounded-full shrink-0">
+                          {debtorsCount}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-black/60 text-xs font-bold uppercase tracking-wider">Продажи</span>
-                    <span className="text-black text-2xl md:text-3xl font-bold font-mono">
-                      3 <span className="text-sm md:text-base text-black/70 font-medium">абон.</span>
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="mt-3.5 text-xs text-slate-900 font-bold flex justify-between px-1 tracking-wide">
-                  <span>Средний чек: <strong className="text-slate-900 font-medium">₽4 833</strong></span>
-                  <span className="text-slate-900 font-medium">+12% к прошлой пятнице</span>
                 </div>
               </div>
-         
-         
-         
 
               {/* Quick Action Pills */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-1 md:px-0">
@@ -1085,47 +1128,6 @@ export default function Admin() {
               </div>
          
 
-              {/* Widget 2: Операционные задачи */}
-              <div
-                style={{ borderRadius: '42px' }}
-                className="bg-[#DDE2E5] dark:bg-[#161618] p-5 md:p-6 shadow-none overflow-hidden !rounded-[42px]"
-              >
-                <span className="text-slate-700 dark:text-zinc-400 text-xs font-bold uppercase tracking-wider">Операционные задачи</span>
-                
-                <div className="flex flex-col gap-3 mt-4">
-                  {/* Task 1 Card */}
-                  <div className="w-full bg-white/60 dark:bg-zinc-800/60 rounded-full p-2 pl-2.5 pr-4 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-9 h-9 rounded-full bg-brand-orange/15 flex items-center justify-center text-brand-orange shrink-0">
-                        <AlertTriangle size={16} className="text-brand-orange" />
-                      </div>
-                      <div className="min-w-0">
-                        <h4 className="text-xs font-medium text-slate-900 dark:text-white truncate">Заканчиваются абонементы</h4>
-                        <p className="text-xs text-slate-600 dark:text-zinc-400 font-bold truncate tracking-wide">Осталось 1 или меньше занятий</p>
-                      </div>
-                    </div>
-                    <span className="text-brand-orange text-xs font-bold font-mono bg-brand-orange/10 px-3 py-1 rounded-full shrink-0">
-                      {expiringSubsCount}
-                    </span>
-                  </div>
-
-                  {/* Task 2 Card */}
-                  <div className="w-full bg-white/60 dark:bg-zinc-800/60 rounded-full p-2 pl-2.5 pr-4 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-9 h-9 rounded-full bg-brand-orange/15 flex items-center justify-center text-brand-orange shrink-0">
-                        <User size={16} className="text-brand-orange" />
-                      </div>
-                      <div className="min-w-0">
-                        <h4 className="text-xs font-medium text-slate-900 dark:text-white truncate">Должники</h4>
-                        <p className="text-xs text-slate-600 dark:text-zinc-400 font-bold truncate tracking-wide">Нужно продлить абонемент</p>
-                      </div>
-                    </div>
-                    <span className="text-brand-orange text-xs font-bold font-mono bg-brand-orange/10 px-3 py-1 rounded-full shrink-0">
-                      {debtorsCount}
-                    </span>
-                  </div>
-                </div>
-              </div>
 
               {/* Widget 3: Активные записи */}
               <div

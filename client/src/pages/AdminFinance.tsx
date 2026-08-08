@@ -442,8 +442,8 @@ export default function AdminFinance() {
   }
 
   return (
-    <div className={`min-h-screen min-h-[100dvh] flex flex-col p-6 pb-28 font-sans relative transition-colors duration-300 ${
-      bgImage ? 'bg-transparent text-white' : theme === 'light' ? 'bg-transparent text-slate-900' : 'bg-black text-white'
+    <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col p-6 pb-28 font-sans relative transition-colors duration-300 bg-transparent ${
+      theme === 'light' ? 'text-slate-900' : 'text-white'
     }`}>
       <header className="mb-4 shrink-0">
         <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Финансы</h1>

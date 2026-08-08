@@ -70,8 +70,8 @@ export default function AdminSettings() {
 
   if (loading) {
     return (
-      <div className={`h-[100dvh] flex items-center justify-center ${
-        theme === 'light' ? 'bg-[#DDE2E5] text-black' : 'bg-black text-white'
+      <div className={`h-[100dvh] page-root flex items-center justify-center ${
+        theme === 'light' ? 'bg-transparent text-black' : 'bg-transparent text-white'
       }`}>
         <Loader2 className="w-8 h-8 animate-spin" style={{ color: accentColor }} />
       </div>
@@ -79,8 +79,8 @@ export default function AdminSettings() {
   }
 
   return (
-    <div className={`min-h-screen min-h-[100dvh] flex flex-col p-6 pb-28 font-sans relative transition-colors duration-300 ${
-      bgImage ? 'bg-transparent text-black dark:text-white' : theme === 'light' ? 'bg-white text-black' : 'bg-black text-white'
+    <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col p-6 pb-28 font-sans relative transition-colors duration-300 ${
+      'bg-transparent text-black dark:text-white'
     }`}>
       {/* Header */}
       <header className="mb-6 flex items-center gap-4 shrink-0">
@@ -123,12 +123,12 @@ export default function AdminSettings() {
               <label className="text-xs font-bold uppercase tracking-wider mb-2 block opacity-60">
                 Тема оформления
               </label>
-              <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setTheme('light')}
                   style={theme === 'light' ? { backgroundColor: accentColor, color: activeTextColor } : {}}
-                  className={`h-12 rounded-control font-bold text-xs uppercase flex items-center justify-center gap-2 transition-all border-none cursor-pointer${
+                    className={`h-12 rounded-full font-bold text-xs uppercase flex items-center justify-center gap-2 transition-all border-none cursor-pointer${
                     theme === 'light' ? 'shadow-md' : 'bg-white/80 text-black hover:bg-white'
                   }`}
                 >
@@ -140,7 +140,7 @@ export default function AdminSettings() {
                   type="button"
                   onClick={() => setTheme('dark')}
                   style={theme === 'dark' ? { backgroundColor: accentColor, color: activeTextColor } : {}}
-                  className={`h-12 rounded-control font-bold text-xs uppercase flex items-center justify-center gap-2 transition-all border-none cursor-pointer${
+                  className={`h-12 rounded-full font-bold text-xs uppercase flex items-center justify-center gap-2 transition-all border-none cursor-pointer${
                     theme === 'dark' ? 'shadow-md' : 'bg-zinc-800/80 text-white hover:bg-zinc-800'
                   }`}
                 >

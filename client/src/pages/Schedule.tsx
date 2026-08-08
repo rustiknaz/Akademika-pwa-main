@@ -67,7 +67,7 @@ const ClassCard = ({
     <motion.div
       whileTap={isPast ? {} : { scale: 0.98 }}
       onClick={handleClick}
-      className="bg-[#CDD2D7] rounded-outer p-5 text-black shadow-lg relative overflow-hidden flex flex-col justify-between mb-4 cursor-pointer select-none transition-all border border-black/10"
+      className="bg-white/10 dark:bg-black/20 backdrop-blur-md rounded-outer p-5 text-black dark:text-white shadow-lg relative overflow-hidden flex flex-col justify-between mb-4 cursor-pointer select-none transition-all border border-white/10 dark:border-white/10"
     >
       {/* Top Header Row: Time & Duration & Badges */}
       <div className="flex justify-between items-start gap-2">
@@ -490,7 +490,7 @@ export default function Schedule() {
   if (!user && loading) return null;
 
   return (
-    <div className="h-[100dvh] flex flex-col overflow-hidden bg-main font-sans text-primary-custom pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] relative">
+    <div className="h-[100dvh] flex flex-col overflow-hidden bg-transparent font-sans text-primary-custom pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] relative" style={{ backgroundColor: 'transparent' }}>
       <header className="px-6 pt-4 pb-4 flex-shrink-0 relative z-10">
         {/* Title and Top Header */}
         <div className="flex items-center justify-between mb-4">
@@ -518,7 +518,7 @@ export default function Schedule() {
 
         {/* Новый стиль таба: День / Неделя */}
         <div className="mb-4">
-          <div className="bg-[#CDD2D7] dark:bg-[#18181b]/80 backdrop-blur-md rounded-full p-1.5 flex items-center justify-between w-full shadow-md">
+          <div className="bg-white/10 dark:bg-black/20 backdrop-blur-md rounded-full p-1.5 flex items-center justify-between w-full shadow-md">
             <button
               className={`${
                 activeTab === 'day'
@@ -643,8 +643,8 @@ export default function Schedule() {
                 } : {}}
                 className={`w-12 h-12 flex flex-col items-center justify-center rounded-full transition-all duration-200 cursor-pointer snap-center shrink-0 flex-shrink-0 ${
                   isSelected
-                    ? "scale-105 font-normal border"
-                    : "bg-[#CDD2D7] border border-black/10 text-black font-medium"
+                    ? "scale-105 font-normal border border-white/10"
+                    : "bg-white/10 dark:bg-black/20 border border-white/10 text-white/80 font-medium"
                 }`}
               >
                 <span className={`text-xs uppercase tracking-wider font-bold leading-none${
@@ -682,7 +682,7 @@ export default function Schedule() {
                 className={`shrink-0 px-4 py-2 text-xs uppercase tracking-wider rounded-chip transition-all duration-200 cursor-pointer ${
                   isActive
                     ? "font-normal shadow-md"
-                    : "bg-[#CDD2D7] border border-black/10 text-black font-medium hover:bg-[#CDD2D7]/90"
+                    : "bg-white/10 dark:bg-black/20 border border-white/10 text-white/80 font-medium hover:bg-white/20"
                 }`}
               >
                 {tag.label}
@@ -718,13 +718,13 @@ export default function Schedule() {
           ) : (
             <div className="space-y-4">
               <div
-                className="bg-[#CDD2D7] border border-black/10 rounded-outer p-8 text-center flex flex-col items-center justify-center my-6 shadow-lg"
+                className="bg-white/10 dark:bg-black/20 border border-white/10 rounded-outer p-8 text-center flex flex-col items-center justify-center my-6 shadow-lg"
                 data-testid="text-no-classes-today"
               >
-                <div className="w-12 h-12 rounded-full bg-black/10 flex items-center justify-center mb-3 text-black">
+                <div className="w-12 h-12 rounded-full bg-white/10 dark:bg-black/20 flex items-center justify-center mb-3 text-white">
                   <CalendarDays size={24} />
                 </div>
-                <h3 className="text-lg font-medium text-black">
+                <h3 className="text-lg font-medium text-white">
                   {isTodaySelected 
                     ? activeFilter !== 'all' 
                       ? 'Нет занятий с выбранным фильтром на сегодня' 

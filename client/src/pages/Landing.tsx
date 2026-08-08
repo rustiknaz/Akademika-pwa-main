@@ -14,7 +14,7 @@ import {
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-[#111] text-white selection:bg-rose-500 selection:text-white">
+    <div className="min-h-screen page-root bg-transparent text-white selection:bg-rose-500 selection:text-white">
       {/* Hero Section */}
       <section className="relative px-6 pt-24 pb-20 overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-rose-500/10 rounded-full blur-[120px] -mr-64 -mt-64"></div>

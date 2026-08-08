@@ -140,9 +140,8 @@ export default function AdminNotifications() {
   };
 
   return (
-    <div className={`min-h-screen min-h-[100dvh] flex flex-col px-4 sm:px-6 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] font-sans relative transition-colors duration-300 ${
-      // Корневой контейнер фон заменён на прозрачный
-      theme === 'light' ? 'bg-transparent text-black' : 'bg-transparent text-white'
+    <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col px-4 sm:px-6 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] font-sans relative transition-colors duration-300 bg-transparent ${
+      theme === 'light' ? 'text-black' : 'text-white'
     }`}>
       
       {/* ─── TOP HEADER ─── */}

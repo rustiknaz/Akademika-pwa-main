@@ -322,7 +322,7 @@ export default function AdminStaff() {
   }
 
   return (
-    <div className={`min-h-screen min-h-[100dvh] flex flex-col p-6 pb-28 font-sans relative transition-colors duration-300 bg-transparent ${theme === 'light' ? 'text-[#121214]' : 'text-white'}`}>
+    <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col p-6 pb-28 font-sans relative transition-colors duration-300 bg-transparent ${theme === 'light' ? 'text-[#121214]' : 'text-white'}`}>
       <header className="mb-6 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-4">
           <button

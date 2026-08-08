@@ -632,16 +632,14 @@ export default function AdminStudents() {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center transition-colors duration-300 ${
-        theme === 'light' ? 'bg-[#DDE2E5] text-slate-900' : 'bg-[#09090b] text-zinc-100'
-      }`}>
+      <div className="min-h-screen page-root flex items-center justify-center transition-colors duration-300 bg-transparent text-slate-900">
         <Loader2 className="w-8 h-8 animate-spin" style={{ color: accentColor }} />
       </div>
     );
   }
 
   return (
-    <div className={`min-h-screen min-h-[100dvh] flex flex-col p-6 pb-28 font-sans relative transition-colors duration-300 bg-transparent ${
+    <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col p-6 pb-28 font-sans relative transition-colors duration-300 bg-transparent ${
       theme === 'light' ? 'text-black' : 'text-white'
     }`}>
       <header className="mb-8 flex items-center justify-between">
@@ -649,7 +647,7 @@ export default function AdminStudents() {
         {/* Кнопка выхода удалена по инструкции */}
       </header>
 
-      <div className="flex-1 pb-2 pr-0.5">
+      <div className="flex-1 pt-4 pb-32 pr-0.5">
         <AnimatePresence mode="wait">
           {activeTab === 'list' ? (
             <motion.div
@@ -661,13 +659,13 @@ export default function AdminStudents() {
               className="w-full h-full flex flex-col"
             >
               <div className="mb-6">
-                <div className="bg-[#CDD2D7]/50 dark:bg-[#18181b]/80 rounded-full px-4 py-2.5 flex items-center gap-3 border border-black/5">
+                <div className="bg-white/50 dark:bg-black/30 backdrop-blur-md rounded-full px-4 py-2.5 flex items-center gap-3 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border-none">
                   <Search className="text-slate-400" size={20} />
                   <Input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Поиск по имени или телефону..."
-                    className="bg-transparent outline-none text-sm w-full text-black dark:text-white placeholder:text-slate-500 border-none shadow-none px-0 py-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:ring-0 focus:outline-none border-none"
+                    className="bg-transparent outline-none text-sm w-full text-black dark:text-white placeholder:text-slate-500 border-none shadow-none px-0 py-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:ring-0 focus:outline-none"
                   />
                 </div>
               </div>
@@ -713,7 +711,7 @@ export default function AdminStudents() {
                       <button
                         key={student.id}
                         type="button"
-                        className="w-full bg-[#CDD2D7]/50 dark:bg-[#18181b]/80 rounded-full px-4 py-3 flex items-center justify-between gap-3 mb-0 shadow-sm focus:outline-none transition group active:scale-[.98] cursor-pointer"
+                        className="w-full bg-white/50 dark:bg-black/30 backdrop-blur-md rounded-full px-4 py-3 flex items-center justify-between gap-3 mb-0 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border-none focus:outline-none transition group active:scale-[.98] cursor-pointer"
                         onClick={() => setSelectedStudentForDrawer(student)}
                         style={{ transition: 'box-shadow .2s, background .15s' }}
                       >
@@ -736,7 +734,7 @@ export default function AdminStudents() {
                                 });
                               }
                             }}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-[#09090b] hover:bg-slate-50 dark:hover:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-full text-xs font-bold text-slate-900 dark:text-white shadow-sm transition-all select-none cursor-pointer group/expiry"
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-white/60 dark:bg-black/25 backdrop-blur-md hover:bg-white/70 dark:hover:bg-black/30 border-none rounded-full text-xs font-bold text-slate-900 dark:text-white shadow-[0_6px_20px_rgba(0,0,0,0.08)] transition-all select-none cursor-pointer group/expiry"
                             tabIndex={-1}
                           >
                             <Calendar
