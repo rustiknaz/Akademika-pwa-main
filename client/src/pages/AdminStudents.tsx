@@ -724,10 +724,10 @@ export default function AdminStudents() {
                         className="
                           w-full h-[92px]
                           bg-white/40 dark:bg-black/40 backdrop-blur-md
-                          border border-white/20 dark:border-white/10
+                          border-none
                           rounded-full px-4 
                           flex items-center gap-3
-                          shadow-[0_10px_30px_rgba(0,0,0,0.08)]
+                          shadow-none
                           focus:outline-none transition group active:scale-[.98] cursor-pointer
                         "
                         onClick={() => setSelectedStudentForDrawer(student)}
@@ -767,6 +767,7 @@ export default function AdminStudents() {
                       </button>
                     );
                   })
+  
                 ) : (
                   <div className="text-center py-12 text-slate-500 font-medium">
                     Ученики не найдены
