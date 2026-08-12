@@ -78,6 +78,15 @@ export default function Admin() {
   const [isSellMembershipOpen, setIsSellMembershipOpen] = useState(false);
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(false);
+  // Filter modal states
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedBranch, setSelectedBranch] = useState('all');
+  const [selectedHall, setSelectedHall] = useState('all');
+  const [selectedDirection, setSelectedDirection] = useState('all');
+  const [selectedAge, setSelectedAge] = useState('all');
+  const branchesList = ['Филиал: Невский', 'Филиал: Центральный'];
+  const directionsList = ['Hip-Hop', 'K-Pop', 'Dancehall', 'High Heels', 'Breakdance'];
+  const agesList = ['Дети (4-7)', 'Подростки (8-14)', 'Взрослые (15+)'];
     const [view, setView] = useState<'home' | 'active' | 'history' | 'classes'>(() => {
     if (location === '/admin/schedule') return 'classes';
     return 'home';
@@ -107,11 +116,7 @@ export default function Admin() {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [pickerCurrentDate, setPickerCurrentDate] = useState<Date>(new Date());
 
-  // Location & Hall filter states
-  const [selectedBranch, setSelectedBranch] = useState<string>('Все филиалы');
-  const [selectedHall, setSelectedHall] = useState<string>('Все залы');
 
-  const branchesList = ['Филиал: Невский', 'Филиал: Центральный'];
   const branchHallsMap: Record<string, string[]> = {
     'Филиал: Невский': ['Зал 1 (Main Glass)', 'Зал 2 (Light Studio)'],
     'Филиал: Центральный': ['Зал 3 (VIP Room)'],
@@ -905,50 +910,7 @@ export default function Admin() {
         }}
       />
 
-      {/* Tabs Switcher */}
-      {view !== 'home' && (
-        <div className="px-3 pb-4 shrink-0">
-          <div className="flex p-1.5 !rounded-[32px] bg-black/5 dark:bg-white/5 border border-black/10 dark:border-zinc-800 transition-colors">
-            <button
-              onClick={() => setView('active')}
-              className={`flex-1 !rounded-[32px] text-xs font-bold py-3.5 uppercase tracking-wider transition-all duration-200 cursor-pointer ${
-                view === 'active'
-                  ? 'shadow-md bg-[#CCFF00] text-black'
-                  : theme === 'light'
-                    ? 'text-[#121214] hover:text-black font-medium'
-                    : 'text-stone-300 hover:text-white font-medium'
-              }`}
-            >
-              Активные
-            </button>
-            <button
-              onClick={() => setView('classes')}
-              className={`flex-1 !rounded-[32px] text-xs font-bold py-3.5 uppercase tracking-wider transition-all duration-200 cursor-pointer ${
-                view === 'classes'
-                  ? 'shadow-md bg-[#CCFF00] text-black'
-                  : theme === 'light'
-                    ? 'text-[#121214] hover:text-black font-medium'
-                    : 'text-stone-300 hover:text-white font-medium'
-              }`}
-            >
-              Расписание
-            </button>
-            <button
-              onClick={() => setView('history')}
-              className={`flex-1 !rounded-[32px] text-xs font-bold py-3.5 uppercase tracking-wider transition-all duration-200 cursor-pointer ${
-                view === 'history'
-                  ? 'shadow-md bg-[#CCFF00] text-black'
-                  : theme === 'light'
-                    ? 'text-[#121214] hover:text-black font-medium'
-                    : 'text-stone-300 hover:text-white font-medium'
-              }`}
-            >
-              История
-            </button>
-          </div>
-     
-        </div>
-      )}
+
 
       {/* Main Content */}
       <div className="flex-1 px-3 pb-32">
@@ -1526,34 +1488,84 @@ export default function Admin() {
                 }} 
               />
 
-              {/* Location & Hall Filter Panel (Signature Light-Grey Pills with Custom Dropdowns) */}
-              <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-1 my-1">
-                {/* Branch Selector */}
-                {branchesList.length > 1 && (
-                  <CustomFilterDropdown
-                    value={selectedBranch}
-                    options={['Все филиалы', ...branchesList]}
-                    onChange={(newBranch) => {
-                      setSelectedBranch(newBranch);
-                      setSelectedHall('Все залы');
-                    }}
-                  />
-                )}
+{/* Кнопка фильтра и выпадающая панель */}
+<div className="relative my-2 z-30">
+  <button 
+    onClick={() => setIsFilterOpen(!isFilterOpen)}
+    type="button"
+    className="flex items-center gap-2 bg-[#CDD2D7] hover:bg-[#b0b6bc] text-slate-900 px-4 py-2 rounded-full font-medium text-xs transition-all cursor-pointer shadow-sm"
+  >
+    <svg className="w-4 h-4 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+    </svg>
+    <span>Фильтры</span>
+  </button>
 
-                {/* Hall Selector */}
-                {availableHalls.length > 1 ? (
-                  <CustomFilterDropdown
-                    value={selectedHall}
-                    options={['Все залы', ...availableHalls]}
-                    onChange={(newHall) => setSelectedHall(newHall)}
-                  />
-                ) : availableHalls.length === 1 ? (
-                  <div className="shrink-0 bg-[#CDD2D7] rounded-control text-xs font-medium text-[#121214] px-4 py-2">
-                    {availableHalls[0]}
-                  </div>
-                ) : null}
-              </div>
+  {isFilterOpen && (
+    <div className="absolute top-full left-0 z-50 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 mt-2 flex flex-col gap-3 shadow-2xl w-72">
+      <div className="text-[11px] font-semibold text-slate-400 dark:text-zinc-400 uppercase tracking-wider">Фильтры расписания</div>
+      
+      <div>
+        <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Филиал</label>
+        <CustomFilterDropdown
+          value={selectedBranch}
+          options={['Все филиалы', ...branchesList]}
+          onChange={(newBranch) => {
+            setSelectedBranch(newBranch);
+            setSelectedHall('Все залы');
+          }}
+        />
+      </div>
 
+      <div>
+        <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Зал</label>
+        <CustomFilterDropdown
+          value={selectedHall}
+          options={['Все залы', ...availableHalls]}
+          onChange={(newHall) => setSelectedHall(newHall)}
+        />
+      </div>
+
+      <div>
+        <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Направление</label>
+        <CustomFilterDropdown
+          value={selectedDirection}
+          options={['Все направления', ...directionsList]}
+          onChange={(newDir) => setSelectedDirection(newDir)}
+        />
+      </div>
+
+      <div>
+        <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Возраст</label>
+        <CustomFilterDropdown
+          value={selectedAge}
+          options={['Все возраста', ...agesList]}
+          onChange={(newAge) => setSelectedAge(newAge)}
+        />
+      </div>
+
+      <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
+        <button 
+          type="button" 
+          onClick={() => setIsFilterOpen(false)} 
+          className="flex-1 bg-[#CCFF00] text-black text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-all cursor-pointer"
+        >
+          Применить
+        </button>
+        <button 
+          type="button" 
+          onClick={() => { 
+            setSelectedBranch('Все филиалы'); 
+            setSelectedHall('Все залы'); 
+          }} 
+          className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer"
+        >
+          Сброс
+        </button>
+      </div>
+    </div>
+  )}
+</div>
               {/* Top subheader (Signature Light-Grey Banner with Direct Buttons) */}
               <PeriodHeaderBanner<'day' | 'week'>
                 title={

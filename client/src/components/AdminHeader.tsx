@@ -80,9 +80,7 @@ export default function AdminHeader({
               ? 'Посещения'
               : 'История посещений'}
           </h1>
-          <p className={`text-xs font-medium${theme === 'light' ? 'text-zinc-600' : 'text-zinc-400'} mt-0.5`}>
-            {view === 'classes' ? 'Занятия и загрузка залов' : 'Управление студией'}
-          </p>
+          
         </div>
       </header>
     );

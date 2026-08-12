@@ -167,6 +167,7 @@ export default function Schedule() {
   const [bookingId, setBookingId] = useState<number | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<'all' | 'my' | 'evening' | 'mclasses'>('all');
   // New: добавляем tab для DAY/WEEK
   const [activeTab, setActiveTab] = useState<'day' | 'week'>('day');

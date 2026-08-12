@@ -146,7 +146,7 @@ export const HorizontalCalendar: React.FC<HorizontalCalendarProps> = ({
   };
 
   const daysToRender = isDesktop ? getDaysOfMonth(selectedDate) : getDaysOfWeek(currentWeekStart);
-  const showArrows = !allFit || !isDesktop;
+  const showArrows = false;
 
   return (
     <div className={`flex items-center justify-between gap-1 sm:gap-1.5 py-1 px-1 ${className}`}>
@@ -167,7 +167,7 @@ export const HorizontalCalendar: React.FC<HorizontalCalendarProps> = ({
 
       <div
         ref={scrollContainerRef}
-        className="flex-1 flex items-center justify-between md:justify-center gap-1 sm:gap-1.5 overflow-x-auto scrollbar-none py-1 px-0.5"
+className="flex-1 flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1 px-1"
       >
         {daysToRender.map((day) => {
           const isSelected = isSameDay(day, selectedDate);
