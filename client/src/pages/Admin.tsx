@@ -1456,117 +1456,123 @@ export default function Admin() {
               transition={{ duration: 0.15 }}
               className="space-y-5"
             >
-              {/* Date Selection Header Row with Month Picker Trigger */}
-              <div className="flex justify-between items-end px-1">
-                <span 
-                  style={{ color: accentColor || '#CCFF00' }}
-                  className="text-3xl md:text-4xl font-bold tracking-wider uppercase"
-                >
-                  {selectedDate.toLocaleDateString('ru-RU', { month: 'long' }).toUpperCase()}
+{/* Единый баннер с календарем и фильтром */}
+<div 
+  className="p-5 rounded-outer transition-all shadow-md flex flex-col gap-4 my-3"
+  style={{ backgroundColor: accentColor || '#CCFF00' }}
+>
+            {/* 1. Верхняя строка: Месяц + Выбор даты */}
+            <div className="flex items-center justify-between px-1">
+              <h2 className="text-xl font-black uppercase tracking-wider text-slate-900">
+                {selectedDate.toLocaleDateString('ru-RU', { month: 'long' }).toUpperCase()}
+              </h2>
+              <button
+                type="button"
+                onClick={() => {
+                  setPickerCurrentDate(new Date(selectedDate));
+                  setIsDatePickerOpen(true);
+                }}
+                className="flex items-center gap-1.5 bg-black/10 hover:bg-black/15 text-slate-900 text-xs font-bold px-3.5 py-1.5 rounded-full backdrop-blur-sm transition-all cursor-pointer border-none"
+              >
+                <span className="uppercase">
+                  {selectedDate.toLocaleDateString('ru-RU', { weekday: 'short' })}, {selectedDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
                 </span>
-                <button
-                  onClick={() => {
-                    setPickerCurrentDate(new Date(selectedDate));
-                    setIsDatePickerOpen(true);
-                  }}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-[#CDD2D7] dark:bg-[#1A1A1C] hover:bg-[#c3c8cd] dark:hover:bg-[#222225] border border-black/10 dark:border-white/10 shadow-sm transition-all text-[#121214] dark:text-white text-xs font-bold rounded-btn cursor-pointer mb-0.5 select-none"
-                >
-                  <span className="text-[#121214] dark:text-white font-bold uppercase">
-                    {selectedDate.toLocaleDateString('ru-RU', { weekday: 'long' }).toUpperCase()}
-                    , {selectedDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }).toUpperCase()}
-                  </span>
-                  <ChevronDown size={14} className="text-[#121214] dark:text-white shrink-0" />
-                </button>
-              </div>
+                <ChevronDown size={14} className="text-slate-900 shrink-0" />
+              </button>
+            </div>
 
-              {/* Responsive Horizontal Calendar */}
-              <HorizontalCalendar 
-                selectedDate={selectedDate} 
+            {/* 2. Календарная лента дней */}
+            <div className="bg-black/5 p-1 rounded-full backdrop-blur-sm">
+              <HorizontalCalendar
+                selectedDate={selectedDate}
                 onSelectDate={(d) => {
                   setSelectedDate(d);
                   setViewMode('day');
-                }} 
+                }}
               />
+            </div>
 
-{/* Кнопка фильтра и выпадающая панель */}
-<div className="relative my-2 z-30">
-  <button 
-    onClick={() => setIsFilterOpen(!isFilterOpen)}
-    type="button"
-    className="flex items-center gap-2 bg-[#CDD2D7] hover:bg-[#b0b6bc] text-slate-900 px-4 py-2 rounded-full font-medium text-xs transition-all cursor-pointer shadow-sm"
-  >
-    <svg className="w-4 h-4 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-    </svg>
-    <span>Фильтры</span>
-  </button>
+            {/* 3. Кнопка Фильтры и Выпадающая панель внутри баннера */}
+            <div className="relative z-30 pt-1">
+              <button 
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+                type="button"
+                className="flex items-center gap-2 bg-black/10 hover:bg-black/15 text-slate-900 px-4 py-2 rounded-full font-bold text-xs transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
+              >
+                <svg className="w-4 h-4 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                </svg>
+                <span>Фильтры</span>
+              </button>
 
-  {isFilterOpen && (
-    <div className="absolute top-full left-0 z-50 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 mt-2 flex flex-col gap-3 shadow-2xl w-72">
-      <div className="text-[11px] font-semibold text-slate-400 dark:text-zinc-400 uppercase tracking-wider">Фильтры расписания</div>
-      
-      <div>
-        <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Филиал</label>
-        <CustomFilterDropdown
-          value={selectedBranch}
-          options={['Все филиалы', ...branchesList]}
-          onChange={(newBranch) => {
-            setSelectedBranch(newBranch);
-            setSelectedHall('Все залы');
-          }}
-        />
-      </div>
+              {isFilterOpen && (
+                <div className="absolute top-full left-0 z-50 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 mt-2 flex flex-col gap-3 shadow-2xl w-72">
+                  <div className="text-[11px] font-semibold text-slate-400 dark:text-zinc-400 uppercase tracking-wider">Фильтры расписания</div>
+                  
+                  <div>
+                    <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Филиал</label>
+                    <CustomFilterDropdown
+                      value={selectedBranch}
+                      options={['Все филиалы', ...branchesList]}
+                      onChange={(newBranch) => {
+                        setSelectedBranch(newBranch);
+                        setSelectedHall('Все залы');
+                      }}
+                    />
+                  </div>
 
-      <div>
-        <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Зал</label>
-        <CustomFilterDropdown
-          value={selectedHall}
-          options={['Все залы', ...availableHalls]}
-          onChange={(newHall) => setSelectedHall(newHall)}
-        />
-      </div>
+                  <div>
+                    <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Зал</label>
+                    <CustomFilterDropdown
+                      value={selectedHall}
+                      options={['Все залы', ...availableHalls]}
+                      onChange={(newHall) => setSelectedHall(newHall)}
+                    />
+                  </div>
 
-      <div>
-        <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Направление</label>
-        <CustomFilterDropdown
-          value={selectedDirection}
-          options={['Все направления', ...directionsList]}
-          onChange={(newDir) => setSelectedDirection(newDir)}
-        />
-      </div>
+                  <div>
+                    <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Направление</label>
+                    <CustomFilterDropdown
+                      value={selectedDirection}
+                      options={['Все направления', ...directionsList]}
+                      onChange={(newDir) => setSelectedDirection(newDir)}
+                    />
+                  </div>
 
-      <div>
-        <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Возраст</label>
-        <CustomFilterDropdown
-          value={selectedAge}
-          options={['Все возраста', ...agesList]}
-          onChange={(newAge) => setSelectedAge(newAge)}
-        />
-      </div>
+                  <div>
+                    <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Возраст</label>
+                    <CustomFilterDropdown
+                      value={selectedAge}
+                      options={['Все возраста', ...agesList]}
+                      onChange={(newAge) => setSelectedAge(newAge)}
+                    />
+                  </div>
 
-      <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
-        <button 
-          type="button" 
-          onClick={() => setIsFilterOpen(false)} 
-          className="flex-1 bg-[#CCFF00] text-black text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-all cursor-pointer"
-        >
-          Применить
-        </button>
-        <button 
-          type="button" 
-          onClick={() => { 
-            setSelectedBranch('Все филиалы'); 
-            setSelectedHall('Все залы'); 
-          }} 
-          className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer"
-        >
-          Сброс
-        </button>
-      </div>
-    </div>
-  )}
-</div>
-              {/* Top subheader (Signature Light-Grey Banner with Direct Buttons) */}
+                  <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
+                    <button 
+                      type="button" 
+                      onClick={() => setIsFilterOpen(false)} 
+                      className="flex-1 bg-[#CCFF00] text-black text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-all cursor-pointer"
+                    >
+                      Применить
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => { 
+                        setSelectedBranch('Все филиалы'); 
+                        setSelectedHall('Все залы'); 
+                        setSelectedDirection('Все направления');
+                        setSelectedAge('Все возраста');
+                      }} 
+                      className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer"
+                    >
+                      Сброс
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>              {/* Top subheader (Signature Light-Grey Banner with Direct Buttons) */}
               <PeriodHeaderBanner<'day' | 'week'>
                 title={
                   viewMode === 'day' 
