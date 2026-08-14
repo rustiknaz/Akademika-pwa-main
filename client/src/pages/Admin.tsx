@@ -33,7 +33,6 @@ import {
   UserPlus
 } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
-import { PeriodHeaderBanner } from '../components/PeriodHeaderBanner';
 import { apiRequest } from '@/lib/queryClient';
 import BottomNav from "../components/BottomNav";
 import { motion, AnimatePresence } from 'framer-motion';
@@ -78,18 +77,21 @@ export default function Admin() {
   const [isSellMembershipOpen, setIsSellMembershipOpen] = useState(false);
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(false);
+  
   // Filter modal states
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedBranch, setSelectedBranch] = useState('Все филиалы');
   const [selectedHall, setSelectedHall] = useState('Все залы');
   const [selectedDirection, setSelectedDirection] = useState('Все направления');
   const [selectedAge, setSelectedAge] = useState('Все возраста');
+  const [selectedType, setSelectedType] = useState('Все типы');
+
   const branchesList = ['Филиал: Невский', 'Филиал: Центральный'];
   const directionsList = ['Hip-Hop', 'K-Pop', 'Dancehall', 'High Heels', 'Breakdance'];
   const agesList = ['Дети (4-7)', 'Подростки (8-14)', 'Взрослые (15+)'];
-  const [selectedType, setSelectedType] = useState('Все типы');
   const typesList = ['Групповая', 'Индивидуальная', 'Аренда', 'Мастер-класс'];
-    const [view, setView] = useState<'home' | 'active' | 'history' | 'classes'>(() => {
+
+  const [view, setView] = useState<'home' | 'active' | 'history' | 'classes'>(() => {
     if (location === '/admin/schedule') return 'classes';
     return 'home';
   });
@@ -106,18 +108,17 @@ export default function Admin() {
 
   useEffect(() => {
     if (location === '/admin/schedule') {
-
       setView(prev => (prev === 'classes' || prev === 'history' || prev === 'active') ? prev : 'classes');
     } else if (location === '/Admin') {
       setView('home');
     }
   }, [location]);
+
   const [cancelingIds, setCancelingIds] = useState<Set<number>>(new Set());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [viewMode, setViewMode] = useState<'day' | 'week' | 'month'>('day');
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [pickerCurrentDate, setPickerCurrentDate] = useState<Date>(new Date());
-
 
   const branchHallsMap: Record<string, string[]> = {
     'Филиал: Невский': ['Зал 1 (Main Glass)', 'Зал 2 (Light Studio)'],
@@ -128,43 +129,33 @@ export default function Admin() {
     ? ['Зал 1 (Main Glass)', 'Зал 2 (Light Studio)', 'Зал 3 (VIP Room)']
     : (branchHallsMap[selectedBranch] || ['Зал 1 (Main Glass)', 'Зал 2 (Light Studio)']);
 
-    const isClassMatchingFilter = (cls: any) => {
-      if (selectedBranch !== 'Все филиалы') {
-        if (cls.branch && cls.branch !== selectedBranch) return false;
-      }
-      if (selectedHall !== 'Все залы') {
-        const classHall = cls.hall || cls.room || (cls.id % 2 === 0 ? "Зал 2 (Light Studio)" : "Зал 1 (Main Glass)");
-        const shortSelected = selectedHall.split('(')[0].trim().toLowerCase();
-        const shortClass = classHall.split('(')[0].trim().toLowerCase();
-        if (!shortClass.includes(shortSelected) && !classHall.toLowerCase().includes(shortSelected)) {
-          return false;
-        }
-      }
-      if (selectedDirection !== 'Все направления') {
-        if (cls.direction && cls.direction !== selectedDirection) return false;
-        if (!cls.title.toLowerCase().includes(selectedDirection.toLowerCase())) return false;
-      }
-      if (selectedType !== 'Все типы') {
-        const classType = cls.type || (cls.is_recurring === false ? 'Мастер-класс' : cls.max_students === 1 ? 'Индивидуальная' : 'Групповая');
-        if (classType.toLowerCase() !== selectedType.toLowerCase()) return false;
-      }
-      return true;
-    };
-
-  const getDaysOfMonth = (d: Date) => {
-    const year = d.getFullYear();
-    const month = d.getMonth();
-    const daysCount = new Date(year, month + 1, 0).getDate();
-    const days = [];
-    for (let i = 1; i <= daysCount; i++) {
-      days.push(new Date(year, month, i));
+  const isClassMatchingFilter = (cls: any) => {
+    if (selectedBranch !== 'Все филиалы') {
+      if (cls.branch && cls.branch !== selectedBranch) return false;
     }
-    return days;
+    if (selectedHall !== 'Все залы') {
+      const classHall = cls.hall || cls.room || (cls.id % 2 === 0 ? "Зал 2 (Light Studio)" : "Зал 1 (Main Glass)");
+      const shortSelected = selectedHall.split('(')[0].trim().toLowerCase();
+      const shortClass = classHall.split('(')[0].trim().toLowerCase();
+      if (!shortClass.includes(shortSelected) && !classHall.toLowerCase().includes(shortSelected)) {
+        return false;
+      }
+    }
+    if (selectedDirection !== 'Все направления') {
+      if (cls.direction && cls.direction !== selectedDirection) return false;
+      if (!cls.title?.toLowerCase().includes(selectedDirection.toLowerCase())) return false;
+    }
+    if (selectedType !== 'Все типы') {
+      const classType = cls.type || (cls.is_recurring === false ? 'Мастер-класс' : cls.max_students === 1 ? 'Индивидуальная' : 'Групповая');
+      if (classType.toLowerCase() !== selectedType.toLowerCase()) return false;
+    }
+    return true;
   };
+
   const [currentWeekStart, setCurrentWeekStart] = useState<Date>(() => {
     const d = new Date();
     const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is Sunday
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
     const monday = new Date(d.setDate(diff));
     monday.setHours(0, 0, 0, 0);
     return monday;
@@ -213,37 +204,6 @@ export default function Admin() {
     return d.getDate() === today.getDate() &&
            d.getMonth() === today.getMonth() &&
            d.getFullYear() === today.getFullYear();
-  };
-
-  const getHeaderTitle = (d: Date, hallFilter: string = 'Все залы') => {
-    let baseTitle = "";
-    if (isDateToday(d)) {
-      baseTitle = "Уроки на сегодня";
-    } else {
-      const weekdays = ["воскресенье", "понедельник", "вторник", "среду", "четверг", "пятницу", "субботу"];
-      const dayName = weekdays[d.getDay()];
-      const formattedDate = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
-      baseTitle = `Уроки на ${dayName} (${formattedDate})`;
-    }
-
-    if (hallFilter && hallFilter !== 'Все залы') {
-      const shortHall = hallFilter.split('(')[0].trim().toUpperCase();
-      return `${baseTitle} • ${shortHall}`;
-    }
-
-    return baseTitle;
-  };
-
-  const handlePrevWeek = () => {
-    const prev = new Date(currentWeekStart);
-    prev.setDate(currentWeekStart.getDate() - 7);
-    setCurrentWeekStart(prev);
-  };
-
-  const handleNextWeek = () => {
-    const next = new Date(currentWeekStart);
-    next.setDate(currentWeekStart.getDate() + 7);
-    setCurrentWeekStart(next);
   };
 
   // Bottom Sheet state
@@ -323,78 +283,6 @@ export default function Admin() {
       console.error('Error fetching bookings:', error);
     } else {
       const filtered = data?.filter((b: any) => b.classes && b.profiles) || [];
-      
-      // Self-healing mock entries initializer for today's classes
-      if (filtered.length === 0) {
-        const isMockActive = localStorage.getItem('supabase_mock_mode') === 'true';
-        if (isMockActive) {
-          const classesRes = await supabase.from('classes').select('*');
-          const classesList = classesRes.data || [];
-          
-          const todayClasses = classesList.filter((cls: any) => {
-            const d = new Date(cls.start_time);
-            const today = new Date();
-            return d.getDate() === today.getDate() && d.getMonth() === today.getMonth();
-          });
-
-          if (todayClasses.length > 0) {
-            const firstClass = todayClasses[0];
-            const secondClass = todayClasses[1] || todayClasses[0];
-
-            const mockProfiles = [
-              { id: 'usr-1', full_name: 'Анна Кузнецова', phone: '89112223344', role: 'student' },
-              { id: 'usr-2', full_name: 'Дмитрий Морозов', phone: '89223334455', role: 'student' },
-              { id: 'usr-3', full_name: 'София Лебедева', phone: '89556667788', role: 'student' },
-              { id: 'usr-4', full_name: 'Кирилл Волков', phone: '89334445566', role: 'student' },
-              { id: 'usr-5', full_name: 'Елена Орлова', phone: '89889990011', role: 'student' },
-            ];
-
-            for (const prof of mockProfiles) {
-              await supabase.from('profiles').insert(prof);
-              await supabase.from('subscriptions').insert({
-                user_id: prof.id,
-                plan_name: "Pro Dance 8 занятий",
-                visits_left: 6,
-                expires_at: "2027-12-31T23:59:59.000Z"
-              });
-            }
-
-            const mockBookings = [
-              { user_id: 'usr-1', class_id: firstClass.id, status: 'booked' },
-              { user_id: 'usr-2', class_id: firstClass.id, status: 'booked' },
-              { user_id: 'usr-3', class_id: firstClass.id, status: 'waiting' },
-              { user_id: 'usr-4', class_id: secondClass.id, status: 'booked' },
-              { user_id: 'usr-5', class_id: secondClass.id, status: 'waiting' },
-            ];
-
-            for (const b of mockBookings) {
-              await supabase.from('bookings').insert(b);
-            }
-
-            const refetched = await supabase.from('bookings').select(`
-              id,
-              status,
-              user_id,
-              class_id,
-              classes (
-                id,
-                title,
-                start_time,
-                teacher_name,
-                max_students
-              ),
-              profiles (
-                id,
-                full_name,
-                phone
-              )
-            `);
-            setBookings(refetched.data || []);
-            return;
-          }
-        }
-      }
-
       setBookings(filtered);
     }
   }
@@ -429,7 +317,6 @@ export default function Admin() {
     }
   }
 
-  // Attendance check (Присутствовал)
   const handleCheckIn = async (bookingId: number, userId: string) => {
     try {
       const { error } = await supabase
@@ -439,7 +326,6 @@ export default function Admin() {
 
       if (error) throw error;
 
-      // Decrement student's visits left from subscriptions
       const { data: subscription, error: subError } = await supabase
         .from('subscriptions')
         .select('id, visits_left')
@@ -473,7 +359,6 @@ export default function Admin() {
     }
   };
 
-  // No-Show (Пропуск - занятие сгорает)
   const handleMissed = async (bookingId: number) => {
     try {
       const { error } = await supabase
@@ -498,7 +383,6 @@ export default function Admin() {
     }
   };
 
-  // Move from Waiting List to Main list (Перевести в основу)
   const handlePromoteFromWaiting = async (bookingId: number, classId: number) => {
     try {
       const classBookings = bookings.filter(b => b.class_id === classId && b.status === 'booked');
@@ -531,7 +415,6 @@ export default function Admin() {
     }
   };
 
-  // Undo attendance marking
   const handleUndoStatus = async (bookingId: number, currentStatus: string, userId: string) => {
     try {
       const { error } = await supabase
@@ -541,7 +424,6 @@ export default function Admin() {
 
       if (error) throw error;
 
-      // If they were marked completed, return the lesson back to subscription
       if (currentStatus === 'completed') {
         const { data: subscription, error: subError } = await supabase
           .from('subscriptions')
@@ -576,7 +458,6 @@ export default function Admin() {
     }
   };
 
-  // Update Choreographer (Хореограф)
   const handleUpdateTeacher = async (classId: number, newTeacher: string) => {
     try {
       const { error } = await supabase
@@ -602,7 +483,6 @@ export default function Admin() {
     }
   };
 
-  // Cancel Class for today (Отменить занятие на сегодня)
   const handleCancelClass = async (classId: number) => {
     try {
       const { error } = await supabase
@@ -627,124 +507,6 @@ export default function Admin() {
     }
   };
 
-  const handleCancel = async (booking: any) => {
-    if (cancelingIds.has(booking.id)) return;
-    
-    setCancelingIds(prev => {
-      const next = new Set(Array.from(prev));
-      next.add(booking.id);
-      return next;
-    });
-
-    try {
-      const { data: freshBooking, error: freshBookingError } = await supabase
-        .from('bookings')
-        .select('status')
-        .eq('id', booking.id)
-        .maybeSingle();
-
-      if (freshBookingError) throw freshBookingError;
-      if (!freshBooking || freshBooking.status !== 'booked') {
-        toast({
-          variant: "destructive",
-          title: "Ошибка",
-          description: "Запись уже отменена, завершена или не существует",
-        });
-        await fetchBookingsData();
-        return;
-      }
-
-      const { error: bookingError } = await supabase
-        .from('bookings')
-        .update({ status: 'cancelled' })
-        .eq('id', booking.id);
-
-      if (bookingError) throw bookingError;
-
-      const { data: subscription, error: subFetchError } = await supabase
-        .from('subscriptions')
-        .select('id, visits_left')
-        .eq('user_id', booking.user_id)
-        .maybeSingle();
-
-      if (subFetchError) throw subFetchError;
-
-      if (subscription) {
-        const { error: subUpdateError } = await supabase
-          .from('subscriptions')
-          .update({ visits_left: subscription.visits_left + 1 })
-          .eq('id', subscription.id);
-
-        if (subUpdateError) throw subUpdateError;
-      }
-
-      toast({
-        title: "Запись отменена",
-        description: "Занятие и место возвращены на баланс",
-      });
-
-      try {
-        await apiRequest('POST', '/api/notifications/telegram', {
-          text: `⚠️ <b>Отмена записи!</b>\n👤 Ученик: ${booking.profiles.full_name || booking.profiles.phone}\n🕺 Урок: ${booking.classes.title}`
-        });
-      } catch (err) {
-        console.error('Failed to send telegram notification:', err);
-      }
-
-      await fetchBookingsData();
-    } catch (err: any) {
-      toast({
-        variant: "destructive",
-        title: "Ошибка отмены",
-        description: err.message,
-      });
-    } finally {
-      setCancelingIds(prev => {
-        const next = new Set(Array.from(prev));
-        next.delete(booking.id);
-        return next;
-      });
-    }
-  };
-
-  const handleDeleteClass = async (classId: number) => {
-    if (!confirm("Вы уверены, что хотите удалить это занятие и все записи на него?")) {
-      return;
-    }
-
-    try {
-      const { error: bookingsError } = await supabase
-        .from('bookings')
-        .delete()
-        .eq('class_id', classId);
-
-      if (bookingsError) throw bookingsError;
-
-      const { error: classError } = await supabase
-        .from('classes')
-        .delete()
-        .eq('id', classId);
-
-      if (classError) throw classError;
-
-      toast({
-        title: "Успешно",
-        description: "Занятие удалено",
-      });
-
-      await Promise.all([
-        fetchBookingsData(),
-        fetchClassesData()
-      ]);
-    } catch (err: any) {
-      toast({
-        variant: "destructive",
-        title: "Ошибка удаления",
-        description: err.message,
-      });
-    }
-  };
-
   const isToday = (dateString: string) => {
     const d = new Date(dateString);
     const today = new Date();
@@ -753,15 +515,9 @@ export default function Admin() {
            d.getFullYear() === today.getFullYear();
   };
 
-  const now = new Date();
-
-  // "Активные" tab today's bookings: main list + waiting list
   const todayBookings = bookings.filter(b => isToday(b.classes.start_time));
   const todayMainBookings = todayBookings.filter(b => b.status !== 'waiting');
   const todayWaitingBookings = todayBookings.filter(b => b.status === 'waiting');
-
-  // "Занятия" tab today's classes
-  const todayClasses = classes.filter(cls => isToday(cls.start_time));
 
   const isSelectedDay = (dateString: string) => {
     const d = new Date(dateString);
@@ -774,35 +530,27 @@ export default function Admin() {
     .filter(cls => isSelectedDay(cls.start_time))
     .filter(isClassMatchingFilter);
 
-  // "История" tab bookings (older or finished bookings)
   const historyBookings = bookings.filter(b => {
-    const startTime = new Date(b.classes.start_time);
     return !isToday(b.classes.start_time) || b.status === 'completed' || b.status === 'cancelled' || b.status === 'missed';
   });
 
   const renderClassCard = (cls: any) => {
     const isCancelled = cls.status === 'cancelled';
-    
-    // Count main bookings for this class
     const classBookings = bookings.filter(b => b.class_id === cls.id && b.status !== 'waiting' && b.status !== 'cancelled');
     const bookedCount = classBookings.length;
     const fillPercentage = Math.min(100, (bookedCount / (cls.max_students || 15)) * 100);
 
-    // Formatted time
     const startTime = new Date(cls.start_time).toLocaleTimeString('ru-RU', {
       hour: '2-digit',
       minute: '2-digit'
     });
 
-    // Dynamic hall allocation (Zal 1 / Zal 2 / Zal 3)
     const roomName = cls.hall || cls.room || (cls.id % 2 === 0 ? "Зал 2 (Light Studio)" : "Зал 1 (Main Glass)");
-
     const classReviews = reviews.filter(r => r.classId === cls.id || r.className?.toLowerCase() === cls.title?.toLowerCase());
     const sum = classReviews.reduce((acc, curr) => acc + curr.rating, 0);
     const avgRating = classReviews.length > 0 ? (sum / classReviews.length).toFixed(1) : "0.0";
     const reviewCount = classReviews.length;
 
-    // Accent color assigned to group or theme default accent
     const cardAccent = cls.color || cls.badge_color || accentColor || '#CCFF00';
 
     return (
@@ -819,12 +567,10 @@ export default function Admin() {
           isCancelled ? 'opacity-75' : ''
         } rounded-[24px] p-5 shadow-lg cursor-pointer relative overflow-hidden transition-all group`}
       >
-        {/* ArrowUpRight icon */}
         <div className="absolute top-5 right-5 text-zinc-500 group-hover:text-white transition-colors pointer-events-none">
           <ArrowUpRight size={16} />
         </div>
 
-        {/* Top Info line */}
         <div className="flex justify-between items-start mb-3">
           <div className="flex items-center gap-2">
             <span 
@@ -850,7 +596,6 @@ export default function Admin() {
           )}
         </div>
 
-        {/* Middle heading */}
         <div className="space-y-1 my-3">
           <h3 className={`text-base font-medium text-white${isCancelled ? 'line-through text-zinc-500' : ''}`}>
             {cls.title}
@@ -868,7 +613,6 @@ export default function Admin() {
           </p>
         </div>
 
-        {/* Bottom progress bar */}
         {!isCancelled && (
           <div className="space-y-1.5 pt-2">
             <div className="flex justify-between items-center text-xs font-bold tracking-wider uppercase text-zinc-500">
@@ -887,14 +631,6 @@ export default function Admin() {
     );
   };
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) return "Доброе утро";
-    if (hour >= 12 && hour < 18) return "Добрый день";
-    if (hour >= 18 && hour < 23) return "Добрый вечер";
-    return "Доброй ночи";
-  };
-
   if (loading) {
     return (
       <div className={`min-h-screen page-root flex items-center justify-center transition-colors duration-300 ${
@@ -909,7 +645,6 @@ export default function Admin() {
     <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col relative font-sans transition-colors duration-300 ${
       theme === 'light' ? 'bg-transparent text-slate-900' : 'bg-transparent text-white'
     }`}>
-      {/* Urban Glass Header */}
       <AdminHeader
         user={currentUserProfile || { full_name: 'Мария', role: 'admin' }}
         view={view}
@@ -920,11 +655,8 @@ export default function Admin() {
         }}
       />
 
-
-
-      {/* Main Content */}
       <div className="flex-1 px-3 pb-32">
-                <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait">
           
           {/* TAB: Главная (Dashboard) */}
           {view === 'home' && (
@@ -936,7 +668,6 @@ export default function Admin() {
               transition={{ duration: 0.15 }}
               className="space-y-6 pb-20"
             >
-              {/* Единый Переключающийся Баннер (Financial / Operations) */}
               <div className="relative h-[184px] w-full overflow-hidden rounded-[42px] cursor-pointer shadow-lg group">
                 <AnimatePresence mode="wait">
                   {activeSlide === 0 ? (
@@ -991,7 +722,6 @@ export default function Admin() {
                       <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 mb-4">ОПЕРАЦИОННЫЕ ЗАДАЧИ</span>
                       
                       <div className="flex flex-col gap-2.5">
-                        {/* Task 1 */}
                         <div className="bg-white rounded-full p-2 pl-3 pr-4 flex items-center justify-between shadow-sm">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-[#FF4500]/10 flex items-center justify-center text-[#FF4500]">
@@ -1005,7 +735,6 @@ export default function Admin() {
                           <span className="bg-[#FF4500]/10 text-[#FF4500] text-[11px] font-black px-3 py-1 rounded-full">{expiringSubsCount}</span>
                         </div>
 
-                        {/* Task 2 */}
                         <div className="bg-white rounded-full p-2 pl-3 pr-4 flex items-center justify-between shadow-sm">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-[#FF4500]/10 flex items-center justify-center text-[#FF4500]">
@@ -1023,7 +752,6 @@ export default function Admin() {
                   )}
                 </AnimatePresence>
 
-                {/* Dots indicator inside banner */}
                 <div className="absolute bottom-4 right-6 flex gap-1.5 z-10">
                   {[0, 1].map((idx) => (
                     <div 
@@ -1040,16 +768,10 @@ export default function Admin() {
 
               {/* Quick Action Pills */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full">
-                {/* 1. Записать */}
                 <button
                   type="button"
                   onClick={() => setIsQuickBookOpen(true)}
-                  className={`
-                    w-full h-[84px] whitespace-nowrap
-                    bg-white/40 backdrop-blur-md border border-white/20
-                    dark:bg-black/40 dark:backdrop-blur-md dark:border dark:border-white/10
-                    rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none
-                  `}
+                  className="w-full h-[84px] whitespace-nowrap bg-white/40 backdrop-blur-md border border-white/20 dark:bg-black/40 dark:backdrop-blur-md dark:border dark:border-white/10 rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none"
                 >
                   <div
                     style={{ backgroundColor: accentColor || '#CCFF00' }}
@@ -1064,16 +786,10 @@ export default function Admin() {
                   </div>
                 </button>
 
-                {/* 2. Продать абонемент */}
                 <button
                   type="button"
                   onClick={() => setIsSellMembershipOpen(true)}
-                  className={`
-                    w-full h-[84px] whitespace-nowrap
-                    bg-white/40 backdrop-blur-md border border-white/20
-                    dark:bg-black/40 dark:backdrop-blur-md dark:border dark:border-white/10
-                    rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none
-                  `}
+                  className="w-full h-[84px] whitespace-nowrap bg-white/40 backdrop-blur-md border border-white/20 dark:bg-black/40 dark:backdrop-blur-md dark:border dark:border-white/10 rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none"
                 >
                   <div
                     style={{ backgroundColor: accentColor || '#CCFF00' }}
@@ -1091,16 +807,10 @@ export default function Admin() {
                   </div>
                 </button>
 
-                {/* 3. Принять оплату */}
                 <button
                   type="button"
                   onClick={() => setIsAddPaymentOpen(true)}
-                  className={`
-                    w-full h-[84px] whitespace-nowrap
-                    bg-white/40 backdrop-blur-md border border-white/20
-                    dark:bg-black/40 dark:backdrop-blur-md dark:border dark:border-white/10
-                    rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none
-                  `}
+                  className="w-full h-[84px] whitespace-nowrap bg-white/40 backdrop-blur-md border border-white/20 dark:bg-black/40 dark:backdrop-blur-md dark:border dark:border-white/10 rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none"
                 >
                   <div
                     style={{ backgroundColor: accentColor || '#CCFF00' }}
@@ -1118,16 +828,10 @@ export default function Admin() {
                   </div>
                 </button>
 
-                {/* 4. Создать лид */}
                 <button
                   type="button"
                   onClick={() => setIsCreateLeadOpen(true)}
-                  className={`
-                    w-full h-[84px] whitespace-nowrap
-                    bg-white/40 backdrop-blur-md border border-white/20
-                    dark:bg-black/40 dark:backdrop-blur-md dark:border dark:border-white/10
-                    rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none
-                  `}
+                  className="w-full h-[84px] whitespace-nowrap bg-white/40 backdrop-blur-md border border-white/20 dark:bg-black/40 dark:backdrop-blur-md dark:border dark:border-white/10 rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none"
                 >
                   <div
                     style={{ backgroundColor: accentColor || '#CCFF00' }}
@@ -1146,11 +850,6 @@ export default function Admin() {
                 </button>
               </div>
 
-         
-         
-         
-
-
               {/* Widget 3: Активные записи */}
               <div
                 style={{ borderRadius: '42px' }}
@@ -1161,15 +860,11 @@ export default function Admin() {
                     <span className="text-slate-700 dark:text-zinc-400 text-xs font-bold uppercase tracking-wider">Активные записи</span>
                     <h3 className="text-slate-900 dark:text-white text-xs font-medium mt-0.5">Ближайшие записи на сегодня</h3>
                   </div>
-                  <span 
-                    className="ui-badge text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider font-mono bg-slate-900 text-white dark:bg-white/10 dark:text-white"
-                  >
+                  <span className="ui-badge text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider font-mono bg-slate-900 text-white dark:bg-white/10 dark:text-white">
                     {todayMainBookings.length} ЗАПИСЕЙ
                   </span>
                 </div>
-           
 
-                {/* Sub widget lists */}
                 <div className="space-y-3">
                   {todayMainBookings.length > 0 ? (
                     todayMainBookings.map((booking) => {
@@ -1197,7 +892,6 @@ export default function Admin() {
                             </h4>
                           </div>
 
-                          {/* Interactive Buttons */}
                           <div className="shrink-0">
                             {booking.status === 'booked' ? (
                               <div className="flex items-center gap-1.5">
@@ -1247,7 +941,6 @@ export default function Admin() {
                     </div>
                   )}
 
-                  {/* Waiting list in Widget 3 */}
                   {todayWaitingBookings.length > 0 && (
                     <div className="mt-4 pt-4 space-y-2">
                       <h4 className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest px-1">Очередь ({todayWaitingBookings.length})</h4>
@@ -1293,7 +986,6 @@ export default function Admin() {
               transition={{ duration: 0.15 }}
               className="space-y-6"
             >
-              {/* Today Date Section */}
               <div className="flex justify-between items-stretch bg-[#CDD2D7] dark:bg-[#161618] border border-black/10 dark:border-white/10 p-1.5 pl-4 rounded-[24px] min-h-[44px]">
                 <div className="flex items-center gap-2 py-1">
                   <Calendar className="w-4 h-4 text-[#121214] dark:text-[#CCFF00]" />
@@ -1307,7 +999,6 @@ export default function Admin() {
                 </span>
               </div>
 
-              {/* Main List Table/Cards */}
               <div className="space-y-3">
                 <h2 className="text-xs font-bold text-stone-400 uppercase tracking-widest pl-1">Основной список ({todayMainBookings.length})</h2>
                 
@@ -1320,7 +1011,6 @@ export default function Admin() {
                         key={booking.id}
                         className="bg-[#161618] border border-white/10 rounded-[24px] p-4 flex items-center justify-between shadow-md group relative overflow-hidden transition-all duration-200"
                       >
-                        {/* Status bar glow indicator */}
                         <div className={`absolute left-0 top-0 bottom-0 w-[3px] ${
                           booking.status === 'completed' ? 'bg-emerald-500' :
                           booking.status === 'missed' ? 'bg-red-500' : 'bg-amber-500/60'
@@ -1341,11 +1031,9 @@ export default function Admin() {
                           </p>
                         </div>
 
-                        {/* Interactive Buttons block */}
                         <div>
                           {booking.status === 'booked' ? (
                             <div className="flex items-center gap-2">
-                              {/* Присутствовал (Зеленая галочка) */}
                               <Button
                                 size="icon"
                                 onClick={() => handleCheckIn(booking.id, booking.user_id)}
@@ -1355,7 +1043,6 @@ export default function Admin() {
                                 <CheckCircle2 className="w-5 h-5" />
                               </Button>
 
-                              {/* Пропуск (Красный крестик) */}
                               <Button
                                 size="icon"
                                 onClick={() => handleMissed(booking.id)}
@@ -1367,7 +1054,6 @@ export default function Admin() {
                             </div>
                           ) : (
                             <div className="flex items-center gap-2">
-                              {/* Attendance Status Display */}
                               <span className={`text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border${
                                 booking.status === 'completed' 
                                   ? 'bg-emerald-950/40 text-emerald-400 border-emerald-500/20' 
@@ -1376,7 +1062,6 @@ export default function Admin() {
                                 {booking.status === 'completed' ? '✓ ПОСЕТИЛ' : '✖ ПРОПУСК'}
                               </span>
 
-                              {/* Undo button to change status back */}
                               <button
                                 onClick={() => handleUndoStatus(booking.id, booking.status, booking.user_id)}
                                 className="text-xs font-bold text-stone-500 hover:text-[#CCFF00] hover:bg-zinc-800 px-2.5 py-1.5 rounded-full transition-colors uppercase tracking-wider"
@@ -1397,7 +1082,6 @@ export default function Admin() {
                 )}
               </div>
 
-              {/* Waiting List (Список ожидания) */}
               <div className="space-y-3 pt-2">
                 <div className="flex justify-between items-center px-1">
                   <h2 className="text-xs font-bold text-stone-400 uppercase tracking-widest">СПИСОК ОЖИДАНИЯ ({todayWaitingBookings.length})</h2>
@@ -1466,147 +1150,131 @@ export default function Admin() {
               transition={{ duration: 0.15 }}
               className="space-y-5"
             >
-{/* Единый баннер с календарем и фильтром */}
-<div 
-  className="p-5 rounded-outer transition-all shadow-md flex flex-col gap-4 my-3"
-  style={{ backgroundColor: accentColor || '#CCFF00' }}
->
-            {/* 1. Верхняя строка: Месяц + Выбор даты */}
-            <div className="flex items-center justify-between px-1">
-              <h2 className="text-xl font-black uppercase tracking-wider text-slate-900">
-                {selectedDate.toLocaleDateString('ru-RU', { month: 'long' }).toUpperCase()}
-              </h2>
-              <button
-                type="button"
-                onClick={() => {
-                  setPickerCurrentDate(new Date(selectedDate));
-                  setIsDatePickerOpen(true);
-                }}
-                className="flex items-center gap-1.5 bg-black/10 hover:bg-black/15 text-slate-900 text-xs font-bold px-3.5 py-1.5 rounded-full backdrop-blur-sm transition-all cursor-pointer border-none"
+              {/* Единый баннер с календарем и фильтром */}
+              <div 
+                className="p-5 rounded-outer transition-all shadow-md flex flex-col gap-4 my-3"
+                style={{ backgroundColor: accentColor || '#CCFF00' }}
               >
-                <span className="uppercase">
-                  {selectedDate.toLocaleDateString('ru-RU', { weekday: 'short' })}, {selectedDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
-                </span>
-                <ChevronDown size={14} className="text-slate-900 shrink-0" />
-              </button>
-            </div>
-
-            {/* 2. Календарная лента дней */}
-            <div className="bg-black/5 p-1 rounded-full backdrop-blur-sm">
-              <HorizontalCalendar
-                selectedDate={selectedDate}
-                onSelectDate={(d) => {
-                  setSelectedDate(d);
-                  setViewMode('day');
-                }}
-              />
-            </div>
-
-            {/* 3. Кнопка Фильтры и Выпадающая панель внутри баннера */}
-            <div className="relative z-30 pt-1">
-              <button 
-                onClick={() => setIsFilterOpen(!isFilterOpen)}
-                type="button"
-                className="flex items-center gap-2 bg-black/10 hover:bg-black/15 text-slate-900 px-4 py-2 rounded-full font-bold text-xs transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
-              >
-                <svg className="w-4 h-4 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                </svg>
-                <span>Фильтры</span>
-              </button>
-
-              {isFilterOpen && (
-                <div className="absolute top-full left-0 z-50 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 mt-2 flex flex-col gap-3 shadow-2xl w-72">
-                  
-                  <div>
-                    <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Филиал</label>
-                    <CustomFilterDropdown
-                      value={selectedBranch}
-                      options={['Все филиалы', ...branchesList]}
-                      onChange={(newBranch) => {
-                        setSelectedBranch(newBranch);
-                        setSelectedHall('Все залы');
-                      }}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Зал</label>
-                    <CustomFilterDropdown
-                      value={selectedHall}
-                      options={['Все залы', ...availableHalls]}
-                      onChange={(newHall) => setSelectedHall(newHall)}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Направление</label>
-                    <CustomFilterDropdown
-                      value={selectedDirection}
-                      options={['Все направления', ...directionsList]}
-                      onChange={(newDir) => setSelectedDirection(newDir)}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Возраст</label>
-                    <CustomFilterDropdown
-                      value={selectedAge}
-                      options={['Все возраста', ...agesList]}
-                      onChange={(newAge) => setSelectedAge(newAge)}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Тип занятия</label>
-                    <CustomFilterDropdown
-                      value={selectedType}
-                      options={['Все типы', ...typesList]}
-                      onChange={(newType) => setSelectedType(newType)}
-                    />
-                  </div>
-
-                  <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
-                    <button 
-                      type="button" 
-                      onClick={() => setIsFilterOpen(false)} 
-                      className="flex-1 bg-[#CCFF00] text-black text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-all cursor-pointer"
-                    >
-                      Применить
-                    </button>
-                    <button 
-                      type="button" 
-                      onClick={() => { 
-                        setSelectedBranch('Все филиалы'); 
-                        setSelectedHall('Все залы'); 
-                        setSelectedDirection('Все направления');
-                        setSelectedAge('Все возраста');
-                        setSelectedType('Все типы');
-                      }} 
-                      className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer"
-                    >
-                      Сброс
-                    </button>
-                  </div>
+                <div className="flex items-center justify-between px-1">
+                  <h2 className="text-xl font-black uppercase tracking-wider text-slate-900">
+                    {selectedDate.toLocaleDateString('ru-RU', { month: 'long' }).toUpperCase()}
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPickerCurrentDate(new Date(selectedDate));
+                      setIsDatePickerOpen(true);
+                    }}
+                    className="flex items-center gap-1.5 bg-black/10 hover:bg-black/15 text-slate-900 text-xs font-bold px-3.5 py-1.5 rounded-full backdrop-blur-sm transition-all cursor-pointer border-none"
+                  >
+                    <span className="uppercase">
+                      {selectedDate.toLocaleDateString('ru-RU', { weekday: 'short' })}, {selectedDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
+                    </span>
+                    <ChevronDown size={14} className="text-slate-900 shrink-0" />
+                  </button>
                 </div>
-              )}
-            </div>
-          </div>              {/* Top subheader (Signature Light-Grey Banner with Direct Buttons) */}
-              <PeriodHeaderBanner<'day' | 'week'>
-                title={
-                  viewMode === 'day' 
-                    ? getHeaderTitle(selectedDate, selectedHall) 
-                    : (selectedHall !== 'Все залы' ? `Расписание на неделю • ${selectedHall.split('(')[0].trim().toUpperCase()}` : "Расписание на неделю")
-                }
-                icon={CalendarDays}
-                options={[
-                  { id: 'day', label: 'День' },
-                  { id: 'week', label: 'Неделя' },
-                ]}
-                activeId={viewMode}
-                onSelect={(mode) => setViewMode(mode)}
-                layoutId="adminViewModePill"
-              />
+
+                <div className="bg-black/5 p-1 rounded-full backdrop-blur-sm">
+                  <HorizontalCalendar
+                    selectedDate={selectedDate}
+                    onSelectDate={(d) => {
+                      setSelectedDate(d);
+                      setViewMode('day');
+                    }}
+                  />
+                </div>
+
+                <div className="relative z-30 pt-1">
+                  <button 
+                    onClick={() => setIsFilterOpen(!isFilterOpen)}
+                    type="button"
+                    className="flex items-center gap-2 bg-black/10 hover:bg-black/15 text-slate-900 px-4 py-2 rounded-full font-bold text-xs transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
+                  >
+                    <svg className="w-4 h-4 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                    </svg>
+                    <span>Фильтры</span>
+                    {(selectedBranch !== 'Все филиалы' || selectedHall !== 'Все залы' || selectedDirection !== 'Все направления' || selectedAge !== 'Все возраста' || selectedType !== 'Все типы') && (
+                      <span className="w-2 h-2 rounded-full bg-slate-900 shrink-0" />
+                    )}
+                  </button>
+
+                  {isFilterOpen && (
+                    <div className="absolute top-full left-0 z-50 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 mt-2 flex flex-col gap-3 shadow-2xl w-72">
+                      <div>
+                        <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Филиал</label>
+                        <CustomFilterDropdown
+                          value={selectedBranch}
+                          options={['Все филиалы', ...branchesList]}
+                          onChange={(newBranch) => {
+                            setSelectedBranch(newBranch);
+                            setSelectedHall('Все залы');
+                          }}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Зал</label>
+                        <CustomFilterDropdown
+                          value={selectedHall}
+                          options={['Все залы', ...availableHalls]}
+                          onChange={(newHall) => setSelectedHall(newHall)}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Направление</label>
+                        <CustomFilterDropdown
+                          value={selectedDirection}
+                          options={['Все направления', ...directionsList]}
+                          onChange={(newDir) => setSelectedDirection(newDir)}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Возраст</label>
+                        <CustomFilterDropdown
+                          value={selectedAge}
+                          options={['Все возраста', ...agesList]}
+                          onChange={(newAge) => setSelectedAge(newAge)}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Тип занятия</label>
+                        <CustomFilterDropdown
+                          value={selectedType}
+                          options={['Все типы', ...typesList]}
+                          onChange={(newType) => setSelectedType(newType)}
+                        />
+                      </div>
+
+                      <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
+                        <button 
+                          type="button" 
+                          onClick={() => setIsFilterOpen(false)} 
+                          className="flex-1 bg-[#CCFF00] text-black text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-all cursor-pointer"
+                        >
+                          Применить
+                        </button>
+                        <button 
+                          type="button" 
+                          onClick={() => { 
+                            setSelectedBranch('Все филиалы'); 
+                            setSelectedHall('Все залы'); 
+                            setSelectedDirection('Все направления');
+                            setSelectedAge('Все возраста');
+                            setSelectedType('Все типы');
+                          }} 
+                          className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer"
+                        >
+                          Сброс
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
 
               {/* Class Cards with AnimatePresence depending on viewMode */}
               <AnimatePresence mode="wait">
@@ -1622,7 +1290,7 @@ export default function Admin() {
                     {selectedDateClasses.length > 0 ? (
                       selectedDateClasses.map((cls) => renderClassCard(cls))
                     ) : (
-                      <div className={`p-6 rounded-[28px] min-h-[110px] flex flex-col items-center justify-center text-center transition-colors ${
+                      <div className={`p-6 rounded-outer min-h-[110px] flex flex-col items-center justify-center text-center shadow-sm ${
                         theme === 'light'
                           ? 'bg-white text-black'
                           : 'bg-[#1A1A1C] text-white'
@@ -1678,7 +1346,7 @@ export default function Admin() {
                             {dayClasses.length > 0 ? (
                               dayClasses.map((cls) => renderClassCard(cls))
                             ) : (
-                              <div className={`rounded-[28px] py-5 px-6 text-center flex items-center justify-center transition-colors ${
+                              <div className={`rounded-outer py-5 px-6 text-center flex items-center justify-center transition-colors ${
                                 theme === 'light'
                                   ? 'bg-white text-zinc-600'
                                   : 'bg-[#1A1A1C] text-stone-400'
@@ -1698,7 +1366,6 @@ export default function Admin() {
               <AnimatePresence>
                 {isDatePickerOpen && (
                   <>
-                    {/* Backdrop */}
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -1707,7 +1374,6 @@ export default function Admin() {
                       className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] cursor-pointer"
                     />
 
-                    {/* Popover Card */}
                     <motion.div
                       initial={{ opacity: 0, scale: 0.95, y: "-45%", x: "-50%" }}
                       animate={{ opacity: 1, scale: 1, y: "-50%", x: "-50%" }}
@@ -1716,7 +1382,6 @@ export default function Admin() {
                       onClick={(e) => e.stopPropagation()}
                       className="fixed top-1/2 left-1/2 w-[calc(100%-2rem)] max-w-sm bg-[#161618] rounded-[24px] p-6 shadow-2xl shadow-black/80 z-[101] select-none text-white flex flex-col"
                     >
-                      {/* Calendar Header */}
                       <div className="flex justify-between items-center mb-5">
                         <h3 className="text-sm font-bold text-white tracking-wide">
                           {pickerCurrentDate.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }).replace(/\s*г\./, '').toLowerCase()}
@@ -1738,7 +1403,6 @@ export default function Admin() {
                         </div>
                       </div>
 
-                      {/* Weekday labels */}
                       <div className="grid grid-cols-7 gap-1 text-center mb-2">
                         {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map(wd => (
                           <span key={wd} className="text-xs font-bold text-stone-500 uppercase tracking-widest py-1">
@@ -1747,16 +1411,13 @@ export default function Admin() {
                         ))}
                       </div>
 
-                      {/* Days Grid */}
                       <div className="grid grid-cols-7 gap-1">
                         {(() => {
                           const year = pickerCurrentDate.getFullYear();
                           const month = pickerCurrentDate.getMonth();
                           
-                          // First day of current month
                           const firstDayDate = new Date(year, month, 1);
                           let startDayOfWeek = firstDayDate.getDay();
-                          // Adjust for Russian calendar (Monday is 1st day)
                           startDayOfWeek = startDayOfWeek === 0 ? 6 : startDayOfWeek - 1;
 
                           const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -1764,19 +1425,16 @@ export default function Admin() {
 
                           const cells = [];
 
-                          // Prev month days
                           for (let i = startDayOfWeek - 1; i >= 0; i--) {
                             const d = new Date(year, month - 1, prevMonthDaysCount - i);
                             cells.push({ date: d, isCurrentMonth: false });
                           }
 
-                          // Current month days
                           for (let i = 1; i <= daysInMonth; i++) {
                             const d = new Date(year, month, i);
                             cells.push({ date: d, isCurrentMonth: true });
                           }
 
-                          // Next month days to make 42 cells (6 rows)
                           const remaining = 42 - cells.length;
                           for (let i = 1; i <= remaining; i++) {
                             const d = new Date(year, month + 1, i);
@@ -1793,9 +1451,9 @@ export default function Admin() {
                                   onClick={() => handleSelectDatePickerDate(cell.date)}
                                   className={`text-xs transition-all cursor-pointer ${
                                     isSel
-? 'w-9 h-9 flex items-center justify-center !rounded-full bg-[#CCFF00] text-black font-bold font-mono text-sm shadow-[0_0_10px_rgba(204,255,0,0.4)]'
+                                      ? 'w-9 h-9 flex items-center justify-center !rounded-full bg-[#CCFF00] text-black font-bold font-mono text-sm shadow-[0_0_10px_rgba(204,255,0,0.4)]'
                                       : isTod
-? 'w-9 h-9 flex items-center justify-center border border-[#CCFF00]/40 text-white font-bold rounded-full bg-[#CCFF00]/5'
+                                        ? 'w-9 h-9 flex items-center justify-center border border-[#CCFF00]/40 text-white font-bold rounded-full bg-[#CCFF00]/5'
                                         : cell.isCurrentMonth
                                           ? 'w-9 h-9 flex items-center justify-center text-white hover:bg-zinc-900 rounded-full'
                                           : 'w-9 h-9 flex items-center justify-center text-stone-600 hover:bg-zinc-900/50 rounded-full'
@@ -1809,7 +1467,6 @@ export default function Admin() {
                         })()}
                       </div>
 
-                      {/* Today button */}
                       <button
                         onClick={handleResetToToday}
                         className="w-full py-3 bg-[#1A1A1C] hover:bg-zinc-800 rounded-full text-[#CCFF00] font-bold text-center mt-4 transition-colors border border-white/10 cursor-pointer"
@@ -1831,7 +1488,6 @@ export default function Admin() {
         </AnimatePresence>
       </div>
 
-      {/* Floating Plus button on "Занятия" to create a new class */}
       {view === 'classes' && (
         <FloatingActionButton
           onClick={() => setLocation('/add-class')}
@@ -1840,11 +1496,10 @@ export default function Admin() {
         />
       )}
 
-      {/* CLASS OPTIONS BOTTOM SHEET (SHORKA) */}
+      {/* CLASS OPTIONS BOTTOM SHEET (ШТОРКА УРОКА) */}
       <AnimatePresence>
         {isClassSheetOpen && selectedClassForSheet && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -1856,7 +1511,6 @@ export default function Admin() {
               className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 cursor-pointer"
             />
 
-            {/* Sheet body */}
             <motion.div
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
@@ -1864,10 +1518,8 @@ export default function Admin() {
               transition={{ type: "spring", damping: 26, stiffness: 220 }}
               className="fixed bottom-0 left-0 right-0 bg-[#161618] border-t border-white/10 rounded-t-[28px] max-h-[85dvh] flex flex-col z-50 shadow-2xl overflow-hidden"
             >
-              {/* Drag Handle indicator */}
               <div className="w-12 h-1.5 bg-zinc-700/60 rounded-full mx-auto mt-3 mb-2 shrink-0" />
 
-              {/* Sheet Header */}
               <div className="px-6 pb-3 pt-1 border-b border-zinc-800/40 flex justify-between items-center shrink-0">
                 <div>
                   <h3 className="text-base font-medium text-white">{selectedClassForSheet.title}</h3>
@@ -1888,10 +1540,7 @@ export default function Admin() {
                 </Button>
               </div>
 
-              {/* Sheet Content container */}
               <div className="px-6 py-6 overflow-y-auto scrollbar-none pb-28 space-y-6 flex-1">
-{/* Sheet Content container */}
-<div className="px-6 py-6 overflow-y-auto scrollbar-none pb-28 space-y-6 flex-1">
                 
                 {/* ⚡ БЛОК: Быстрая продажа и запись прямо на урок */}
                 <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px] space-y-3 shadow-md">
@@ -1930,9 +1579,6 @@ export default function Admin() {
                 </div>
 
                 {/* 1. Edit Choreographer option */}
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-stone-400 uppercase tracking-wider block">Изменить хореографа</label>
-                  <div className="relative">                {/* 1. Edit Choreographer option */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-stone-400 uppercase tracking-wider block">Изменить хореографа</label>
                   <div className="relative">
@@ -2052,7 +1698,6 @@ export default function Admin() {
                   );
                 })()}
 
-                {/* Info block */}
                 <div className="bg-[#1C1C1E]/40 border border-zinc-800/40 rounded-2xl p-4 text-center leading-relaxed">
                   <p className="text-xs font-bold text-stone-500 uppercase tracking-wider">
                     Любые изменения отобразятся у учеников в реальном времени ✨
