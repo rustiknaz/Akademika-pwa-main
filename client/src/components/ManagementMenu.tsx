@@ -1,5 +1,5 @@
 import React from 'react';
-import { DollarSign, Users, Settings, ChevronRight, Layers, Bell } from 'lucide-react';
+import { RussianRuble, Users, Settings, ChevronRight, Layers, Bell, Ticket } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/context/ThemeContext';
@@ -26,10 +26,17 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
     },
     {
       id: 'finance',
-      title: currentRole === 'admin' ? 'Касса' : 'Финансы',
+      title: 'Финансы и Касса',
       description: currentRole === 'admin' ? 'Прием оплаты от учеников' : 'Зарплаты, аренда, доходы студии',
-      icon: DollarSign,
+      icon: RussianRuble,
       path: '/admin/finance'
+    },
+    {
+      id: 'services',
+      title: 'Абонементы и Услуги',
+      description: 'Прайс-лист, абонементы, аренда',
+      icon: Ticket,
+      path: '/admin/services'
     },
     {
       id: 'staff',
@@ -40,7 +47,7 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
     },
     {
       id: 'notifications',
-      title: 'Уведомления',
+      title: 'Рассылки и Маркетинг',
       description: 'Telegram, WhatsApp, авто-напоминания',
       icon: Bell,
       path: '/admin/notifications'

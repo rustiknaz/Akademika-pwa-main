@@ -23,6 +23,7 @@ import Profile from "@/pages/Profile";
 import Settings from "@/pages/Settings";
 import Schedule from "@/pages/Schedule";
 import NotFound from "@/pages/not-found";
+import AdminServices from "@/pages/AdminServices";
 
 // Custom GlobalBackground with dynamic image and color support
 function GlobalBackground() {
@@ -76,6 +77,8 @@ function Router() {
       <Route path="/edit-class/:id" component={EditClass} />
       <Route path="/profile" component={Profile} />
       <Route path="/settings" component={Settings} />
+      <Route path="/admin/services" component={AdminServices} />
+      <Route path="/admin/memberships" component={AdminServices} />
       <Route component={NotFound} />
     </Switch>
   );
