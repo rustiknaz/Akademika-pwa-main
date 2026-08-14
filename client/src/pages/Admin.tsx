@@ -80,13 +80,15 @@ export default function Admin() {
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(false);
   // Filter modal states
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [selectedBranch, setSelectedBranch] = useState('all');
-  const [selectedHall, setSelectedHall] = useState('all');
-  const [selectedDirection, setSelectedDirection] = useState('all');
-  const [selectedAge, setSelectedAge] = useState('all');
+  const [selectedBranch, setSelectedBranch] = useState('Все филиалы');
+  const [selectedHall, setSelectedHall] = useState('Все залы');
+  const [selectedDirection, setSelectedDirection] = useState('Все направления');
+  const [selectedAge, setSelectedAge] = useState('Все возраста');
   const branchesList = ['Филиал: Невский', 'Филиал: Центральный'];
   const directionsList = ['Hip-Hop', 'K-Pop', 'Dancehall', 'High Heels', 'Breakdance'];
   const agesList = ['Дети (4-7)', 'Подростки (8-14)', 'Взрослые (15+)'];
+  const [selectedType, setSelectedType] = useState('Все типы');
+  const typesList = ['Групповая', 'Индивидуальная', 'Аренда', 'Мастер-класс'];
     const [view, setView] = useState<'home' | 'active' | 'history' | 'classes'>(() => {
     if (location === '/admin/schedule') return 'classes';
     return 'home';
@@ -126,20 +128,28 @@ export default function Admin() {
     ? ['Зал 1 (Main Glass)', 'Зал 2 (Light Studio)', 'Зал 3 (VIP Room)']
     : (branchHallsMap[selectedBranch] || ['Зал 1 (Main Glass)', 'Зал 2 (Light Studio)']);
 
-  const isClassMatchingFilter = (cls: any) => {
-    if (selectedBranch !== 'Все филиалы') {
-      if (cls.branch && cls.branch !== selectedBranch) return false;
-    }
-    if (selectedHall !== 'Все залы') {
-      const classHall = cls.hall || cls.room || (cls.id % 2 === 0 ? "Зал 2 (Light Studio)" : "Зал 1 (Main Glass)");
-      const shortSelected = selectedHall.split('(')[0].trim().toLowerCase();
-      const shortClass = classHall.split('(')[0].trim().toLowerCase();
-      if (!shortClass.includes(shortSelected) && !classHall.toLowerCase().includes(shortSelected)) {
-        return false;
+    const isClassMatchingFilter = (cls: any) => {
+      if (selectedBranch !== 'Все филиалы') {
+        if (cls.branch && cls.branch !== selectedBranch) return false;
       }
-    }
-    return true;
-  };
+      if (selectedHall !== 'Все залы') {
+        const classHall = cls.hall || cls.room || (cls.id % 2 === 0 ? "Зал 2 (Light Studio)" : "Зал 1 (Main Glass)");
+        const shortSelected = selectedHall.split('(')[0].trim().toLowerCase();
+        const shortClass = classHall.split('(')[0].trim().toLowerCase();
+        if (!shortClass.includes(shortSelected) && !classHall.toLowerCase().includes(shortSelected)) {
+          return false;
+        }
+      }
+      if (selectedDirection !== 'Все направления') {
+        if (cls.direction && cls.direction !== selectedDirection) return false;
+        if (!cls.title.toLowerCase().includes(selectedDirection.toLowerCase())) return false;
+      }
+      if (selectedType !== 'Все типы') {
+        const classType = cls.type || (cls.is_recurring === false ? 'Мастер-класс' : cls.max_students === 1 ? 'Индивидуальная' : 'Групповая');
+        if (classType.toLowerCase() !== selectedType.toLowerCase()) return false;
+      }
+      return true;
+    };
 
   const getDaysOfMonth = (d: Date) => {
     const year = d.getFullYear();
@@ -1507,7 +1517,6 @@ export default function Admin() {
 
               {isFilterOpen && (
                 <div className="absolute top-full left-0 z-50 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 mt-2 flex flex-col gap-3 shadow-2xl w-72">
-                  <div className="text-[11px] font-semibold text-slate-400 dark:text-zinc-400 uppercase tracking-wider">Фильтры расписания</div>
                   
                   <div>
                     <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Филиал</label>
@@ -1548,6 +1557,15 @@ export default function Admin() {
                     />
                   </div>
 
+                  <div>
+                    <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Тип занятия</label>
+                    <CustomFilterDropdown
+                      value={selectedType}
+                      options={['Все типы', ...typesList]}
+                      onChange={(newType) => setSelectedType(newType)}
+                    />
+                  </div>
+
                   <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
                     <button 
                       type="button" 
@@ -1563,6 +1581,7 @@ export default function Admin() {
                         setSelectedHall('Все залы'); 
                         setSelectedDirection('Все направления');
                         setSelectedAge('Все возраста');
+                        setSelectedType('Все типы');
                       }} 
                       className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer"
                     >
@@ -1871,8 +1890,49 @@ export default function Admin() {
 
               {/* Sheet Content container */}
               <div className="px-6 py-6 overflow-y-auto scrollbar-none pb-28 space-y-6 flex-1">
+{/* Sheet Content container */}
+<div className="px-6 py-6 overflow-y-auto scrollbar-none pb-28 space-y-6 flex-1">
                 
+                {/* ⚡ БЛОК: Быстрая продажа и запись прямо на урок */}
+                <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px] space-y-3 shadow-md">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-bold text-[#CCFF00] uppercase tracking-wider">
+                      ⚡ Быстрая продажа / Запись
+                    </span>
+                    <span className="text-[10px] font-mono text-zinc-400">
+                      Свободно: {(selectedClassForSheet.max_students || 15) - (bookings.filter(b => b.class_id === selectedClassForSheet.id && b.status !== 'cancelled').length)} мест
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsClassSheetOpen(false);
+                        setIsSellMembershipOpen(true);
+                      }}
+                      className="py-2.5 px-3 bg-zinc-900 hover:bg-zinc-850 border border-zinc-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <span>🎟️ Продать абонемент</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsClassSheetOpen(false);
+                        setIsAddPaymentOpen(true);
+                      }}
+                      className="py-2.5 px-3 bg-zinc-900 hover:bg-zinc-850 border border-zinc-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <span>💳 Разовая оплата</span>
+                    </button>
+                  </div>
+                </div>
+
                 {/* 1. Edit Choreographer option */}
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-stone-400 uppercase tracking-wider block">Изменить хореографа</label>
+                  <div className="relative">                {/* 1. Edit Choreographer option */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-stone-400 uppercase tracking-wider block">Изменить хореографа</label>
                   <div className="relative">

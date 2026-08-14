@@ -1,78 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { useTheme } from '../context/ThemeContext';
 
 interface CustomFilterDropdownProps {
   value: string;
   options: string[];
   onChange: (value: string) => void;
-  className?: string;
 }
 
-export const CustomFilterDropdown: React.FC<CustomFilterDropdownProps> = ({
+export default function CustomFilterDropdown({
   value,
   options,
   onChange,
-  className = '',
-}) => {
+}: CustomFilterDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { accentColor, accentTextHex } = useTheme();
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Закрытие при клике вне дропдауна
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          className={`ui-select flex items-center justify-between gap-2 px-4 py-2 bg-[#CDD2D7] hover:bg-[#c3c8cd] shadow-sm transition-all text-[#121214] text-xs font-bold !rounded-full cursor-pointer outline-none select-none shrink-0${className}`}
-        >
-          <span className="truncate">{value}</span>
-          <ChevronDown
-            size={14}
-            className={`text-[#121214] shrink-0 transition-transform duration-200 ${
-              isOpen ? 'rotate-180' : ''
-            }`}
-          />
-        </button>
-      </PopoverTrigger>
-
-      <PopoverContent
-        align="start"
-        sideOffset={6}
-        className="z-[120] min-w-[190px] w-auto max-w-[260px] p-1.5 bg-[#CDD2D7] dark:bg-[#1A1A1C] rounded-inner shadow-2xl outline-none select-none backdrop-blur-md space-y-1"
+    <div className="relative w-full" ref={dropdownRef}>
+      {/* Кнопка-триггер дропдауна */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between bg-slate-200/70 dark:bg-zinc-800 text-slate-900 dark:text-white px-3.5 py-2 rounded-full text-xs font-bold transition-colors cursor-pointer border-none outline-none"
       >
-        {options.map((option) => {
-          const isSelected = option === value;
-          return (
-            <button
-              key={option}
-              type="button"
-              onClick={() => {
-                onChange(option);
-                setIsOpen(false);
-              }}
-              style={
-                isSelected
-                  ? {
-                      backgroundColor: accentColor || '#CCFF00',
-                      color: accentTextHex || '#000000',
-                    }
-                  : {}
-              }
-              className={`w-full text-left px-3.5 py-2.5 rounded-control text-xs transition-all flex items-center justify-between cursor-pointer border-none outline-none ${
-                isSelected
-? 'font-normal shadow-xs'
-: 'font-medium text-[#121214] dark:text-zinc-200 hover:bg-black/10 dark:hover:bg-white/10 bg-transparent'
-              }`}
-            >
-              <span className="truncate pr-2">{option}</span>
-              {isSelected && <Check size={14} className="shrink-0" />}
-            </button>
-          );
-        })}
-      </PopoverContent>
-    </Popover>
-  );
-};
+        <span className="truncate">{value}</span>
+        <ChevronDown 
+          size={14} 
+          className={`text-slate-500 dark:text-zinc-400 transition-transform duration-200 shrink-0 ${
+            isOpen ? 'rotate-180' : ''
+          }`} 
+        />
+      </button>
 
-export default CustomFilterDropdown;
+      {/* Выпадающий список с галочками */}
+      {isOpen && (
+        <div className="absolute top-full left-0 right-0 mt-1.5 bg-white dark:bg-[#1C1C1E] border border-slate-200/80 dark:border-zinc-700/80 rounded-2xl shadow-xl z-50 py-1.5 max-h-48 overflow-y-auto scrollbar-none">
+          {options.map((opt) => {
+            const isSelected = opt === value;
+            return (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => {
+                  onChange(opt);
+                  setIsOpen(false);
+                }}
+                className={`w-full flex items-center justify-between px-3.5 py-2 text-xs font-medium text-left transition-colors cursor-pointer border-none ${
+                  isSelected
+                    ? 'bg-slate-100 dark:bg-zinc-800/80 text-black dark:text-[#CCFF00] font-bold'
+                    : 'text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800/50'
+                }`}
+              >
+                <span className="truncate">{opt}</span>
+                {isSelected && (
+                  <Check size={14} className="text-black dark:text-[#CCFF00] stroke-[2.5] shrink-0 ml-2" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
