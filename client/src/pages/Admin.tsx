@@ -766,91 +766,71 @@ export default function Admin() {
                 </div>
               </div>
 
-              {/* Quick Action Pills */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full">
-                <button
-                  type="button"
-                  onClick={() => setIsQuickBookOpen(true)}
-                  className="w-full h-[84px] whitespace-nowrap bg-white/40 backdrop-blur-md border border-white/20 dark:bg-black/40 dark:backdrop-blur-md dark:border dark:border-white/10 rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none"
-                >
-                  <div
-                    style={{ backgroundColor: accentColor || '#CCFF00' }}
-                    className="w-[68px] h-[68px] rounded-full flex items-center justify-center group-hover:scale-105 transition-transform shrink-0"
-                  >
-                    <CalendarPlus size={28} className="text-black stroke-[2.2] w-7 h-7" />
-                  </div>
-                  <div className="min-w-0 flex-1 text-left flex flex-col justify-center">
-                    <span className="text-sm md:text-base font-semibold text-slate-900 dark:text-white block leading-snug whitespace-nowrap">
-                      Записать
-                    </span>
-                  </div>
-                </button>
+{/* НОВЫЙ БАННЕР БЫСТРЫХ ДЕЙСТВИЙ */}
+<div 
+        className="rounded-outer p-5 shadow-md flex flex-col mt-2"
+        style={{ backgroundColor: accentColor || '#CCFF00' }}
+      >
+        <div className="flex items-center justify-between mb-4 px-1">
+          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-black/60">
+            Быстрые действия
+          </span>
+        </div>
 
-                <button
-                  type="button"
-                  onClick={() => setIsSellMembershipOpen(true)}
-                  className="w-full h-[84px] whitespace-nowrap bg-white/40 backdrop-blur-md border border-white/20 dark:bg-black/40 dark:backdrop-blur-md dark:border dark:border-white/10 rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none"
-                >
-                  <div
-                    style={{ backgroundColor: accentColor || '#CCFF00' }}
-                    className="w-[68px] h-[68px] rounded-full flex items-center justify-center group-hover:scale-105 transition-transform shrink-0"
-                  >
-                    <Ticket size={28} className="text-black stroke-[2.2] w-7 h-7" />
-                  </div>
-                  <div className="min-w-0 flex-1 text-left flex flex-col justify-center">
-                    <span className="text-sm md:text-base font-semibold text-slate-900 dark:text-white block leading-snug whitespace-nowrap">
-                      Продать
-                    </span>
-                    <span className="text-sm md:text-base font-semibold text-slate-900 dark:text-white block leading-snug whitespace-nowrap">
-                      абонемент
-                    </span>
-                  </div>
-                </button>
+        <div className="flex justify-between items-start gap-1 px-1">
+          {/* Записать */}
+          <button 
+            onClick={() => toast({ title: "В разработке", description: "Модуль записи в группу" })}
+            className="flex flex-col items-center justify-start gap-2.5 group w-[72px] cursor-pointer outline-none border-none bg-transparent p-0"
+          >
+            <div className="w-14 h-14 rounded-full bg-black/10 flex items-center justify-center text-black hover:bg-black/20 transition-colors shadow-sm">
+              <CalendarPlus size={24} className="stroke-[2.5]" />
+            </div>
+            <span className="text-[10px] font-bold text-black text-center leading-tight">
+              Записать
+            </span>
+          </button>
 
-                <button
-                  type="button"
-                  onClick={() => setIsAddPaymentOpen(true)}
-                  className="w-full h-[84px] whitespace-nowrap bg-white/40 backdrop-blur-md border border-white/20 dark:bg-black/40 dark:backdrop-blur-md dark:border dark:border-white/10 rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none"
-                >
-                  <div
-                    style={{ backgroundColor: accentColor || '#CCFF00' }}
-                    className="w-[68px] h-[68px] rounded-full flex items-center justify-center group-hover:scale-105 transition-transform shrink-0"
-                  >
-                    <Wallet size={28} className="text-black stroke-[2.2] w-7 h-7" />
-                  </div>
-                  <div className="min-w-0 flex-1 text-left flex flex-col justify-center">
-                    <span className="text-sm md:text-base font-semibold text-slate-900 dark:text-white block leading-snug whitespace-nowrap">
-                      Принять
-                    </span>
-                    <span className="text-sm md:text-base font-semibold text-slate-900 dark:text-white block leading-snug whitespace-nowrap">
-                      оплату
-                    </span>
-                  </div>
-                </button>
+          {/* Продать абонемент */}
+          <button 
+            onClick={() => setLocation('/admin/services')}
+            className="flex flex-col items-center justify-start gap-2.5 group w-[72px] cursor-pointer outline-none border-none bg-transparent p-0"
+          >
+            <div className="w-14 h-14 rounded-full bg-black/10 flex items-center justify-center text-black hover:bg-black/20 transition-colors shadow-sm">
+              <Ticket size={24} className="stroke-[2.5]" />
+            </div>
+            <span className="text-[10px] font-bold text-black text-center leading-tight">
+              Продать<br/>абонемент
+            </span>
+          </button>
 
-                <button
-                  type="button"
-                  onClick={() => setIsCreateLeadOpen(true)}
-                  className="w-full h-[84px] whitespace-nowrap bg-white/40 backdrop-blur-md border border-white/20 dark:bg-black/40 dark:backdrop-blur-md dark:border dark:border-white/10 rounded-full p-2 flex items-center gap-4 transition-all cursor-pointer group text-left outline-none select-none border-none"
-                >
-                  <div
-                    style={{ backgroundColor: accentColor || '#CCFF00' }}
-                    className="w-[68px] h-[68px] rounded-full flex items-center justify-center group-hover:scale-105 transition-transform shrink-0"
-                  >
-                    <UserPlus size={28} className="text-black stroke-[2.2] w-7 h-7" />
-                  </div>
-                  <div className="min-w-0 flex-1 text-left flex flex-col justify-center">
-                    <span className="text-sm md:text-base font-semibold text-slate-900 dark:text-white block leading-snug whitespace-nowrap">
-                      Создать
-                    </span>
-                    <span className="text-sm md:text-base font-semibold text-slate-900 dark:text-white block leading-snug whitespace-nowrap">
-                      лид
-                    </span>
-                  </div>
-                </button>
-              </div>
+          {/* Принять оплату */}
+          <button 
+            onClick={() => setLocation('/admin/finance')}
+            className="flex flex-col items-center justify-start gap-2.5 group w-[72px] cursor-pointer outline-none border-none bg-transparent p-0"
+          >
+            <div className="w-14 h-14 rounded-full bg-black/10 flex items-center justify-center text-black hover:bg-black/20 transition-colors shadow-sm">
+              <Wallet size={24} className="stroke-[2.5]" />
+            </div>
+            <span className="text-[10px] font-bold text-black text-center leading-tight">
+              Принять<br/>оплату
+            </span>
+          </button>
 
-              {/* Widget 3: Активные записи */}
+          {/* Создать лид */}
+          <button 
+            onClick={() => toast({ title: "В разработке", description: "Модуль добавления лида" })}
+            className="flex flex-col items-center justify-start gap-2.5 group w-[72px] cursor-pointer outline-none border-none bg-transparent p-0"
+          >
+            <div className="w-14 h-14 rounded-full bg-black/10 flex items-center justify-center text-black hover:bg-black/20 transition-colors shadow-sm">
+              <UserPlus size={24} className="stroke-[2.5]" />
+            </div>
+            <span className="text-[10px] font-bold text-black text-center leading-tight">
+              Создать<br/>лид
+            </span>
+          </button>
+        </div>
+      </div>              {/* Widget 3: Активные записи */}
               <div
                 style={{ borderRadius: '42px' }}
                 className="bg-[#DDE2E5] dark:bg-[#161618] p-5 md:p-6 shadow-none overflow-hidden !rounded-[42px]"
