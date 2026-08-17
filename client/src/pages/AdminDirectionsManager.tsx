@@ -19,7 +19,9 @@ import {
   ChevronRight,
   ShieldAlert,
   GraduationCap,
-  Baby
+  Baby,
+  SlidersHorizontal,
+  Settings
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import FloatingActionButton from "../components/FloatingActionButton";
@@ -273,8 +275,21 @@ export function DirectionsAndGroupsManager() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
 
-  // Active Tab: 'groups' | 'directions' | 'ages' | 'levels'
+  // Main View: 'groups' | 'settings'
+  const [mainView, setMainView] = useState<'groups' | 'settings'>('groups');
+
+  // Active Tab inside settings: 'directions' | 'ages' | 'levels'
   const [activeTab, setActiveTab] = useState<'directions' | 'groups' | 'ages' | 'levels'>('groups');
+
+  // Filter States
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedBranch, setSelectedBranch] = useState('Все филиалы');
+  const [selectedHall, setSelectedHall] = useState('Все залы');
+  const [selectedDirection, setSelectedDirection] = useState('Все направления');
+  const [selectedAge, setSelectedAge] = useState('Все возраста');
+  const [selectedCoach, setSelectedCoach] = useState('Все педагоги');
+
+  const branchesList = ['Филиал: Невский', 'Филиал: Центральный'];
 
   // Edit item ID state & delete confirm state & detail viewer state
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -368,6 +383,7 @@ export function DirectionsAndGroupsManager() {
   };
 
   const handleEditDirection = (dir: DirectionItem) => {
+    setMainView('settings');
     setActiveTab('directions');
     setEditingId(dir.id);
     setFormName(dir.name);
@@ -379,6 +395,7 @@ export function DirectionsAndGroupsManager() {
   };
 
   const handleEditGroup = (group: GroupItem) => {
+    setMainView('groups');
     setActiveTab('groups');
     setEditingId(group.id);
     setFormName(group.name);
@@ -401,6 +418,7 @@ export function DirectionsAndGroupsManager() {
   };
 
   const handleEditAge = (age: AgeCategoryItem) => {
+    setMainView('settings');
     setActiveTab('ages');
     setEditingId(age.id);
     setFormName(age.name);
@@ -410,6 +428,7 @@ export function DirectionsAndGroupsManager() {
   };
 
   const handleEditLevel = (lvl: LevelItem) => {
+    setMainView('settings');
     setActiveTab('levels');
     setEditingId(lvl.id);
     setFormName(lvl.name);
@@ -607,6 +626,16 @@ export function DirectionsAndGroupsManager() {
     setIsModalOpen(false);
   };
 
+  const filteredGroups = groups.filter((g) => {
+    if (selectedHall !== 'Все залы' && g.hall !== selectedHall) return false;
+    if (selectedDirection !== 'Все направления' && g.direction !== selectedDirection) return false;
+    if (selectedAge !== 'Все возраста' && g.age && !g.age.includes(selectedAge.split(' ')[0])) return false;
+    if (selectedCoach !== 'Все педагоги' && g.coach !== selectedCoach) return false;
+    return true;
+  });
+
+  const isFilterActive = selectedBranch !== 'Все филиалы' || selectedHall !== 'Все залы' || selectedDirection !== 'Все направления' || selectedAge !== 'Все возраста' || selectedCoach !== 'Все педагоги';
+
   if (loading) {
     return (
       <div className={`h-[100dvh] flex items-center justify-center transition-colors duration-300 ${
@@ -621,93 +650,273 @@ export function DirectionsAndGroupsManager() {
     <div className={`min-h-screen min-h-[100dvh] flex flex-col p-6 pb-28 font-sans relative bg-transparent ${
       theme === 'light' ? 'text-slate-900' : 'text-white'
     }`}>
-      {/* Header */}
-      <header className="mb-4 flex items-center justify-between shrink-0">
-        <div>
-          <h1 className="text-xl font-semibold text-slate-900 dark:text-zinc-900 uppercase">
-            ГРУППЫ
-          </h1>
+      
+      {/* ВЕРХНИЙ БЛОК: Главный баннер + Вертикальная навигация */}
+      <div className="flex gap-2.5 h-[180px] w-full mt-4 mb-3 select-none z-30">
+        
+        {/* ЛЕВЫЙ БЛОК: Основной баннер со свайпом и анимацией */}
+        <div className="flex-1 relative h-full">
+          <AnimatePresence initial={false} mode="wait">
+            {mainView === 'groups' ? (
+              /* СЛАЙД 1: ГРУППЫ */
+              <motion.div
+                key="groups-slide"
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={(_, info) => {
+                  if (info.offset.x < -40) {
+                    setIsFilterOpen(false);
+                    setMainView('settings');
+                    setActiveTab('directions');
+                  }
+                }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.25 }}
+                style={{ backgroundColor: accentColor || '#CCFF00' }}
+                className="absolute inset-0 p-5 rounded-outer shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none"
+              >
+                <div>
+                  <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 leading-tight">
+                    Группы
+                  </h2>
+                </div>
+
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-black text-slate-900 font-mono tracking-tight leading-none">
+                    {filteredGroups.length}
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-900/70 uppercase tracking-wide leading-tight">
+                    активных<br/>групп
+                  </span>
+                </div>
+
+                {/* Низ баннера: Круглая кнопка Фильтров */}
+                <div className="relative flex items-center justify-between z-[100]">
+                  <div className="relative">
+                    <button 
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsFilterOpen(!isFilterOpen);
+                      }} 
+                      className="w-11 h-11 rounded-full bg-black/10 hover:bg-black/15 text-slate-900 flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                    >
+                      <SlidersHorizontal size={20} className="stroke-[2.5]" />
+                      {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-slate-900 shrink-0" />}
+                    </button>
+
+                    {isFilterOpen && (
+                      <div 
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()} 
+                        className="absolute top-[110%] left-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl w-72 origin-top-left"
+                      >
+                        <div>
+                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Филиал</label>
+                          <select
+                            value={selectedBranch}
+                            onChange={(e) => setSelectedBranch(e.target.value)}
+                            className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
+                          >
+                            <option value="Все филиалы">Все филиалы</option>
+                            {branchesList.map(b => <option key={b} value={b}>{b}</option>)}
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Зал</label>
+                          <select
+                            value={selectedHall}
+                            onChange={(e) => setSelectedHall(e.target.value)}
+                            className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
+                          >
+                            <option value="Все залы">Все залы</option>
+                            {HALLS_LIST.map(h => <option key={h} value={h}>{h}</option>)}
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Направление</label>
+                          <select
+                            value={selectedDirection}
+                            onChange={(e) => setSelectedDirection(e.target.value)}
+                            className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
+                          >
+                            <option value="Все направления">Все направления</option>
+                            {directions.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Возраст</label>
+                          <select
+                            value={selectedAge}
+                            onChange={(e) => setSelectedAge(e.target.value)}
+                            className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
+                          >
+                            <option value="Все возраста">Все возраста</option>
+                            {ages.map(a => <option key={a.id} value={a.name}>{a.name} ({a.range})</option>)}
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Педагог</label>
+                          <select
+                            value={selectedCoach}
+                            onChange={(e) => setSelectedCoach(e.target.value)}
+                            className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
+                          >
+                            <option value="Все педагоги">Все педагоги</option>
+                            {COACHES_LIST.map(c => <option key={c} value={c}>{c}</option>)}
+                          </select>
+                        </div>
+
+                        <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
+                          <button 
+                            type="button" 
+                            onClick={() => setIsFilterOpen(false)} 
+                            className="flex-1 bg-[#CCFF00] text-black text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-all cursor-pointer"
+                          >
+                            Применить
+                          </button>
+                          <button 
+                            type="button" 
+                            onClick={() => { 
+                              setSelectedBranch('Все филиалы'); 
+                              setSelectedHall('Все залы'); 
+                              setSelectedDirection('Все направления'); 
+                              setSelectedAge('Все возраста'); 
+                              setSelectedCoach('Все педагоги'); 
+                            }} 
+                            className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer"
+                          >
+                            Сброс
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ) : (
+              /* СЛАЙД 2: НАСТРОЙКИ */
+              <motion.div
+                key="settings-slide"
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={(_, info) => {
+                  if (info.offset.x > 40) {
+                    setIsFilterOpen(false);
+                    setMainView('groups');
+                    setActiveTab('groups');
+                  }
+                }}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.25 }}
+                className="absolute inset-0 p-5 rounded-outer shadow-md flex flex-col justify-between bg-[#DDE2E5] dark:bg-[#161618] border border-slate-300/40 dark:border-white/10 cursor-grab active:cursor-grabbing !overflow-visible select-none"
+              >
+                <div>
+                  <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 dark:text-white leading-tight">
+                    Настройки
+                  </h2>
+                </div>
+
+                {/* Сводка со счетчиками */}
+                <div className="grid grid-cols-3 gap-2 bg-white/60 dark:bg-black/40 rounded-2xl p-3 backdrop-blur-sm">
+                  <div className="flex flex-col">
+                    <span className="text-2xl font-black text-slate-900 dark:text-white font-mono leading-none">
+                      {directions.length}
+                    </span>
+                    <span className="text-[9px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider mt-1 leading-tight">
+                      Направлений
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <span className="text-2xl font-black text-slate-900 dark:text-white font-mono leading-none">
+                      {ages.length}
+                    </span>
+                    <span className="text-[9px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider mt-1 leading-tight">
+                      Возрастов
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <span className="text-2xl font-black text-slate-900 dark:text-white font-mono leading-none">
+                      {levels.length}
+                    </span>
+                    <span className="text-[9px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider mt-1 leading-tight">
+                      Уровней
+                    </span>
+                  </div>
+                </div>
+
+                <div className="h-2" />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </header>
 
-      {/* Акцентный баннер сводки */}
-      <div
-        style={{
-          backgroundColor: accentColor || '#CCFF00',
-          borderRadius: '42px',
-        }}
-        className="w-full text-black p-5 sm:p-6 mb-4 flex items-center justify-between shadow-lg relative overflow-hidden min-h-[140px]"
-      >
-        <div className="flex items-center gap-3.5 flex-1">
-          <div className="w-12 h-12 rounded-full bg-white/90 dark:bg-black/10 flex items-center justify-center shrink-0 shadow-sm">
-            <Layers size={22} className="text-black" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-black/70 leading-tight">
-              Направления
-            </span>
-            <span className="text-base sm:text-lg font-black text-black leading-tight">
-              {directions.length} дисциплин
-            </span>
-          </div>
-        </div>
-
-        <div className="w-px h-10 bg-black/15 mx-2" />
-
-        <div className="flex items-center gap-3.5 flex-1 justify-end sm:justify-start pl-2">
-          <div className="w-12 h-12 rounded-full bg-white/90 dark:bg-black/10 flex items-center justify-center shrink-0 shadow-sm">
-            <Calendar size={22} className="text-black" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-black/70 leading-tight">
-              Группы
-            </span>
-            <span className="text-base sm:text-lg font-black text-black leading-tight">
-              {groups.length} активных
-            </span>
-          </div>
+        {/* ПРАВЫЙ БЛОК: Вертикальная пилюля (Группы / Настройки) */}
+        <div className="w-[64px] bg-white/60 dark:bg-[#161618]/90 border border-black/5 dark:border-white/10 rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-sm shrink-0 backdrop-blur-md">
+          <button 
+            onClick={() => { setMainView('groups'); setActiveTab('groups'); }}
+            className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+              mainView === 'groups' 
+                ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
+                : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+            }`}
+            title="Группы"
+          >
+            <Calendar size={20} className="stroke-[2.5]" />
+          </button>
+          
+          <button 
+            onClick={() => { setMainView('settings'); setActiveTab('directions'); }}
+            className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+              mainView === 'settings' 
+                ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
+                : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+            }`}
+            title="Настройки"
+          >
+            <Settings size={20} className="stroke-[2.5]" />
+          </button>
         </div>
       </div>
- 
 
-      {/* Переключатель вкладок — увеличенная высота */}
-      <div className="ui-tab-container bg-[#CDD2D7] dark:bg-[#18181b]/80 backdrop-blur-md border border-black/10 dark:border-white/10 !rounded-full h-16 py-2 px-2 flex items-center justify-between w-full my-4 shadow-md shrink-0">
-        {[
-          { id: 'groups', label: 'ГРУППЫ' },
-          { id: 'directions', label: 'НАПРАВЛЕНИЯ' },
-          { id: 'ages', label: 'ВОЗРАСТ' },
-          { id: 'levels', label: 'УРОВНИ' }
-        ].map((tab) => {
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id as any)}
-              style={
-                isActive
-                  ? {
-                      backgroundColor: accentColor,
-                      color:
-                        activeTextColor === 'text-black' ||
-                        activeTextColor === '#000000'
-                          ? '#000000'
-                          : '#000000',
-                      height: "100%",
-                    }
-                  : { height: "100%" }
-              }
-              className={
-                isActive
-                  ? "ui-tab-item bg-[#CCFF00] text-black font-bold text-xs sm:text-xs uppercase tracking-wider rounded-full px-4 transition-all shadow-md border-none outline-none cursor-pointer flex-1 text-center h-full"
-                  : "ui-tab-item text-slate-800 dark:text-zinc-300 hover:text-black dark:hover:text-white font-bold text-xs sm:text-xs uppercase tracking-wider px-2 transition-colors cursor-pointer border-none outline-none bg-transparent flex-1 text-center h-full"
-              }
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+      {/* ВНУТРЕННИЕ ТАБЫ НАСТРОЕК */}
+      {mainView === 'settings' && (
+        <div className="ui-tab-container bg-[#CDD2D7] dark:bg-[#18181b]/80 backdrop-blur-md border border-black/10 dark:border-white/10 !rounded-full h-14 py-1.5 px-1.5 flex items-center justify-between w-full mb-4 shadow-md shrink-0 animate-in fade-in slide-in-from-top-2 duration-200">
+          {[
+            { id: 'directions', label: 'НАПРАВЛЕНИЯ' },
+            { id: 'ages', label: 'ВОЗРАСТ' },
+            { id: 'levels', label: 'УРОВНИ' }
+          ].map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`ui-tab-item font-bold text-xs uppercase tracking-wider rounded-full px-3 transition-all border-none outline-none cursor-pointer flex-1 text-center h-full ${
+                  isActive
+                    ? 'bg-[#CCFF00] text-black shadow-md'
+                    : 'bg-transparent text-slate-700 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* Floating Action Button (+) */}
       {currentRole !== 'trainer' && (
@@ -802,95 +1011,97 @@ export function DirectionsAndGroupsManager() {
               transition={{ duration: 0.15 }}
               className="space-y-3"
             >
-              {groups.map((group) => (
-                <div
-                  key={group.id}
-                  onClick={() => setSelectedDetail({ type: 'group', item: group })}
-                  style={{ borderRadius: '42px' }}
-                  className="w-full text-left !bg-[#18181b] border !border-zinc-800 p-4 flex flex-col gap-3 relative shadow-lg shadow-black/10 transition-all duration-200 cursor-pointer hover:border-white/20 hover:bg-white/[0.04] hover:scale-[1.01] !rounded-[42px] overflow-hidden"
-                >
-                  <div className="flex justify-between items-start gap-2">
-                    <div className="space-y-1.5">
-                      {/* Иерархические пилюли (Направление, Уровень, Возраст) */}
-                      <div className="flex flex-wrap items-center gap-2">
-                        {/* 1. Пилюля Направления (Primary Tag) */}
-                        {(() => {
-                          const dirObj = directions.find(d => d.name === group.direction);
-                          const bgCol = dirObj?.colorTag || accentColor || '#CCFF00';
-                          const isLime = bgCol.toLowerCase() === '#ccff00';
-                          return (
-                            <span
-                              style={{ backgroundColor: bgCol, color: isLime ? '#000000' : '#ffffff' }}
-                              className="ui-tag font-bold text-xs px-3.5 py-1 uppercase tracking-wide shadow-sm !rounded-full"
-                            >
-                              {group.direction}
-                            </span>
-                          );
-                        })()}
+              {filteredGroups.length > 0 ? (
+                filteredGroups.map((group) => (
+                  <div
+                    key={group.id}
+                    onClick={() => setSelectedDetail({ type: 'group', item: group })}
+                    style={{ borderRadius: '42px' }}
+                    className="w-full text-left !bg-[#18181b] border !border-zinc-800 p-4 flex flex-col gap-3 relative shadow-lg shadow-black/10 transition-all duration-200 cursor-pointer hover:border-white/20 hover:bg-white/[0.04] hover:scale-[1.01] !rounded-[42px] overflow-hidden"
+                  >
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="space-y-1.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          {(() => {
+                            const dirObj = directions.find(d => d.name === group.direction);
+                            const bgCol = dirObj?.colorTag || accentColor || '#CCFF00';
+                            const isLime = bgCol.toLowerCase() === '#ccff00';
+                            return (
+                              <span
+                                style={{ backgroundColor: bgCol, color: isLime ? '#000000' : '#ffffff' }}
+                                className="ui-tag font-bold text-xs px-3.5 py-1 uppercase tracking-wide shadow-sm !rounded-full"
+                              >
+                                {group.direction}
+                              </span>
+                            );
+                          })()}
 
-                        {/* 2. Пилюля Уровня (Secondary Tag) */}
-                        <span className="ui-tag bg-white/10 text-zinc-200 border border-white/10 font-bold text-xs px-2.5 py-1 uppercase tracking-wide !rounded-full">
-                          {group.level || 'Beginners Pro'}
-                        </span>
+                          <span className="ui-tag bg-white/10 text-zinc-200 border border-white/10 font-bold text-xs px-2.5 py-1 uppercase tracking-wide !rounded-full">
+                            {group.level || 'Beginners Pro'}
+                          </span>
 
-                        {/* 3. Пилюля Возраста (Tertiary Tag) */}
-                        <span className="ui-tag bg-white/5 text-zinc-400 font-bold text-xs px-2.5 py-1 border border-white/5 uppercase !rounded-full">
-                          {group.age || '16+ Лет'}
-                        </span>
+                          <span className="ui-tag bg-white/5 text-zinc-400 font-bold text-xs px-2.5 py-1 border border-white/5 uppercase !rounded-full">
+                            {group.age || '16+ Лет'}
+                          </span>
+                        </div>
+
+                        <p className="text-xs text-zinc-400 flex items-center gap-1 font-medium">
+                          <Calendar size={13} style={{ color: accentColor }} />
+                          <span>{group.schedule}</span>
+                        </p>
                       </div>
 
-                      <p className="text-xs text-zinc-400 flex items-center gap-1 font-medium">
-                        <Calendar size={13} style={{ color: accentColor }} />
-                        <span>{group.schedule}</span>
-                      </p>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {currentRole !== 'trainer' && (
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); handleEditGroup(group); }}
+                            className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-[#CDD2D7] dark:text-zinc-400 hover:text-white transition-colors cursor-pointer border-none outline-none"
+                            title="Редактировать"
+                          >
+                            <Pencil size={14} />
+                          </button>
+                        )}
+                        {currentRole === 'owner' && (
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); setDeleteConfirm({ type: 'group', id: group.id, name: group.name }); }}
+                            className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center text-red-400 hover:text-red-300 transition-colors cursor-pointer ml-1.5 border-none outline-none"
+                            title="Удалить"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      {currentRole !== 'trainer' && (
-                        <button
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); handleEditGroup(group); }}
-                          className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-[#CDD2D7] dark:text-zinc-400 hover:text-white transition-colors cursor-pointer border-none outline-none"
-                          title="Редактировать"
-                        >
-                          <Pencil size={14} />
-                        </button>
-                      )}
-                      {currentRole === 'owner' && (
-                        <button
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); setDeleteConfirm({ type: 'group', id: group.id, name: group.name }); }}
-                          className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center text-red-400 hover:text-red-300 transition-colors cursor-pointer ml-1.5 border-none outline-none"
-                          title="Удалить"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      )}
+                    <div className="h-px bg-zinc-800/80 w-full" />
+
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="flex items-center gap-1.5 text-zinc-400">
+                        <Users size={14} className="text-zinc-500" />
+                        <span className="truncate">Тренер: <strong className="text-white">{group.coach}</strong></span>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 text-zinc-400 justify-end">
+                        <Building2 size={14} className="text-zinc-500" />
+                        <span className="truncate">{group.hall}</span>
+                      </div>
+                    </div>
+
+                    <div className="ui-strip flex items-center justify-between bg-zinc-950/60 p-2.5 border border-zinc-800/60 mt-1">
+                      <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Вместимость зала:</span>
+                      <span className="text-xs font-medium text-white">
+                        <span style={{ color: accentColor }}>{group.enrolled}</span> / {group.capacity} мест
+                      </span>
                     </div>
                   </div>
-
-                  <div className="h-px bg-zinc-800/80 w-full" />
-
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="flex items-center gap-1.5 text-zinc-400">
-                      <Users size={14} className="text-zinc-500" />
-                      <span className="truncate">Тренер: <strong className="text-white">{group.coach}</strong></span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 text-zinc-400 justify-end">
-                      <Building2 size={14} className="text-zinc-500" />
-                      <span className="truncate">{group.hall}</span>
-                    </div>
-                  </div>
-
-                  <div className="ui-strip flex items-center justify-between bg-zinc-950/60 p-2.5 border border-zinc-800/60 mt-1">
-                    <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Вместимость зала:</span>
-                    <span className="text-xs font-medium text-white">
-                      <span style={{ color: accentColor }}>{group.enrolled}</span> / {group.capacity} мест
-                    </span>
-                  </div>
+                ))
+              ) : (
+                <div className="p-8 text-center text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Группы по выбранным фильтрам не найдены
                 </div>
-              ))}
+              )}
             </motion.div>
           )}
 
@@ -1026,7 +1237,6 @@ export function DirectionsAndGroupsManager() {
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -1035,7 +1245,6 @@ export function DirectionsAndGroupsManager() {
               className="absolute inset-0 bg-black/70 backdrop-blur-md"
             />
 
-            {/* Glass Card Container */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -1075,7 +1284,6 @@ export function DirectionsAndGroupsManager() {
               </div>
 
               <form onSubmit={handleCreate} className="space-y-4">
-                {/* 1. Название (только для направлений, категорий и уровней) */}
                 {activeTab !== 'groups' && (
                   <div>
                     <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
@@ -1100,7 +1308,6 @@ export function DirectionsAndGroupsManager() {
                   </div>
                 )}
 
-                {/* Specific Fields for Directions */}
                 {activeTab === 'directions' && (
                   <>
                     <div>
@@ -1135,10 +1342,8 @@ export function DirectionsAndGroupsManager() {
                   </>
                 )}
 
-                {/* Specific Order for Groups */}
                 {activeTab === 'groups' && (
                   <>
-                    {/* 1. НАПРАВЛЕНИЕ */}
                     <div>
                       <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
                         1. Направление
@@ -1154,7 +1359,6 @@ export function DirectionsAndGroupsManager() {
                       </select>
                     </div>
 
-                    {/* 2. УРОВЕНЬ */}
                     <div>
                       <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
                         2. Уровень подготовки
@@ -1172,7 +1376,6 @@ export function DirectionsAndGroupsManager() {
                       </select>
                     </div>
 
-                    {/* 3. ВОЗРАСТНАЯ КАТЕГОРИЯ */}
                     <div>
                       <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
                         3. Возрастная категория
@@ -1190,7 +1393,6 @@ export function DirectionsAndGroupsManager() {
                       </select>
                     </div>
 
-                    {/* 4. НАЗНАЧЕННЫЙ ТРЕНЕР */}
                     <div>
                       <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
                         4. Назначенный тренер
@@ -1206,7 +1408,6 @@ export function DirectionsAndGroupsManager() {
                       </select>
                     </div>
 
-                    {/* 5. РАСПИСАНИЕ И ВРЕМЯ (ГИБКИЙ КОНСТРУКТОР) */}
                     <div className="space-y-3 p-3.5 rounded-[20px] bg-zinc-800/50 border border-zinc-700/60">
                       <div className="flex justify-between items-center">
                         <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider block">
@@ -1274,7 +1475,6 @@ export function DirectionsAndGroupsManager() {
                       )}
                     </div>
 
-                    {/* 6. ЗАЛ */}
                     <div>
                       <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
                         6. Зал проведения
@@ -1290,7 +1490,6 @@ export function DirectionsAndGroupsManager() {
                       </select>
                     </div>
 
-                    {/* 7. МАКСИМАЛЬНОЕ КОЛИЧЕСТВО МЕСТ */}
                     <div>
                       <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
                         7. Максимальное количество мест в группе
@@ -1307,7 +1506,6 @@ export function DirectionsAndGroupsManager() {
                   </>
                 )}
 
-                {/* Specific Fields for Ages */}
                 {activeTab === 'ages' && (
                   <div>
                     <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
@@ -1323,7 +1521,6 @@ export function DirectionsAndGroupsManager() {
                   </div>
                 )}
 
-                {/* Specific Fields for Levels */}
                 {activeTab === 'levels' && (
                   <div>
                     <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
@@ -1339,7 +1536,6 @@ export function DirectionsAndGroupsManager() {
                   </div>
                 )}
 
-                {/* Description input for non-group items */}
                 {activeTab !== 'groups' && (
                   <div>
                     <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
@@ -1355,7 +1551,6 @@ export function DirectionsAndGroupsManager() {
                   </div>
                 )}
 
-                {/* Submit Action Button */}
                 <div className="pt-2">
                   <button
                     type="submit"
@@ -1379,11 +1574,6 @@ export function DirectionsAndGroupsManager() {
           </div>
         )}
       </AnimatePresence>
-
-      {/* Delete Confirmation Modal */}
-      {/* ... unchanged ... */}
-      {/* Detail View Modal */}
-      {/* ... unchanged ... */}
 
       <BottomNav />
     </div>

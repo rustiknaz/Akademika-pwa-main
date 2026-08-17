@@ -16,7 +16,8 @@ import {
   MoreHorizontal,
   Snowflake,
   MapPin,
-  Users
+  Users,
+  SlidersHorizontal
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,10 +34,10 @@ import {
   DialogFooter
 } from "@/components/ui/dialog";
 
-// Новая структура типов
 type MainCategory = 'memberships' | 'services';
 
 type SubCategory = 
+  | 'all'
   // Абонементы
   | 'unlimited' | 'limited' | 'time_based' | 'single'
   // Услуги
@@ -50,9 +51,9 @@ interface ServiceItem {
   price: number;
   visitsCount?: number;
   durationDays?: number;
-  freezeDays?: number; // Правила заморозки
-  linkedDirections?: string; // Привязка к направлениям
-  linkedTrainers?: string; // Привязка к тренерам
+  freezeDays?: number;
+  linkedDirections?: string;
+  linkedTrainers?: string;
   description: string;
   popular?: boolean;
   color?: string;
@@ -136,7 +137,9 @@ export default function AdminServices() {
   const { toast } = useToast();
 
   const [mainCategory, setMainCategory] = useState<MainCategory>('memberships');
-  const [subCategory, setSubCategory] = useState<SubCategory>('limited');
+  const [membershipFilter, setMembershipFilter] = useState<string>('all');
+  const [serviceFilter, setServiceFilter] = useState<string>('all');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   
   const [services, setServices] = useState<ServiceItem[]>(INITIAL_SERVICES);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -157,30 +160,12 @@ export default function AdminServices() {
     popular: false
   });
 
-  // Вкладки подкатегорий
-  const subTabs = mainCategory === 'memberships' ? [
-    { id: 'unlimited', label: 'Безлимитные', icon: InfinityIcon },
-    { id: 'limited', label: 'С ограничением', icon: ListOrdered },
-    { id: 'time_based', label: 'Временные', icon: CalendarDays },
-    { id: 'single', label: 'Разовые визиты', icon: Ticket },
-  ] : [
-    { id: 'private', label: 'Индивидуальные', icon: UserCircle },
-    { id: 'rent', label: 'Аренда залов', icon: Building2 },
-    { id: 'choreography', label: 'Постановка', icon: Music },
-    { id: 'additional', label: 'Доп. сервисы', icon: MoreHorizontal },
-  ];
-
-  const handleMainCategoryChange = (cat: MainCategory) => {
-    setMainCategory(cat);
-    setSubCategory(cat === 'memberships' ? 'limited' : 'private');
-  };
-
   const handleOpenAddModal = () => {
     setEditingItem(null);
     setFormData({
       title: '',
       mainCategory: mainCategory,
-      subCategory: subCategory,
+      subCategory: mainCategory === 'memberships' ? 'limited' : 'private',
       price: '',
       visitsCount: '',
       durationDays: '',
@@ -255,199 +240,352 @@ export default function AdminServices() {
     setIsModalOpen(false);
   };
 
-  const filteredServices = services.filter(s => s.mainCategory === mainCategory && s.subCategory === subCategory);
+  const activeFilter = mainCategory === 'memberships' ? membershipFilter : serviceFilter;
+  const isFilterActive = activeFilter !== 'all';
+
+  const filteredServices = services.filter(s => {
+    if (s.mainCategory !== mainCategory) return false;
+    if (mainCategory === 'memberships') {
+      if (membershipFilter !== 'all' && s.subCategory !== membershipFilter) return false;
+    } else {
+      if (serviceFilter !== 'all' && s.subCategory !== serviceFilter) return false;
+    }
+    return true;
+  });
 
   return (
-    <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col font-sans relative transition-colors duration-300 ${
-      theme === 'light' ? 'bg-transparent text-slate-900' : 'bg-transparent text-white'
+    <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col p-6 pb-28 font-sans relative transition-colors duration-300 bg-transparent ${
+      theme === 'light' ? 'text-black' : 'text-white'
     }`}>
 
-      <div className="flex-1 px-4 pb-32 pt-4">
-        {/* Фирменный баннер раздела */}
-        <div 
-          className="p-5 rounded-outer transition-all shadow-md flex flex-col gap-3 my-2"
-          style={{ backgroundColor: accentColor || '#CCFF00' }}
-        >
-          <div className="flex items-center justify-between px-1">
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-[0.15em] text-black/60">
-                ПРАЙС-ЛИСТ СТУДИИ
-              </span>
-              <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 mt-0.5">
-                Каталог
-              </h2>
-            </div>
+      {/* ВЕРХНИЙ БЛОК: Баннер + Вертикальная навигация */}
+      <div className="flex gap-2.5 h-[180px] w-full mt-4 mb-3 select-none z-30">
+        
+        {/* ЛЕВЫЙ БЛОК: Основной баннер со свайпом */}
+        <div className="flex-1 relative h-full">
+          <AnimatePresence initial={false} mode="wait">
+            {mainCategory === 'memberships' ? (
+              /* СЛАЙД 1: АБОНЕМЕНТЫ */
+              <motion.div
+                key="memberships-slide"
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={(_, info) => {
+                  if (info.offset.x < -40) {
+                    setIsFilterOpen(false);
+                    setMainCategory('services');
+                  }
+                }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.25 }}
+                style={{ backgroundColor: accentColor || '#CCFF00' }}
+                className="absolute inset-0 p-5 rounded-outer shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none"
+              >
+                <div>
+                  <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 leading-tight">
+                    Абонементы
+                  </h2>
+                </div>
 
-            <div className="bg-black/10 text-slate-900 text-xs font-bold px-3.5 py-1.5 rounded-full backdrop-blur-sm">
-              <span className="font-mono">{services.length}</span> поз.
-            </div>
-          </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-black text-slate-900 font-mono tracking-tight leading-none">
+                    {filteredServices.length}
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-900/70 uppercase tracking-wide leading-tight">
+                    активных<br/>тарифов
+                  </span>
+                </div>
 
-          <div className="flex items-baseline gap-2 px-1">
-            <span className="text-3xl font-black text-slate-900 font-mono tracking-tight">
-              {services.filter(s => s.mainCategory === mainCategory).length}
-            </span>
-            <span className="text-xs font-bold text-slate-900/70 uppercase tracking-wide">
-              активных предложений в категории
-            </span>
-          </div>
-        </div>
-
-        {/* Двухуровневая навигация */}
-        <div className="my-4 space-y-3">
-          {/* Уровень 1: Главный переключатель */}
-          <div className="flex p-1 bg-black/5 dark:bg-white/5 rounded-2xl">
-            <button
-              onClick={() => handleMainCategoryChange('memberships')}
-              className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-all ${
-                mainCategory === 'memberships' 
-                  ? 'bg-white dark:bg-zinc-800 text-slate-900 dark:text-white shadow-sm' 
-                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Абонементы и тарифы
-            </button>
-            <button
-              onClick={() => handleMainCategoryChange('services')}
-              className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-all ${
-                mainCategory === 'services' 
-                  ? 'bg-white dark:bg-zinc-800 text-slate-900 dark:text-white shadow-sm' 
-                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Каталог услуг
-            </button>
-          </div>
-
-          {/* Уровень 2: Скроллируемые табы подкатегорий */}
-          <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1 [&::-webkit-scrollbar]:hidden">
-            {subTabs.map(tab => {
-              const isActive = subCategory === tab.id;
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setSubCategory(tab.id as SubCategory)}
-                  style={isActive ? { backgroundColor: accentColor || '#CCFF00', color: '#000000' } : {}}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer border ${
-                    isActive 
-                      ? 'shadow-md font-black border-transparent' 
-                      : 'bg-white/40 dark:bg-zinc-900/60 border-slate-200/60 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 hover:bg-white/80'
-                  }`}
-                >
-                  <Icon size={14} className={isActive ? "stroke-[2.5]" : "stroke-2"} />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Список карточек услуг */}
-        <div className="space-y-3 mt-4">
-          <AnimatePresence mode="popLayout">
-            {filteredServices.length > 0 ? (
-              filteredServices.map((service) => (
-                <motion.div
-                  key={service.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.96 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  className="bg-white/40 dark:bg-black/40 backdrop-blur-md rounded-outer p-5 border border-white/20 dark:border-white/10 shadow-sm relative group overflow-hidden"
-                >
-                  {service.popular && (
-                    <div 
-                      style={{ backgroundColor: accentColor || '#CCFF00' }}
-                      className="absolute top-0 right-0 px-3.5 py-1 rounded-bl-2xl text-[9px] font-black uppercase tracking-widest text-black flex items-center gap-1 shadow-xs"
+                {/* Низ баннера: Круглая кнопка Фильтров */}
+                <div className="relative flex items-center justify-between z-[100]">
+                  <div className="relative">
+                    <button 
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsFilterOpen(!isFilterOpen);
+                      }} 
+                      className="w-11 h-11 rounded-full bg-black/10 hover:bg-black/15 text-slate-900 flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                     >
-                      <Sparkles size={11} className="stroke-[2.5]" />
-                      <span>Хит продаж</span>
-                    </div>
-                  )}
+                      <SlidersHorizontal size={20} className="stroke-[2.5]" />
+                      {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-slate-900 shrink-0" />}
+                    </button>
 
-                  <div className="flex justify-between items-start pr-12">
-                    <div>
-                      <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                        {service.title}
-                      </h3>
-                      <p className="text-xs font-medium text-slate-500 dark:text-zinc-400 mt-1 max-w-[280px] leading-relaxed">
-                        {service.description}
-                      </p>
-                    </div>
-                  </div>
+                    {isFilterOpen && (
+                      <div 
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()} 
+                        className="absolute top-[110%] left-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl w-64 origin-top-left"
+                      >
+                        <div>
+                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Категория тарифов</label>
+                          <select
+                            value={membershipFilter}
+                            onChange={(e) => setMembershipFilter(e.target.value)}
+                            className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
+                          >
+                            <option value="all">Все категории</option>
+                            <option value="unlimited">Безлимитные</option>
+                            <option value="limited">С ограничением</option>
+                            <option value="time_based">Временные</option>
+                            <option value="single">Разовые визиты</option>
+                          </select>
+                        </div>
 
-                  {/* Блок с новыми параметрами (Заморозка, Направления, Тренеры) */}
-                  <div className="flex flex-wrap items-center gap-2 mt-3 text-[10px] font-bold tracking-wide">
-                    {service.freezeDays ? (
-                      <span className="flex items-center gap-1 bg-sky-500/10 text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded-md uppercase">
-                        <Snowflake size={11} /> Заморозка: {service.freezeDays} дн.
-                      </span>
-                    ) : null}
-                    
-                    {service.linkedDirections && (
-                      <span className="flex items-center gap-1 bg-violet-500/10 text-violet-600 dark:text-violet-400 px-2 py-0.5 rounded-md uppercase truncate max-w-[150px]">
-                        <MapPin size={11} /> {service.linkedDirections}
-                      </span>
-                    )}
-
-                    {service.linkedTrainers && (
-                      <span className="flex items-center gap-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-md uppercase truncate max-w-[150px]">
-                        <Users size={11} /> {service.linkedTrainers}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Нижняя строка: характеристики + цена + кнопки управления */}
-                  <div className="flex justify-between items-center pt-4 mt-3 border-t border-black/5 dark:border-white/10">
-                    <div className="flex items-center gap-3 text-xs font-bold text-slate-600 dark:text-zinc-400">
-                      {service.visitsCount && (
-                        <span className="flex items-center gap-1">
-                          <ListOrdered size={13} className="text-slate-400" />
-                          <span className="font-mono">{service.visitsCount >= 999 ? '∞' : service.visitsCount}</span> зан.
-                        </span>
-                      )}
-                      {service.durationDays && (
-                        <span className="flex items-center gap-1">
-                          <Clock size={13} className="text-slate-400" />
-                          <span className="font-mono">{service.durationDays}</span> дн.
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg font-black text-slate-900 dark:text-white font-mono">
-                        ₽{service.price.toLocaleString('ru-RU')}
-                      </span>
-
-                      <div className="flex items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={() => handleOpenEditModal(service)}
-                          className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 text-slate-700 dark:text-white flex items-center justify-center transition-colors cursor-pointer"
-                        >
-                          <Pencil size={13} />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(service.id)}
-                          className="w-8 h-8 rounded-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 flex items-center justify-center transition-colors cursor-pointer"
-                        >
-                          <Trash2 size={13} />
-                        </button>
+                        <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
+                          <button 
+                            type="button" 
+                            onClick={() => setIsFilterOpen(false)} 
+                            className="flex-1 bg-[#CCFF00] text-black text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-all cursor-pointer"
+                          >
+                            Применить
+                          </button>
+                          <button 
+                            type="button" 
+                            onClick={() => { 
+                              setMembershipFilter('all');
+                              setIsFilterOpen(false);
+                            }} 
+                            className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer"
+                          >
+                            Сброс
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
-                </motion.div>
-              ))
+                </div>
+              </motion.div>
             ) : (
-              <div className="text-center py-16 text-slate-500 dark:text-zinc-500 font-medium text-xs uppercase tracking-wider">
-                В этой категории пока нет добавленных услуг
-              </div>
+              /* СЛАЙД 2: УСЛУГИ */
+              <motion.div
+                key="services-slide"
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={(_, info) => {
+                  if (info.offset.x > 40) {
+                    setIsFilterOpen(false);
+                    setMainCategory('memberships');
+                  }
+                }}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.25 }}
+                className="absolute inset-0 p-5 rounded-outer shadow-md flex flex-col justify-between bg-[#DDE2E5] dark:bg-[#161618] border border-slate-300/40 dark:border-white/10 cursor-grab active:cursor-grabbing !overflow-visible select-none"
+              >
+                <div>
+                  <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 dark:text-white leading-tight">
+                    Каталог услуг
+                  </h2>
+                </div>
+
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-black text-slate-900 dark:text-white font-mono tracking-tight leading-none">
+                    {filteredServices.length}
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wide leading-tight">
+                    активных<br/>услуг
+                  </span>
+                </div>
+
+                {/* Низ баннера: Круглая кнопка Фильтров */}
+                <div className="relative flex items-center justify-between z-[100]">
+                  <div className="relative">
+                    <button 
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsFilterOpen(!isFilterOpen);
+                      }} 
+                      className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 text-slate-900 dark:text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                    >
+                      <SlidersHorizontal size={20} className="stroke-[2.5]" />
+                      {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-slate-900 dark:bg-white shrink-0" />}
+                    </button>
+
+                    {isFilterOpen && (
+                      <div 
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()} 
+                        className="absolute top-[110%] left-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl w-64 origin-top-left"
+                      >
+                        <div>
+                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Категория услуг</label>
+                          <select
+                            value={serviceFilter}
+                            onChange={(e) => setServiceFilter(e.target.value)}
+                            className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
+                          >
+                            <option value="all">Все услуги</option>
+                            <option value="private">Индивидуальные</option>
+                            <option value="rent">Аренда залов</option>
+                            <option value="choreography">Постановка</option>
+                            <option value="additional">Доп. сервисы</option>
+                          </select>
+                        </div>
+
+                        <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
+                          <button 
+                            type="button" 
+                            onClick={() => setIsFilterOpen(false)} 
+                            className="flex-1 bg-[#CCFF00] text-black text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-all cursor-pointer"
+                          >
+                            Применить
+                          </button>
+                          <button 
+                            type="button" 
+                            onClick={() => { 
+                              setServiceFilter('all');
+                              setIsFilterOpen(false);
+                            }} 
+                            className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer"
+                          >
+                            Сброс
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
             )}
           </AnimatePresence>
         </div>
+
+        {/* ПРАВЫЙ БЛОК: Вертикальная пилюля (Абонементы / Услуги) */}
+        <div className="w-[64px] bg-white/60 dark:bg-[#161618]/90 border border-black/5 dark:border-white/10 rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-sm shrink-0 backdrop-blur-md">
+          <button 
+            onClick={() => { setIsFilterOpen(false); setMainCategory('memberships'); }}
+            className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+              mainCategory === 'memberships' 
+                ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
+                : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+            }`}
+            title="Абонементы"
+          >
+            <Ticket size={20} className="stroke-[2.5]" />
+          </button>
+          
+          <button 
+            onClick={() => { setIsFilterOpen(false); setMainCategory('services'); }}
+            className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+              mainCategory === 'services' 
+                ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
+                : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+            }`}
+            title="Услуги"
+          >
+            <Sparkles size={20} className="stroke-[2.5]" />
+          </button>
+        </div>
+      </div>
+
+      {/* Список карточек услуг и абонементов */}
+      <div className="space-y-3 mt-2 flex-1 pb-20">
+        <AnimatePresence mode="popLayout">
+          {filteredServices.length > 0 ? (
+            filteredServices.map((service) => (
+              <motion.div
+                key={service.id}
+                layout
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                className="bg-white/40 dark:bg-black/40 backdrop-blur-md rounded-outer p-5 border border-white/20 dark:border-white/10 shadow-sm relative group overflow-hidden"
+              >
+                {service.popular && (
+                  <div 
+                    style={{ backgroundColor: accentColor || '#CCFF00' }}
+                    className="absolute top-0 right-0 px-3.5 py-1 rounded-bl-2xl text-[9px] font-black uppercase tracking-widest text-black flex items-center gap-1 shadow-xs"
+                  >
+                    <Sparkles size={11} className="stroke-[2.5]" />
+                    <span>Хит продаж</span>
+                  </div>
+                )}
+
+                <div className="flex justify-between items-start pr-12">
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                      {service.title}
+                    </h3>
+                    <p className="text-xs font-medium text-slate-500 dark:text-zinc-400 mt-1 max-w-[280px] leading-relaxed">
+                      {service.description}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 mt-3 text-[10px] font-bold tracking-wide">
+                  {service.freezeDays ? (
+                    <span className="flex items-center gap-1 bg-sky-500/10 text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded-md uppercase">
+                      <Snowflake size={11} /> Заморозка: {service.freezeDays} дн.
+                    </span>
+                  ) : null}
+                  
+                  {service.linkedDirections && (
+                    <span className="flex items-center gap-1 bg-violet-500/10 text-violet-600 dark:text-violet-400 px-2 py-0.5 rounded-md uppercase truncate max-w-[150px]">
+                      <MapPin size={11} /> {service.linkedDirections}
+                    </span>
+                  )}
+
+                  {service.linkedTrainers && (
+                    <span className="flex items-center gap-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-md uppercase truncate max-w-[150px]">
+                      <Users size={11} /> {service.linkedTrainers}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex justify-between items-center pt-4 mt-3 border-t border-black/5 dark:border-white/10">
+                  <div className="flex items-center gap-3 text-xs font-bold text-slate-600 dark:text-zinc-400">
+                    {service.visitsCount && (
+                      <span className="flex items-center gap-1">
+                        <ListOrdered size={13} className="text-slate-400" />
+                        <span className="font-mono">{service.visitsCount >= 999 ? '∞' : service.visitsCount}</span> зан.
+                      </span>
+                    )}
+                    {service.durationDays && (
+                      <span className="flex items-center gap-1">
+                        <Clock size={13} className="text-slate-400" />
+                        <span className="font-mono">{service.durationDays}</span> дн.
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg font-black text-slate-900 dark:text-white font-mono">
+                      ₽{service.price.toLocaleString('ru-RU')}
+                    </span>
+
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleOpenEditModal(service)}
+                        className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 text-slate-700 dark:text-white flex items-center justify-center transition-colors cursor-pointer"
+                      >
+                        <Pencil size={13} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(service.id)}
+                        className="w-8 h-8 rounded-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 flex items-center justify-center transition-colors cursor-pointer"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            <div className="text-center py-16 text-slate-500 dark:text-zinc-500 font-medium text-xs uppercase tracking-wider">
+              В этой категории пока нет добавленных предложений
+            </div>
+          )}
+        </AnimatePresence>
       </div>
 
       <FloatingActionButton

@@ -323,18 +323,9 @@ export default function AdminStudents() {
                   </span>
                 </div>
 
-                {/* НИЖНИЕ КНОПКИ В БАННЕРЕ */}
+                {/* НИЖНИЕ КНОПКИ В БАННЕРЕ (Фильтры слева, Поиск справа) */}
                 <div className="relative flex items-center justify-between z-[100]">
-                  {/* Кнопка Поиска */}
-                  <button 
-                    onPointerDown={(e) => e.stopPropagation()} 
-                    onClick={(e) => { e.stopPropagation(); setIsSearchVisible(!isSearchVisible); }} 
-                    className="w-11 h-11 rounded-full bg-black/10 hover:bg-black/15 text-slate-900 flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
-                  >
-                    <Search size={20} className="stroke-[2.5]" />
-                  </button>
-
-                  {/* Кнопка Фильтров */}
+                  {/* Кнопка Фильтров (Слева) */}
                   <div className="relative">
                     <button 
                       onPointerDown={(e) => e.stopPropagation()} 
@@ -346,7 +337,7 @@ export default function AdminStudents() {
                     </button>
 
                     {isFilterOpen && (
-                      <div onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()} className="absolute top-[110%] right-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl w-72 origin-top-right">
+                      <div onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()} className="absolute top-[110%] left-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl w-72 origin-top-left">
                         <div>
                           <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Филиал</label>
                           <CustomFilterDropdown value={selectedBranch} options={['Все филиалы', ...branchesList]} onChange={(newBranch) => { setSelectedBranch(newBranch); setSelectedHall('Все залы'); }} />
@@ -370,6 +361,15 @@ export default function AdminStudents() {
                       </div>
                     )}
                   </div>
+
+                  {/* Кнопка Поиска (Справа) */}
+                  <button 
+                    onPointerDown={(e) => e.stopPropagation()} 
+                    onClick={(e) => { e.stopPropagation(); setIsSearchVisible(!isSearchVisible); }} 
+                    className="w-11 h-11 rounded-full bg-black/10 hover:bg-black/15 text-slate-900 flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
+                  >
+                    <Search size={20} className="stroke-[2.5]" />
+                  </button>
                 </div>
               </motion.div>
             ) : (
@@ -399,14 +399,7 @@ export default function AdminStudents() {
                 </div>
 
                 <div className="relative flex items-center justify-between z-[100]">
-                  <button 
-                    onPointerDown={(e) => e.stopPropagation()} 
-                    onClick={(e) => { e.stopPropagation(); setIsSearchVisible(!isSearchVisible); }} 
-                    className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 text-slate-900 dark:text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
-                  >
-                    <Search size={20} className="stroke-[2.5]" />
-                  </button>
-
+                  {/* Кнопка Фильтров (Слева) */}
                   <div className="relative">
                     <button 
                       onPointerDown={(e) => e.stopPropagation()} 
@@ -418,7 +411,7 @@ export default function AdminStudents() {
                     </button>
 
                     {isFilterOpen && (
-                      <div onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()} className="absolute top-[110%] right-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl w-72 origin-top-right">
+                      <div onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()} className="absolute top-[110%] left-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl w-72 origin-top-left">
                         <div>
                           <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Этап воронки</label>
                           <CustomFilterDropdown value={selectedFunnelStage} options={funnelStagesList} onChange={(newStage) => setSelectedFunnelStage(newStage)} />
@@ -438,6 +431,15 @@ export default function AdminStudents() {
                       </div>
                     )}
                   </div>
+
+                  {/* Кнопка Поиска (Справа) */}
+                  <button 
+                    onPointerDown={(e) => e.stopPropagation()} 
+                    onClick={(e) => { e.stopPropagation(); setIsSearchVisible(!isSearchVisible); }} 
+                    className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 text-slate-900 dark:text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
+                  >
+                    <Search size={20} className="stroke-[2.5]" />
+                  </button>
                 </div>
               </motion.div>
             )}

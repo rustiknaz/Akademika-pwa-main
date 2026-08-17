@@ -70,17 +70,16 @@ export default function AdminHeader({
 
   // If view is not 'home', show contextual tab header
   if (view !== 'home') {
+    if (view === 'classes') return null; // <-- Скрывает внешний заголовок для расписания
+
     return (
       <header className="px-3 pt-6 pb-3 flex items-center justify-between shrink-0">
         <div>
-          <h1 className={`text-2xl font-semibold tracking-wide${theme === 'light' ? 'text-[#121214]' : 'text-white'}`}>
-            {view === 'classes'
-              ? 'Расписание'
-              : view === 'active'
+          <h1 className={`text-2xl font-semibold tracking-wide ${theme === 'light' ? 'text-[#121214]' : 'text-white'}`}>
+            {view === 'active'
               ? 'Посещения'
               : 'История посещений'}
           </h1>
-          
         </div>
       </header>
     );
