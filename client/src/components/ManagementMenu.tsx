@@ -1,5 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { RussianRuble, Users, Settings, ChevronRight, ChevronLeft, Layers, Bell, Ticket, Sliders, MessageSquare } from 'lucide-react';
+import { 
+  RussianRuble, 
+  Users, 
+  Settings, 
+  ChevronRight, 
+  ChevronLeft, 
+  Layers, 
+  Bell, 
+  Ticket, 
+  Sliders, 
+  MessageSquare, 
+  ShoppingBag,
+  Sparkles
+} from 'lucide-react';
 import { useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/context/ThemeContext';
@@ -17,17 +30,14 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
   const { currentRole, isAllowed } = useRole();
   const activeTextColor = accentConfig.textColor === 'text-black' ? '#000000' : '#ffffff';
 
-  // Состояние текущего экрана меню: 'main' или 'settings'
   const [menuView, setMenuView] = useState<'main' | 'settings'>('main');
 
-  // Сбрасываем вид на главное при закрытии меню
   useEffect(() => {
     if (!isOpen) {
       setMenuView('main');
     }
   }, [isOpen]);
 
-  // Главный список меню (Финансы, Сотрудники, Уведомления, Настройки)
   const mainMenuItems = [
     {
       id: 'finance',
@@ -51,15 +61,22 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
       path: '/admin/messages'
     },
     {
+      id: 'shop',
+      title: 'Магазин',
+      description: 'Мерч, вода и другие товары',
+      icon: ShoppingBag,
+      path: '/admin/shop'
+    },
+    {
       id: 'settings_trigger',
       title: 'Настройки',
       description: 'Группы, тарифы, контакты',
       icon: Settings,
       isSubmenuTrigger: true
     },
-  ].filter(item => item.isSubmenuTrigger || (item.path && isAllowed(item.path)));
+  ].filter(item => item.isSubmenuTrigger || (item.path && (isAllowed ? isAllowed(item.path) : true)));
 
-  // Вложенный список «Настройки» (Группы, Абонементы, Рассылки, Маркетинг, Основные)
+  // Вложенный список «Настройки»
   const settingsSubMenuItems = [
     {
       id: 'directions',
@@ -77,8 +94,8 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
     },
     {
       id: 'notifications',
-      title: 'Рассылки, Маркетинг',
-      description: 'Telegram, WhatsApp, авто-напоминания',
+      title: 'Рассылки',
+      description: 'Telegram, WhatsApp, авто-триггеры',
       icon: Bell,
       path: '/admin/notifications'
     },
@@ -89,13 +106,12 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
       icon: Sliders,
       path: '/admin/settings'
     },
-  ].filter(item => isAllowed(item.path));
+  ].filter(item => (isAllowed ? isAllowed(item.path) : true));
 
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Полупрозрачная подложка Urban Glass */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -104,7 +120,6 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
             className="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-[70] pointer-events-auto"
           />
 
-          {/* Панель с кнопками управления */}
           <div 
             className="fixed bottom-[calc(max(1.5rem,env(safe-area-inset-bottom))+6.75rem)] w-[260px] z-[80] pointer-events-none"
             style={{ 
@@ -114,7 +129,6 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
           >
             <AnimatePresence mode="wait" initial={false}>
               {menuView === 'main' ? (
-                /* 1. ГЛАВНОЕ МЕНЮ (4 пилюли) */
                 <motion.div
                   key="main-menu"
                   initial={{ opacity: 0, x: -16, scale: 0.96 }}
@@ -182,7 +196,6 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
                   })}
                 </motion.div>
               ) : (
-                /* 2. ВЛОЖЕННОЕ МЕНЮ: НАСТРОЙКИ */
                 <motion.div
                   key="settings-submenu"
                   initial={{ opacity: 0, x: 16, scale: 0.96 }}
@@ -191,7 +204,6 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
                   transition={{ duration: 0.2 }}
                   className="flex flex-col gap-2 pointer-events-auto items-center"
                 >
-                  {/* Круглая кнопка «Назад» */}
                   <button
                     onClick={() => setMenuView('main')}
                     className="w-11 h-11 rounded-full flex items-center justify-center text-zinc-400 hover:text-white bg-zinc-900/80 hover:bg-zinc-800/90 border border-white/10 transition-all cursor-pointer shadow-xl backdrop-blur-xl mb-0.5 self-center"
@@ -200,7 +212,6 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
                     <ChevronLeft size={20} className="stroke-[2.5]" />
                   </button>
 
-                  {/* Пилюли: Группы, Абонементы, Рассылки, Маркетинг, Основные */}
                   {settingsSubMenuItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = location === item.path;

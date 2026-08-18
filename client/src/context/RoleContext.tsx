@@ -42,11 +42,16 @@ export function isRouteAllowed(role: UserRole, path: string): boolean {
   // - Forbidden: /admin/staff, /admin/notifications, /admin/settings
   if (role === 'admin') {
     if (
-      normPath === '/admin' || 
-      normPath === '/admin/schedule' || 
-      normPath === '/admin/students' || 
-      normPath === '/admin/directions' || 
-      normPath === '/admin/finance'
+      normPath === '/admin' ||
+      normPath === '/admin/schedule' ||
+      normPath === '/admin/students' ||
+      normPath === '/admin/directions' ||
+      normPath === '/admin/finance' ||
+      normPath === '/admin/marketing' ||
+      normPath === '/admin/messages' ||
+      normPath === '/admin/shop' ||
+      normPath === '/admin/services' ||
+      normPath === '/admin/ai'
     ) {
       return true;
     }

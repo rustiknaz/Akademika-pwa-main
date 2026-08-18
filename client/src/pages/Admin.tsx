@@ -473,7 +473,7 @@ export default function Admin() {
         description: `Преподаватель успешно изменен на ${newTeacher}`,
       });
 
-      setSelectedClassForSheet(prev => prev ? { ...prev, teacher_name: newTeacher } : null);
+      setSelectedClassForSheet((prev: any) => prev ? { ...prev, teacher_name: newTeacher } : null);
       await fetchClassesData();
     } catch (err: any) {
       toast({

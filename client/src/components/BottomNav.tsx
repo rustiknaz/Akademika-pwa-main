@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, User, Users, Home, LayoutGrid, Settings } from 'lucide-react';
+import { Calendar, User, Users, Home, LayoutGrid, Settings, Sparkles } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import ManagementMenu from './ManagementMenu';
 import { useTheme } from '@/context/ThemeContext';
@@ -16,7 +16,7 @@ export default function BottomNav() {
     setIsMenuOpen(false);
   }, [location]);
 
-  // Общий класс для иконок (для правильного размера)
+  // Общий класс для иконок
   const iconClass = "w-7 h-7 stroke-[2]";
 
   // Пресет для кнопки: размер, радиус, поведение
@@ -30,41 +30,10 @@ export default function BottomNav() {
   // Универсальный класс для АКТИВНОЙ кнопки (icon-holder)
   const baseActive =
     "w-[68px] h-[68px] rounded-full flex items-center justify-center bg-[#CCFF00] text-black shadow-md";
-    
-  // ---------------------------
-  // ADMIN MAIN TABS AND LOGIC
-  // ---------------------------
-  // Главные вкладки для админа (маршруты и их иконки)
-  const adminMainRoutes = [
-    '/Admin',
-    '/admin/schedule',
-    '/admin/students'
-  ];
 
-  // ---------------------------
-  // CLIENT MAIN TABS AND LOGIC
-  // ---------------------------
-  // Главные вкладки для клиента (маршруты и их иконки)
-  const clientMainRoutes = [
-    '/',
-    '/schedule',
-    '/profile'
-  ];
-
-  // ---------------------------
-  // Доп. меню маршруты (more-menu)
-  // ---------------------------
-  const moreRoutes = [
-    '/settings',
-    '/admin-settings',
-    '/finance',
-    '/analytics',
-    '/services',
-    '/staff',
-    '/admin/finance',
-    '/admin/settings',
-    '/admin/staff'
-  ];
+  // Постоянный градиентный стиль для кнопки AI Ассистента
+  const aiButtonGradient =
+    "w-[68px] h-[68px] rounded-full flex items-center justify-center bg-gradient-to-tr from-[#CCFF00] via-[#00F0FF] to-[#BD00FF] text-black shadow-lg hover:shadow-cyan-500/25 transition-all hover:scale-105 active:scale-95";
 
   // -----------
   // Определения режима и флагов страниц
@@ -80,25 +49,22 @@ export default function BottomNav() {
 
   // NAVIGATION: ADMIN MODE
   if (isAdminMode) {
-    // Главная, расписание, ученики
-    const isHomeTabActive = !isMenuOpen && (location === '/Admin' || location === '/Admin/');
+    const isHomeTabActive = !isMenuOpen && (location === '/Admin' || location === '/Admin/' || location === '/admin');
     const isScheduleTabActive = !isMenuOpen && (location === '/admin/schedule' || location === '/admin/schedule/');
     const isStudentsTabActive = !isMenuOpen && (location === '/admin/students' || location === '/admin/students/');
 
-    // Универсальное определение основных вкладок:
-    const mainRoutes = ['/Admin', '/admin/schedule'];
+    // Проверка активности меню шторки
+    const mainRoutes = ['/Admin', '/admin', '/admin/schedule', '/admin/ai', '/admin/marketing'];
     if (currentRole !== 'trainer') mainRoutes.push('/admin/students');
 
-    // Проверка активной основной вкладки:
     const isMainPage = mainRoutes.some(route => location === route || location === route + '/');
-    const isMoreActive = isMenuOpen || !isMainPage;
+    const isMoreActive = isMenuOpen || (!isMainPage && !location.startsWith('/admin/ai'));
 
     // Для тренера: профиль/настройки
     const isProfileSettingsTabActive = !isMenuOpen && (location === '/profile' || location === '/profile/' || location === '/settings' || location === '/settings/');
 
     return (
       <>
-        {/* z-index: 94! Menu overlay below the nav */}
         <ManagementMenu
           isOpen={isMenuOpen}
           onClose={() => setIsMenuOpen(false)}
@@ -109,7 +75,7 @@ export default function BottomNav() {
             id="urban-glass-admin-nav"
             className="relative z-[95] p-3 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-lg flex gap-3 items-center rounded-full w-max pointer-events-auto transition-colors duration-300 border-none"
           >
-            {/* Главная */}
+            {/* 1. Главная */}
             <Link
               href="/Admin"
               className={navBtnClass}
@@ -125,7 +91,7 @@ export default function BottomNav() {
               </span>
             </Link>
 
-            {/* Расписание */}
+            {/* 2. Расписание */}
             <Link
               href="/admin/schedule"
               className={navBtnClass}
@@ -141,7 +107,7 @@ export default function BottomNav() {
               </span>
             </Link>
 
-            {/* Ученики (не для тренера) */}
+            {/* 3. Ученики (не для тренера) */}
             {currentRole !== 'trainer' && isAllowed('/admin/students') && (
               <Link
                 href="/admin/students"
@@ -159,7 +125,7 @@ export default function BottomNav() {
               </Link>
             )}
 
-            {/* Тренер: профиль / Админ: "..." меню */}
+            {/* 4. Меню шторки (для тренера — профиль, для админа — LayoutGrid) */}
             {currentRole === 'trainer' ? (
               <Link
                 href="/profile"
@@ -191,6 +157,23 @@ export default function BottomNav() {
                 </span>
               </button>
             )}
+
+            {/* 5. AI Ассистент (Крайняя правая кнопка, всегда яркая) */}
+            <Link
+              href="/admin/ai"
+              className={navBtnClass}
+              title="AI Ассистент"
+              onClick={e => {
+                e.preventDefault();
+                setLocation('/admin/ai');
+                setIsMenuOpen(false);
+              }}
+            >
+              <span className={aiButtonGradient}>
+                {/* Сюда позже можно вставить <MyCustomAiIcon /> */}
+                <Sparkles size={28} className="w-7 h-7 stroke-[2.5] text-black drop-shadow-sm" />
+              </span>
+            </Link>
           </nav>
         </div>
       </>
@@ -198,16 +181,11 @@ export default function BottomNav() {
   }
 
   // NAVIGATION: CLIENT
-
-  // Основные маршруты клиента (без settings)
-  const mainClientRoutes = ['/', '/schedule', '/profile'];
-
-  // Активности для первых трех иконок (подсвечиваются при точном совпадении)
   const isHomeTabActive = !isMenuOpen && (location === '/' || location === '//');
   const isScheduleTabActive = !isMenuOpen && (location === '/schedule' || location === '/schedule/');
   const isProfileTabActive = !isMenuOpen && (location === '/profile' || location === '/profile/');
 
-  // 4-я иконка считается "more": settings
+  const mainClientRoutes = ['/', '/schedule', '/profile'];
   const isMainPageClient = mainClientRoutes.some(route => location === route || location === route + '/');
   const isMoreActiveClient = !isMainPageClient;
 

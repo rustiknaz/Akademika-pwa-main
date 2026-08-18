@@ -24,6 +24,9 @@ import Settings from "@/pages/Settings";
 import Schedule from "@/pages/Schedule";
 import NotFound from "@/pages/not-found";
 import AdminServices from "@/pages/AdminServices";
+import AdminMarketing from "@/pages/AdminMarketing";
+import AdminMessages from "@/pages/AdminMessages";
+import AdminAiHub from "@/pages/AdminAiHub";
 
 // Custom GlobalBackground with dynamic image and color support
 function GlobalBackground() {
@@ -79,6 +82,9 @@ function Router() {
       <Route path="/settings" component={Settings} />
       <Route path="/admin/services" component={AdminServices} />
       <Route path="/admin/memberships" component={AdminServices} />
+      <Route path="/admin/messages" component={AdminMessages} />
+      <Route path="/admin/ai" component={AdminAiHub} />
+      <Route path="/admin/marketing" component={AdminAiHub} />
       <Route component={NotFound} />
     </Switch>
   );
