@@ -73,7 +73,7 @@ export default function BottomNav() {
         />
         
         {/* ─── ОБЩИЙ КОНТЕЙНЕР (СВЯЗКА ПИЛЮЛИ И КНОПКИ AI ЧЕРЕЗ GAP-2.5) ─── */}
-        <div className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-[95] flex items-center justify-center gap-2.5 pointer-events-none select-none max-w-full">
+        <div className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] inset-x-0 mx-auto w-full px-3 z-[95] flex items-center justify-center gap-2.5 pointer-events-none select-none">
           
           {/* 1. ОСНОВНАЯ ПИЛЮЛЯ НАВИГАЦИИ (ПЛОТНЫЙ GAP-1.5 МЕЖДУ ЗНАЧКАМИ) */}
           <nav
