@@ -9,6 +9,7 @@ export default function BottomNav() {
   const [location, setLocation] = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAllowed, currentRole } = useRole();
+  const { accentColor } = useTheme();
 
   const menuBtnRef = useRef<HTMLButtonElement | null>(null);
 
@@ -19,17 +20,17 @@ export default function BottomNav() {
   // Общий класс для иконок
   const iconClass = "w-7 h-7 stroke-[2]";
 
-  // Пресет для кнопки: размер, радиус, поведение
+  // Пресет для кнопки: оригинальный размер 68px
   const navBtnClass =
     "relative w-[68px] h-[68px] rounded-full flex items-center justify-center cursor-pointer group focus:outline-none shrink-0 transition-colors duration-300";
 
-  // Универсальный класс для НЕактивной кнопки (icon-holder)
+  // Универсальный класс для НЕактивной кнопки
   const baseInactive =
     "w-[68px] h-[68px] flex items-center justify-center bg-transparent text-slate-600 dark:text-zinc-400";
 
-  // Универсальный класс для АКТИВНОЙ кнопки (icon-holder)
+  // Универсальный класс для АКТИВНОЙ кнопки
   const baseActive =
-    "w-[68px] h-[68px] rounded-full flex items-center justify-center bg-[#CCFF00] text-black shadow-md";
+    "w-[68px] h-[68px] rounded-full flex items-center justify-center text-black shadow-md";
 
   // Постоянный градиентный стиль для кнопки AI Ассистента
   const aiButtonGradient =
@@ -70,10 +71,14 @@ export default function BottomNav() {
           onClose={() => setIsMenuOpen(false)}
           menuZindex={94}
         />
-        <div className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-[95] flex flex-col items-center pointer-events-none">
+        
+        {/* ─── ОБЩИЙ КОНТЕЙНЕР (СВЯЗКА ПИЛЮЛИ И КНОПКИ AI ЧЕРЕЗ GAP-2.5) ─── */}
+        <div className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-[95] flex items-center justify-center gap-2.5 pointer-events-none select-none max-w-full">
+          
+          {/* 1. ОСНОВНАЯ ПИЛЮЛЯ НАВИГАЦИИ (ПЛОТНЫЙ GAP-1.5 МЕЖДУ ЗНАЧКАМИ) */}
           <nav
             id="urban-glass-admin-nav"
-            className="relative z-[95] p-3 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-lg flex gap-3 items-center rounded-full w-max pointer-events-auto transition-colors duration-300 border-none"
+            className="p-3 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-lg flex gap-1.5 items-center rounded-full w-max pointer-events-auto transition-colors duration-300 border-none"
           >
             {/* 1. Главная */}
             <Link
@@ -86,7 +91,10 @@ export default function BottomNav() {
                 setIsMenuOpen(false);
               }}
             >
-              <span className={isHomeTabActive ? baseActive : baseInactive}>
+              <span 
+                style={isHomeTabActive ? { backgroundColor: accentColor || '#CCFF00' } : {}}
+                className={isHomeTabActive ? baseActive : baseInactive}
+              >
                 <Home size={28} className={iconClass} />
               </span>
             </Link>
@@ -102,7 +110,10 @@ export default function BottomNav() {
                 setIsMenuOpen(false);
               }}
             >
-              <span className={isScheduleTabActive ? baseActive : baseInactive}>
+              <span 
+                style={isScheduleTabActive ? { backgroundColor: accentColor || '#CCFF00' } : {}}
+                className={isScheduleTabActive ? baseActive : baseInactive}
+              >
                 <Calendar size={28} className={iconClass} />
               </span>
             </Link>
@@ -119,7 +130,10 @@ export default function BottomNav() {
                   setIsMenuOpen(false);
                 }}
               >
-                <span className={isStudentsTabActive ? baseActive : baseInactive}>
+                <span 
+                  style={isStudentsTabActive ? { backgroundColor: accentColor || '#CCFF00' } : {}}
+                  className={isStudentsTabActive ? baseActive : baseInactive}
+                >
                   <Users size={28} className={iconClass} />
                 </span>
               </Link>
@@ -137,7 +151,10 @@ export default function BottomNav() {
                   setIsMenuOpen(false);
                 }}
               >
-                <span className={isProfileSettingsTabActive ? baseActive : baseInactive}>
+                <span 
+                  style={isProfileSettingsTabActive ? { backgroundColor: accentColor || '#CCFF00' } : {}}
+                  className={isProfileSettingsTabActive ? baseActive : baseInactive}
+                >
                   <Settings size={28} className={iconClass} />
                 </span>
               </Link>
@@ -152,13 +169,18 @@ export default function BottomNav() {
                 title="Меню"
                 type="button"
               >
-                <span className={isMoreActive ? baseActive : baseInactive}>
+                <span 
+                  style={isMoreActive ? { backgroundColor: accentColor || '#CCFF00' } : {}}
+                  className={isMoreActive ? baseActive : baseInactive}
+                >
                   <LayoutGrid size={28} className={iconClass} />
                 </span>
               </button>
             )}
+          </nav>
 
-            {/* 5. AI Ассистент (Крайняя правая кнопка, всегда яркая) */}
+          {/* 2. ОТДЕЛЬНАЯ КРУГЛАЯ КНОПКА AI В ОДНОТИПНОЙ ПОДЛОЖКЕ */}
+          <div className="p-3 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-lg rounded-full flex items-center justify-center pointer-events-auto transition-colors duration-300 border-none shrink-0">
             <Link
               href="/admin/ai"
               className={navBtnClass}
@@ -170,11 +192,11 @@ export default function BottomNav() {
               }}
             >
               <span className={aiButtonGradient}>
-                {/* Сюда позже можно вставить <MyCustomAiIcon /> */}
                 <Sparkles size={28} className="w-7 h-7 stroke-[2.5] text-black drop-shadow-sm" />
               </span>
             </Link>
-          </nav>
+          </div>
+
         </div>
       </>
     );
@@ -192,7 +214,7 @@ export default function BottomNav() {
   return (
     <nav
       id="urban-glass-client-nav"
-      className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 p-3 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-lg flex gap-3 items-center z-[95] rounded-full w-max pointer-events-auto transition-colors duration-300 border-none"
+      className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 p-3 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-lg flex gap-1.5 items-center z-[95] rounded-full w-max pointer-events-auto transition-colors duration-300 border-none"
     >
       <Link
         href="/"
@@ -203,7 +225,10 @@ export default function BottomNav() {
           setIsMenuOpen(false);
         }}
       >
-        <span className={isHomeTabActive ? baseActive : baseInactive}>
+        <span 
+          style={isHomeTabActive ? { backgroundColor: accentColor || '#CCFF00' } : {}}
+          className={isHomeTabActive ? baseActive : baseInactive}
+        >
           <Home size={28} className={iconClass} />
         </span>
       </Link>
@@ -216,7 +241,10 @@ export default function BottomNav() {
           setIsMenuOpen(false);
         }}
       >
-        <span className={isScheduleTabActive ? baseActive : baseInactive}>
+        <span 
+          style={isScheduleTabActive ? { backgroundColor: accentColor || '#CCFF00' } : {}}
+          className={isScheduleTabActive ? baseActive : baseInactive}
+        >
           <Calendar size={28} className={iconClass} />
         </span>
       </Link>
@@ -229,7 +257,10 @@ export default function BottomNav() {
           setIsMenuOpen(false);
         }}
       >
-        <span className={isProfileTabActive ? baseActive : baseInactive}>
+        <span 
+          style={isProfileTabActive ? { backgroundColor: accentColor || '#CCFF00' } : {}}
+          className={isProfileTabActive ? baseActive : baseInactive}
+        >
           <User size={28} className={iconClass} />
         </span>
       </Link>
@@ -242,7 +273,10 @@ export default function BottomNav() {
           setIsMenuOpen(false);
         }}
       >
-        <span className={isMoreActiveClient ? baseActive : baseInactive}>
+        <span 
+          style={isMoreActiveClient ? { backgroundColor: accentColor || '#CCFF00' } : {}}
+          className={isMoreActiveClient ? baseActive : baseInactive}
+        >
           <Settings size={28} className={iconClass} />
         </span>
       </Link>
