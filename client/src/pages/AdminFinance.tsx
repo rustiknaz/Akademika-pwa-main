@@ -273,234 +273,227 @@ export default function AdminFinance() {
   }
 
   return (
-    <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col p-6 pb-28 font-sans relative transition-colors duration-300 bg-transparent ${
+    <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col font-sans relative transition-colors duration-300 bg-transparent ${
       theme === 'light' ? 'text-black' : 'text-white'
     }`}>
 
-      {/* ВЕРХНИЙ БЛОК: Баннер + Вертикальная навигация */}
-      <div className="flex gap-2.5 h-[180px] w-full mt-4 mb-3 select-none z-30">
-        
-        {/* ЛЕВЫЙ БЛОК: Основной баннер */}
-        <div className="flex-1 relative h-full">
-          <AnimatePresence initial={false} mode="wait">
-            {activeSlide === 0 ? (
-              /* СЛАЙД 1: Сводка */
-              <motion.div
-                key="finance-slide"
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.2}
-                onDragEnd={(_, info) => {
-                  if (info.offset.x < -40) {
-                    setIsFilterOpen(false);
-                    setActiveSlide(1);
-                  }
-                }}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.25 }}
-                style={{ backgroundColor: accentColor || '#CCFF00' }}
-                className="absolute inset-0 p-5 rounded-outer shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible"
-              >
-                <div>
-                  <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 leading-tight">
-                    Сводка
-                  </h2>
-                </div>
+      {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
+      <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
 
-                <div className="flex flex-col gap-0 px-0.5">
-                  <span className="text-4xl font-black text-slate-900 font-mono tracking-tight leading-none">
-                    {displayAmount.toLocaleString('ru-RU')} ₽
-                  </span>
-                  <span className="text-[10px] font-bold text-slate-900/70 uppercase tracking-wide mt-1.5">
-                    {summaryMode === 'income' ? 'Доходы' : summaryMode === 'expense' ? 'Расходы' : 'Касса / Баланс'} за {selectedDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
-                  </span>
-                </div>
+        {/* ─── ВЕРХНИЙ БЛОК: Сводка / Касса + Вертикальная навигация ─── */}
+        <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
+          
+          {/* Левый баннер-слайдер */}
+          <div className="flex-1 relative h-full">
+            <AnimatePresence initial={false} mode="wait">
+              {activeSlide === 0 ? (
+                /* СЛАЙД 1: Сводка */
+                <motion.div
+                  key="finance-slide"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x < -40) {
+                      setIsFilterOpen(false);
+                      setActiveSlide(1);
+                    }
+                  }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.25 }}
+                  style={{ backgroundColor: accentColor || '#CCFF00' }}
+                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible"
+                >
+                  <div>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 leading-tight">
+                      Сводка
+                    </h2>
+                  </div>
 
-                {/* Низ баннера: Круглая кнопка Фильтров слева */}
-                <div className="relative flex items-center justify-between z-[100]">
-                  <div className="relative">
+                  <div className="flex flex-col gap-0 px-0.5">
+                    <span className="text-4xl font-black text-slate-900 font-mono tracking-tight leading-none">
+                      {displayAmount.toLocaleString('ru-RU')} ₽
+                    </span>
+                    <span className="text-[10px] font-bold text-slate-900/70 uppercase tracking-wide mt-1.5">
+                      {summaryMode === 'income' ? 'Доходы' : summaryMode === 'expense' ? 'Расходы' : 'Касса / Баланс'} за {selectedDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
+                    </span>
+                  </div>
+
+                  {/* Низ баннера: Круглая кнопка Фильтров слева */}
+                  <div className="relative flex items-center justify-between z-[100]">
+                    <div className="relative">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsFilterOpen(!isFilterOpen);
+                        }}
+                        type="button"
+                        className="w-11 h-11 rounded-full bg-black/10 hover:bg-black/15 text-slate-900 flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                      >
+                        <SlidersHorizontal size={20} className="stroke-[2.5]" />
+                        {summaryMode !== 'income' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-slate-900 shrink-0" />}
+                      </button>
+
+                      {isFilterOpen && (
+                        <div 
+                          onClick={(e) => e.stopPropagation()}
+                          className="absolute top-[110%] left-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl w-64 origin-top-left"
+                        >
+                          <div>
+                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Тип сводки</label>
+                            <select
+                              value={summaryMode}
+                              onChange={(e) => {
+                                setSummaryMode(e.target.value as any);
+                                setIsFilterOpen(false);
+                              }}
+                              className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
+                            >
+                              <option value="income">Доходы</option>
+                              <option value="expense">Расходы</option>
+                              <option value="all">Касса (Баланс)</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Дата операций</label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setIsFilterOpen(false);
+                                setIsDatePickerOpen(true);
+                              }}
+                              className="w-full flex items-center justify-between bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white px-3 py-2 rounded-xl text-xs font-bold cursor-pointer transition-colors"
+                            >
+                              <span>{selectedDate.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
+                              <CalendarDays size={14} className="text-slate-400" />
+                            </button>
+                          </div>
+
+                          <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
+                            <button 
+                              type="button" 
+                              onClick={() => setIsFilterOpen(false)} 
+                              className="flex-1 bg-[#CCFF00] text-black text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-all cursor-pointer"
+                            >
+                              Применить
+                            </button>
+                            <button 
+                              type="button" 
+                              onClick={() => { 
+                                setSummaryMode('income');
+                                setSelectedDate(new Date());
+                                setIsFilterOpen(false);
+                              }} 
+                              className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer"
+                            >
+                              Сброс
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              ) : (
+                /* СЛАЙД 2: Касса */
+                <motion.div
+                  key="cashier-slide"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x > 40) {
+                      setIsFilterOpen(false);
+                      setActiveSlide(0);
+                    }
+                  }}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.25 }}
+                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between bg-[#DDE2E5] dark:bg-[#161618] border border-slate-300/40 dark:border-white/10 cursor-grab active:cursor-grabbing !overflow-visible"
+                >
+                  <div>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 dark:text-white leading-tight">
+                      Касса студии
+                    </h2>
+                  </div>
+
+                  {/* Блок быстрых действий Кассы */}
+                  <div className="grid grid-cols-2 gap-3 px-0.5">
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsFilterOpen(!isFilterOpen);
-                      }}
-                      type="button"
-                      className="w-11 h-11 rounded-full bg-black/10 hover:bg-black/15 text-slate-900 flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                      onClick={() => setIsPOSOpen(true)}
+                      style={{ backgroundColor: accentColor || '#CCFF00' }}
+                      className="hover:opacity-90 border-none p-3.5 rounded-[22px] shadow-sm flex flex-col items-center justify-center gap-2 transition-all cursor-pointer"
                     >
-                      <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                      {summaryMode !== 'income' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-slate-900 shrink-0" />}
+                      <div className="w-10 h-10 rounded-full bg-black/10 text-black flex items-center justify-center shrink-0">
+                        <ShoppingCart size={20} className="stroke-[2.5]" />
+                      </div>
+                      <span className="text-[11px] font-bold text-black uppercase tracking-wider text-center leading-tight">
+                        Новая<br/>продажа
+                      </span>
                     </button>
 
-                    {isFilterOpen && (
-                      <div 
-                        onClick={(e) => e.stopPropagation()}
-                        className="absolute top-[110%] left-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl w-64 origin-top-left"
-                      >
-                        <div>
-                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Тип сводки</label>
-                          <select
-                            value={summaryMode}
-                            onChange={(e) => {
-                              setSummaryMode(e.target.value as any);
-                              setIsFilterOpen(false);
-                            }}
-                            className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
-                          >
-                            <option value="income">Доходы</option>
-                            <option value="expense">Расходы</option>
-                            <option value="all">Касса (Баланс)</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Дата операций</label>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setIsFilterOpen(false);
-                              setIsDatePickerOpen(true);
-                            }}
-                            className="w-full flex items-center justify-between bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white px-3 py-2 rounded-xl text-xs font-bold cursor-pointer transition-colors"
-                          >
-                            <span>{selectedDate.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
-                            <CalendarDays size={14} className="text-slate-400" />
-                          </button>
-                        </div>
-
-                        <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
-                          <button 
-                            type="button" 
-                            onClick={() => setIsFilterOpen(false)} 
-                            className="flex-1 bg-[#CCFF00] text-black text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-all cursor-pointer"
-                          >
-                            Применить
-                          </button>
-                          <button 
-                            type="button" 
-                            onClick={() => { 
-                              setSummaryMode('income');
-                              setSelectedDate(new Date());
-                              setIsFilterOpen(false);
-                            }} 
-                            className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer"
-                          >
-                            Сброс
-                          </button>
-                        </div>
+                    <button
+                      onClick={() => toast({ title: "В разработке", description: "Модуль внесения расхода" })}
+                      className="bg-white/60 dark:bg-black/40 hover:bg-white dark:hover:bg-black/60 border border-transparent dark:border-white/5 p-3.5 rounded-[22px] shadow-sm flex flex-col items-center justify-center gap-2 transition-all cursor-pointer"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+                        <ArrowDownRight size={20} className="stroke-[2.5]" />
                       </div>
-                    )}
+                      <span className="text-[11px] font-bold text-slate-900 dark:text-white uppercase tracking-wider text-center leading-tight">
+                        Внести<br/>расход
+                      </span>
+                    </button>
                   </div>
-                </div>
-              </motion.div>
-            ) : (
-              /* СЛАЙД 2: Касса */
-              <motion.div
-                key="cashier-slide"
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.2}
-                onDragEnd={(_, info) => {
-                  if (info.offset.x > 40) {
-                    setIsFilterOpen(false);
-                    setActiveSlide(0);
-                  }
-                }}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.25 }}
-                className="absolute inset-0 p-5 rounded-outer shadow-md flex flex-col justify-between bg-[#DDE2E5] dark:bg-[#161618] border border-slate-300/40 dark:border-white/10 cursor-grab active:cursor-grabbing !overflow-visible"
-              >
-                <div>
-                  <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 dark:text-white leading-tight">
-                    Касса студии
-                  </h2>
-                </div>
 
-                {/* Блок быстрых действий Кассы */}
-                <div className="grid grid-cols-2 gap-3 px-0.5">
-                  <button
-                    onClick={() => setIsPOSOpen(true)}
-                    style={{ backgroundColor: accentColor || '#CCFF00' }}
-                    className="hover:opacity-90 border-none p-3.5 rounded-[22px] shadow-sm flex flex-col items-center justify-center gap-2 transition-all cursor-pointer"
-                  >
-                    <div className="w-10 h-10 rounded-full bg-black/10 text-black flex items-center justify-center shrink-0">
-                      <ShoppingCart size={20} className="stroke-[2.5]" />
-                    </div>
-                    <span className="text-[11px] font-bold text-black uppercase tracking-wider text-center leading-tight">
-                      Новая<br/>продажа
-                    </span>
-                  </button>
+                  <div className="h-2" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
-                  <button
-                    onClick={() => toast({ title: "В разработке", description: "Модуль внесения расхода" })}
-                    className="bg-white/60 dark:bg-black/40 hover:bg-white dark:hover:bg-black/60 border border-transparent dark:border-white/5 p-3.5 rounded-[22px] shadow-sm flex flex-col items-center justify-center gap-2 transition-all cursor-pointer"
-                  >
-                    <div className="w-10 h-10 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
-                      <ArrowDownRight size={20} className="stroke-[2.5]" />
-                    </div>
-                    <span className="text-[11px] font-bold text-slate-900 dark:text-white uppercase tracking-wider text-center leading-tight">
-                      Внести<br/>расход
-                    </span>
-                  </button>
-                </div>
-
-                <div className="h-2" />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Правая вертикальная пилюля */}
+          <div className="w-[64px] bg-white/40 dark:bg-[#161618]/90 border border-black/5 dark:border-white/10 rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-sm shrink-0 backdrop-blur-md">
+            <button 
+              onClick={() => { setIsFilterOpen(false); setActiveSlide(0); }}
+              className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+                activeSlide === 0 
+                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
+                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+              }`}
+              title="Сводка"
+            >
+              <BarChart3 size={20} className="stroke-[2.5]" />
+            </button>
+            
+            <button 
+              onClick={() => { setIsFilterOpen(false); setActiveSlide(1); }}
+              className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+                activeSlide === 1 
+                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
+                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+              }`}
+              title="Касса"
+            >
+              <Wallet size={20} className="stroke-[2.5]" />
+            </button>
+          </div>
         </div>
 
-        {/* ПРАВЫЙ БЛОК: Вертикальная пилюля (Сводка / Касса) */}
-        <div className="w-[64px] bg-white/60 dark:bg-[#161618]/90 border border-black/5 dark:border-white/10 rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-sm shrink-0 backdrop-blur-md">
-          <button 
-            onClick={() => { setIsFilterOpen(false); setActiveSlide(0); }}
-            className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
-              activeSlide === 0 
-                ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
-            }`}
-            title="Сводка"
-          >
-            <BarChart3 size={20} className="stroke-[2.5]" />
-          </button>
-          
-          <button 
-            onClick={() => { setIsFilterOpen(false); setActiveSlide(1); }}
-            className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
-              activeSlide === 1 
-                ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
-            }`}
-            title="Касса"
-          >
-            <Wallet size={20} className="stroke-[2.5]" />
-          </button>
-        </div>
-      </div>
-
-      <div className="flex-1 pt-2 pb-32 pr-0.5">
-        <div className="flex items-center justify-between mb-3 px-2">
-          <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-zinc-500">
-            {summaryMode === 'income' ? 'Список доходов' : summaryMode === 'expense' ? 'Список расходов' : 'Все транзакции'}
-          </h3>
-          <span className="text-[11px] font-bold text-slate-400 dark:text-zinc-500">
-            Всего: {displayedTransactions.length} операций
-          </span>
-        </div>
-
-        {/* СПИСОК ТРАНЗАКЦИЙ (Стили и полупрозрачность как в Базе Клиентов) */}
-        <div className="space-y-2.5 mb-6">
+        {/* ─── СПИСОК ТРАНЗАКЦИЙ С ЕДИНЫМ GAP-2.5 ─── */}
+        <div className="flex flex-col gap-2.5">
           {displayedTransactions.length > 0 ? (
             displayedTransactions.map((t) => (
               <div
                 key={t.id}
-                className="w-full min-h-[86px] bg-white/40 dark:bg-black/40 backdrop-blur-md border-none rounded-outer px-4 py-2.5 flex items-center gap-3.5 shadow-none transition group"
+                className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] px-5 py-3 flex items-center gap-3.5 shadow-none transition group"
               >
-                {/* Круглая иконка операции 56x56 */}
-                <div className={`w-[56px] h-[56px] rounded-full flex items-center justify-center shrink-0 ${
+                {/* Круглая иконка операции */}
+                <div className={`w-[52px] h-[52px] rounded-full flex items-center justify-center shrink-0 ${
                   t.type === 'income' 
                     ? 'bg-emerald-500/10 text-emerald-600 dark:text-[#CCFF00]' 
                     : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
@@ -514,11 +507,11 @@ export default function AdminFinance() {
 
                 {/* Название и категория */}
                 <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
-                  <h4 className="font-semibold text-base text-black dark:text-white truncate group-hover:text-lime-600 dark:group-hover:text-[#CCFF00]">
+                  <h4 className="font-bold text-base text-slate-950 dark:text-white truncate group-hover:text-lime-600 dark:group-hover:text-[#CCFF00]">
                     {t.title}
                   </h4>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border uppercase tracking-wider bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-slate-600 dark:text-zinc-400">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-300">
                       {t.category}
                     </span>
                   </div>
@@ -540,6 +533,7 @@ export default function AdminFinance() {
             </div>
           )}
         </div>
+
       </div>
 
       <FloatingActionButton

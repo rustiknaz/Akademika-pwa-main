@@ -136,190 +136,191 @@ export default function AdminNotifications() {
   };
 
   return (
-    <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col p-6 pb-28 font-sans relative transition-colors duration-300 bg-transparent ${
+    <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col font-sans relative transition-colors duration-300 bg-transparent ${
       theme === 'light' ? 'text-black' : 'text-white'
     }`}>
 
-      {/* ─── ВЕРХНИЙ БЛОК: Баннер + Вертикальная навигация ─── */}
-      <div className="flex gap-2.5 h-[180px] w-full mt-4 mb-3 select-none z-30">
+      {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
+      <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ЛЕВЫЙ БЛОК: Основной баннер со свайпом */}
-        <div className="flex-1 relative h-full">
-          <AnimatePresence initial={false} mode="wait">
-            {activeSlide === 0 ? (
-              /* СЛАЙД 1: КАНАЛЫ */
-              <motion.div
-                key="channels-slide"
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.2}
-                onDragEnd={(_, info) => {
-                  if (info.offset.x < -40) setActiveSlide(1);
-                }}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.25 }}
-                style={{ backgroundColor: accentColor || '#CCFF00' }}
-                className="absolute inset-0 p-5 rounded-outer shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none"
-              >
-                <div>
-                  <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 leading-tight">
-                    Каналы связи
-                  </h2>
-                </div>
-
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-black text-slate-900 font-mono tracking-tight leading-none">
-                    {(isTgConnected ? 1 : 0) + (isWaConnected ? 1 : 0)}
-                  </span>
-                  <span className="text-[10px] font-bold text-slate-900/70 uppercase tracking-wide leading-tight">
-                    активных<br/>канала
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/10 text-slate-900 backdrop-blur-sm">
-                    Telegram • WhatsApp
-                  </span>
-                </div>
-              </motion.div>
-            ) : activeSlide === 1 ? (
-              /* СЛАЙД 2: РАССЫЛКА */
-              <motion.div
-                key="broadcast-slide"
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.2}
-                onDragEnd={(_, info) => {
-                  if (info.offset.x > 40) setActiveSlide(0);
-                  else if (info.offset.x < -40) setActiveSlide(2);
-                }}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.25 }}
-                className="absolute inset-0 p-5 rounded-outer shadow-md flex flex-col justify-between bg-[#DDE2E5] dark:bg-[#161618] border border-slate-300/40 dark:border-white/10 cursor-grab active:cursor-grabbing !overflow-visible select-none"
-              >
-                <div>
-                  <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 dark:text-white leading-tight">
-                    Рассылка
-                  </h2>
-                </div>
-
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-black text-slate-900 dark:text-white font-mono tracking-tight leading-none">
-                    184
-                  </span>
-                  <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
-                    получателя<br/>в базе
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-400">
-                    Мгновенная отправка
-                  </span>
-                </div>
-              </motion.div>
-            ) : (
-              /* СЛАЙД 3: ТРИГГЕРЫ */
-              <motion.div
-                key="triggers-slide"
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.2}
-                onDragEnd={(_, info) => {
-                  if (info.offset.x > 40) setActiveSlide(1);
-                }}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.25 }}
-                className="absolute inset-0 p-5 rounded-outer shadow-md flex flex-col justify-between bg-[#DDE2E5] dark:bg-[#161618] border border-slate-300/40 dark:border-white/10 cursor-grab active:cursor-grabbing !overflow-visible select-none"
-              >
-                <div>
-                  <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 dark:text-white leading-tight">
-                    Авто-триггеры
-                  </h2>
-                </div>
-
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-black text-slate-900 dark:text-white font-mono tracking-tight leading-none">
-                    {(t1Enabled ? 1 : 0) + (t2Enabled ? 1 : 0) + (t3Enabled ? 1 : 0)}
-                  </span>
-                  <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
-                    активных<br/>правила
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-400">
-                    Сервисные уведомления
-                  </span>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* ПРАВЫЙ БЛОК: Вертикальная пилюля (Каналы / Рассылка / Триггеры) */}
-        <div className="w-[64px] bg-white/60 dark:bg-[#161618]/90 border border-black/5 dark:border-white/10 rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-sm shrink-0 backdrop-blur-md">
-          <button 
-            onClick={() => setActiveSlide(0)}
-            className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
-              activeSlide === 0 
-                ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
-            }`}
-            title="Каналы"
-          >
-            <Bot size={20} className="stroke-[2.5]" />
-          </button>
+        {/* ─── ВЕРХНИЙ БЛОК: Слайдер + Вертикальная навигация ─── */}
+        <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
           
-          <button 
-            onClick={() => setActiveSlide(1)}
-            className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
-              activeSlide === 1 
-                ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
-            }`}
-            title="Рассылка"
-          >
-            <Send size={19} className="stroke-[2.5]" />
-          </button>
+          {/* Левый баннер со свайпом */}
+          <div className="flex-1 relative h-full">
+            <AnimatePresence initial={false} mode="wait">
+              {activeSlide === 0 ? (
+                /* СЛАЙД 1: КАНАЛЫ */
+                <motion.div
+                  key="channels-slide"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x < -40) setActiveSlide(1);
+                  }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.25 }}
+                  style={{ backgroundColor: accentColor || '#CCFF00' }}
+                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none"
+                >
+                  <div>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 leading-tight">
+                      Каналы связи
+                    </h2>
+                  </div>
 
-          <button 
-            onClick={() => setActiveSlide(2)}
-            className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
-              activeSlide === 2 
-                ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
-            }`}
-            title="Триггеры"
-          >
-            <Zap size={20} className="stroke-[2.5]" />
-          </button>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-black text-slate-900 font-mono tracking-tight leading-none">
+                      {(isTgConnected ? 1 : 0) + (isWaConnected ? 1 : 0)}
+                    </span>
+                    <span className="text-[10px] font-bold text-slate-900/70 uppercase tracking-wide leading-tight">
+                      активных<br/>канала
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/10 text-slate-900 backdrop-blur-sm">
+                      Telegram • WhatsApp
+                    </span>
+                  </div>
+                </motion.div>
+              ) : activeSlide === 1 ? (
+                /* СЛАЙД 2: РАССЫЛКА */
+                <motion.div
+                  key="broadcast-slide"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x > 40) setActiveSlide(0);
+                    else if (info.offset.x < -40) setActiveSlide(2);
+                  }}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.25 }}
+                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between bg-[#DDE2E5] dark:bg-[#161618] border border-slate-300/40 dark:border-white/10 cursor-grab active:cursor-grabbing !overflow-visible select-none"
+                >
+                  <div>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 dark:text-white leading-tight">
+                      Рассылка
+                    </h2>
+                  </div>
+
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-black text-slate-900 dark:text-white font-mono tracking-tight leading-none">
+                      184
+                    </span>
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
+                      получателя<br/>в базе
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-400">
+                      Мгновенная отправка
+                    </span>
+                  </div>
+                </motion.div>
+              ) : (
+                /* СЛАЙД 3: ТРИГГЕРЫ */
+                <motion.div
+                  key="triggers-slide"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x > 40) setActiveSlide(1);
+                  }}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.25 }}
+                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between bg-[#DDE2E5] dark:bg-[#161618] border border-slate-300/40 dark:border-white/10 cursor-grab active:cursor-grabbing !overflow-visible select-none"
+                >
+                  <div>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 dark:text-white leading-tight">
+                      Авто-триггеры
+                    </h2>
+                  </div>
+
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-black text-slate-900 dark:text-white font-mono tracking-tight leading-none">
+                      {(t1Enabled ? 1 : 0) + (t2Enabled ? 1 : 0) + (t3Enabled ? 1 : 0)}
+                    </span>
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
+                      активных<br/>правила
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-400">
+                      Сервисные уведомления
+                    </span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Правая вертикальная пилюля */}
+          <div className="w-[64px] bg-white/40 dark:bg-[#161618]/90 border border-black/5 dark:border-white/10 rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-sm shrink-0 backdrop-blur-md">
+            <button 
+              onClick={() => setActiveSlide(0)}
+              className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+                activeSlide === 0 
+                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
+                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+              }`}
+              title="Каналы"
+            >
+              <Bot size={20} className="stroke-[2.5]" />
+            </button>
+            
+            <button 
+              onClick={() => setActiveSlide(1)}
+              className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+                activeSlide === 1 
+                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
+                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+              }`}
+              title="Рассылка"
+            >
+              <Send size={19} className="stroke-[2.5]" />
+            </button>
+
+            <button 
+              onClick={() => setActiveSlide(2)}
+              className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+                activeSlide === 2 
+                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
+                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+              }`}
+              title="Триггеры"
+            >
+              <Zap size={20} className="stroke-[2.5]" />
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* ─── ТЕЛО СТРАНИЦЫ ─── */}
-      <main className="flex-1 pb-28 space-y-4 pr-0.5">
-
+        {/* ─── ТЕЛО СТРАНИЦЫ С ЕДИНЫМ GAP-2.5 ─── */}
         {activeSlide === 0 ? (
           /* ════════════════════════════════════════════════════
               СЕКЦИЯ 1: ПОДКЛЮЧЕНИЕ КАНАЛОВ
              ════════════════════════════════════════════════════ */
-          <div className="space-y-3">
+          <div className="flex flex-col gap-2.5">
             {/* TELEGRAM BOT */}
-            <div className="w-full bg-white/40 dark:bg-black/40 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-outer p-5 shadow-sm space-y-3.5">
+            <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-none space-y-4">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-sky-500/10 text-sky-500 flex items-center justify-center font-bold text-sm shrink-0">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-13 h-13 rounded-full bg-sky-500/10 text-sky-500 flex items-center justify-center font-bold text-sm shrink-0">
                     TG
                   </div>
                   <div>
-                    <h3 className="font-semibold text-base text-black dark:text-white leading-tight">Telegram Bot</h3>
+                    <h3 className="font-bold text-base text-slate-950 dark:text-white leading-tight">Telegram Bot</h3>
                     <p className="text-[11px] text-zinc-400 font-mono mt-0.5">@urbanglass_dance_bot</p>
                   </div>
                 </div>
@@ -346,7 +347,7 @@ export default function AdminNotifications() {
                     value={tgToken}
                     onChange={(e) => setTgToken(e.target.value)}
                     placeholder="Введите API Token ботa"
-                    className="w-full h-12 rounded-[18px] pl-4 pr-12 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                    className="w-full h-12 rounded-2xl pl-4 pr-12 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                   />
                   <button
                     onClick={() => setShowTgToken(!showTgToken)}
@@ -371,10 +372,10 @@ export default function AdminNotifications() {
             </div>
 
             {/* WHATSAPP BUSINESS */}
-            <div className="w-full bg-white/40 dark:bg-black/40 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-outer p-5 shadow-sm space-y-3.5">
+            <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-none space-y-4">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold text-sm shrink-0">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-13 h-13 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold text-sm shrink-0">
                     WA
                   </div>
                   <div>
@@ -404,7 +405,7 @@ export default function AdminNotifications() {
                   value={waApiKey}
                   onChange={(e) => setWaApiKey(e.target.value)}
                   placeholder="Ключ шлюза WhatsApp"
-                  className="w-full h-12 rounded-[18px] px-4 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                  className="w-full h-12 rounded-2xl px-4 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                 />
 
                 <div className="flex items-center justify-between pt-1">
@@ -432,7 +433,7 @@ export default function AdminNotifications() {
           /* ════════════════════════════════════════════════════
               СЕКЦИЯ 2: РУЧНАЯ РАССЫЛКА
              ════════════════════════════════════════════════════ */
-          <div className="w-full bg-white/40 dark:bg-black/40 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-outer p-5 shadow-sm space-y-4">
+          <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-none space-y-4">
             {/* АУДИТОРИЯ */}
             <div>
               <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-2">
@@ -448,10 +449,10 @@ export default function AdminNotifications() {
                     key={aud.id}
                     type="button"
                     onClick={() => setAudience(aud.id as any)}
-                    className={`p-3 rounded-[18px] border text-left transition-all cursor-pointer ${
+                    className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                       audience === aud.id
-                        ? 'bg-[#CCFF00] text-black border-[#CCFF00] shadow-md font-bold'
-                        : 'bg-black/5 dark:bg-zinc-900 border-black/5 dark:border-zinc-800 text-slate-800 dark:text-zinc-300'
+                        ? 'bg-[#CCFF00] text-black border-[#CCFF00] shadow-sm font-bold'
+                        : 'bg-black/5 dark:bg-zinc-900 border-transparent text-slate-800 dark:text-zinc-300'
                     }`}
                   >
                     <span className="text-xs font-bold block">{aud.label}</span>
@@ -467,7 +468,7 @@ export default function AdminNotifications() {
                   <select
                     value={selectedGroup}
                     onChange={(e) => setSelectedGroup(e.target.value)}
-                    className="w-full h-11 rounded-[16px] px-3.5 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors cursor-pointer bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                    className="w-full h-11 rounded-2xl px-3.5 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors cursor-pointer bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                   >
                     {groupsList.map((g) => (
                       <option key={g} value={g}>{g}</option>
@@ -492,10 +493,10 @@ export default function AdminNotifications() {
                     key={ch.id}
                     type="button"
                     onClick={() => setBroadcastChannel(ch.id as any)}
-                    className={`text-xs font-bold uppercase tracking-wider px-3.5 py-2.5 rounded-[14px] border transition-all cursor-pointer ${
+                    className={`text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-full border transition-all cursor-pointer ${
                       broadcastChannel === ch.id
                         ? 'bg-slate-900 dark:bg-white text-white dark:text-black border-transparent shadow-sm'
-                        : 'bg-black/5 dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border-black/5 dark:border-zinc-800'
+                        : 'bg-black/5 dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border-transparent'
                     }`}
                   >
                     {ch.label}
@@ -514,7 +515,7 @@ export default function AdminNotifications() {
                 value={broadcastMessage}
                 onChange={(e) => setBroadcastMessage(e.target.value)}
                 placeholder="Введите новость, анонс мастер-класса или важное объявление..."
-                className="w-full rounded-[18px] p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white placeholder:text-zinc-400"
+                className="w-full rounded-2xl p-4 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white placeholder:text-zinc-400"
               />
             </div>
 
@@ -523,7 +524,7 @@ export default function AdminNotifications() {
               onClick={handleSendBroadcast}
               disabled={isSendingBroadcast}
               style={{ backgroundColor: accentColor || '#CCFF00', color: '#000000' }}
-              className="w-full h-13 font-black text-xs uppercase tracking-wider rounded-full flex items-center justify-center gap-2 shadow-md hover:brightness-105 active:scale-[0.99] transition-all cursor-pointer border-none disabled:opacity-50"
+              className="w-full h-14 font-black text-xs uppercase tracking-wider rounded-full flex items-center justify-center gap-2 shadow-md hover:opacity-90 active:scale-[0.99] transition-all cursor-pointer border-none disabled:opacity-50"
             >
               {isSendingBroadcast ? (
                 <>
@@ -542,7 +543,7 @@ export default function AdminNotifications() {
           /* ════════════════════════════════════════════════════
               СЕКЦИЯ 3: АВТО-ТРИГГЕРЫ
              ════════════════════════════════════════════════════ */
-          <div className="space-y-3">
+          <div className="flex flex-col gap-2.5">
             {/* Кнопка быстрого сохранения */}
             <div className="flex justify-end pb-1">
               <button
@@ -557,11 +558,11 @@ export default function AdminNotifications() {
             </div>
 
             {/* TRIGGER 1 */}
-            <div className="w-full bg-white/40 dark:bg-black/40 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-outer p-5 shadow-sm space-y-3">
+            <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-none space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-[#CCFF00]/10 text-lime-600 dark:text-[#CCFF00] flex items-center justify-center shrink-0">
-                    <Clock size={16} />
+                  <div className="w-9 h-9 rounded-full bg-[#CCFF00]/15 text-slate-950 dark:text-[#CCFF00] flex items-center justify-center shrink-0">
+                    <Clock size={18} />
                   </div>
                   <span className="text-sm font-bold text-black dark:text-white">Напоминание о занятии</span>
                 </div>
@@ -589,10 +590,10 @@ export default function AdminNotifications() {
                         key={t.id}
                         type="button"
                         onClick={() => setT1Timing(t.id as any)}
-                        className={`text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border transition-all cursor-pointer ${
+                        className={`text-[11px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border transition-all cursor-pointer ${
                           t1Timing === t.id
                             ? 'bg-[#CCFF00] text-black border-[#CCFF00]'
-                            : 'bg-black/5 dark:bg-zinc-900 text-zinc-400 border-black/5 dark:border-zinc-800'
+                            : 'bg-black/5 dark:bg-zinc-900 text-zinc-400 border-transparent'
                         }`}
                       >
                         {t.label}
@@ -604,18 +605,18 @@ export default function AdminNotifications() {
                     rows={2}
                     value={t1Template}
                     onChange={(e) => setT1Template(e.target.value)}
-                    className="w-full rounded-[16px] p-3 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                    className="w-full rounded-2xl p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                   />
                 </div>
               )}
             </div>
 
             {/* TRIGGER 2 */}
-            <div className="w-full bg-white/40 dark:bg-black/40 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-outer p-5 shadow-sm space-y-3">
+            <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-none space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
-                    <AlertTriangle size={16} />
+                  <div className="w-9 h-9 rounded-full bg-amber-500/15 text-amber-500 flex items-center justify-center shrink-0">
+                    <AlertTriangle size={18} />
                   </div>
                   <span className="text-sm font-bold text-black dark:text-white">Окончание абонемента</span>
                 </div>
@@ -642,10 +643,10 @@ export default function AdminNotifications() {
                         key={c.id}
                         type="button"
                         onClick={() => setT2Condition(c.id as any)}
-                        className={`text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border transition-all cursor-pointer ${
+                        className={`text-[11px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border transition-all cursor-pointer ${
                           t2Condition === c.id
                             ? 'bg-[#CCFF00] text-black border-[#CCFF00]'
-                            : 'bg-black/5 dark:bg-zinc-900 text-zinc-400 border-black/5 dark:border-zinc-800'
+                            : 'bg-black/5 dark:bg-zinc-900 text-zinc-400 border-transparent'
                         }`}
                       >
                         {c.label}
@@ -657,18 +658,18 @@ export default function AdminNotifications() {
                     rows={2}
                     value={t2Template}
                     onChange={(e) => setT2Template(e.target.value)}
-                    className="w-full rounded-[16px] p-3 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                    className="w-full rounded-2xl p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                   />
                 </div>
               )}
             </div>
 
             {/* TRIGGER 3 */}
-            <div className="w-full bg-white/40 dark:bg-black/40 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-outer p-5 shadow-sm space-y-3">
+            <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-none space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-purple-500/10 text-purple-500 flex items-center justify-center shrink-0">
-                    <Sparkles size={16} />
+                  <div className="w-9 h-9 rounded-full bg-purple-500/15 text-purple-500 flex items-center justify-center shrink-0">
+                    <Sparkles size={18} />
                   </div>
                   <span className="text-sm font-bold text-black dark:text-white">Отмена / Перенос урока</span>
                 </div>
@@ -690,7 +691,7 @@ export default function AdminNotifications() {
                     rows={2}
                     value={t3Template}
                     onChange={(e) => setT3Template(e.target.value)}
-                    className="w-full rounded-[16px] p-3 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                    className="w-full rounded-2xl p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                   />
                 </div>
               )}
@@ -698,7 +699,7 @@ export default function AdminNotifications() {
           </div>
         )}
 
-      </main>
+      </div>
 
       {/* ─── QR CODE MODAL ─── */}
       <AnimatePresence>
@@ -716,11 +717,7 @@ export default function AdminNotifications() {
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className={`relative z-10 w-full max-w-sm p-6 rounded-[32px] border shadow-2xl backdrop-blur-xl transition-colors ${
-                theme === 'light'
-                  ? 'bg-white/95 border-black/10 text-black'
-                  : 'bg-zinc-900/95 border-zinc-800 text-white'
-              }`}
+              className="relative z-10 w-full max-w-sm p-6 rounded-[28px] border shadow-2xl backdrop-blur-xl bg-[#18181b] border-zinc-800 text-white"
             >
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-base font-bold uppercase flex items-center gap-2">
@@ -768,8 +765,8 @@ export default function AdminNotifications() {
                     description: "WhatsApp шлюз успешно привязан."
                   });
                 }}
-                style={{ backgroundColor: accentColor, color: activeTextColor }}
-                className="w-full h-11 font-bold uppercase text-xs rounded-[16px] shadow-md hover:brightness-105 transition-all cursor-pointer border-none"
+                style={{ backgroundColor: accentColor || '#CCFF00', color: '#000000' }}
+                className="w-full h-11 font-black uppercase text-xs rounded-full shadow-md hover:opacity-90 transition-all cursor-pointer border-none"
               >
                 Готово
               </button>

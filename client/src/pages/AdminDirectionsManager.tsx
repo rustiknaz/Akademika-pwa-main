@@ -268,7 +268,7 @@ const HALLS_LIST = [
 ];
 
 export function DirectionsAndGroupsManager() {
-  const [location, setLocation] = useLocation();
+  const [, setLocation] = useLocation();
   const { theme, accentColor, accentConfig } = useTheme();
   const { currentRole } = useRole();
   const activeTextColor = accentConfig.textColor === 'text-black' ? '#000000' : '#ffffff';
@@ -291,7 +291,7 @@ export function DirectionsAndGroupsManager() {
 
   const branchesList = ['Филиал: Невский', 'Филиал: Центральный'];
 
-  // Edit item ID state & delete confirm state & detail viewer state
+  // Edit & delete confirm states
   const [editingId, setEditingId] = useState<number | null>(null);
   const [selectedDetail, setSelectedDetail] = useState<{
     type: 'direction' | 'group' | 'age' | 'level';
@@ -619,7 +619,6 @@ export function DirectionsAndGroupsManager() {
       }
     }
 
-    // Reset and close
     setEditingId(null);
     setFormName('');
     setFormDescription('');
@@ -638,296 +637,286 @@ export function DirectionsAndGroupsManager() {
 
   if (loading) {
     return (
-      <div className={`h-[100dvh] flex items-center justify-center transition-colors duration-300 ${
-        theme === 'light' ? 'bg-transparent text-slate-900' : 'bg-transparent text-white'
-      }`}>
+      <div className={`min-h-screen page-root flex items-center justify-center transition-colors duration-300 bg-transparent text-slate-900`}>
         <Loader2 className="w-8 h-8 animate-spin" style={{ color: accentColor }} />
       </div>
     );
   }
 
   return (
-    <div className={`min-h-screen min-h-[100dvh] flex flex-col p-6 pb-28 font-sans relative bg-transparent ${
-      theme === 'light' ? 'text-slate-900' : 'text-white'
+    <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col font-sans relative transition-colors duration-300 bg-transparent ${
+      theme === 'light' ? 'text-black' : 'text-white'
     }`}>
       
-      {/* ВЕРХНИЙ БЛОК: Главный баннер + Вертикальная навигация */}
-      <div className="flex gap-2.5 h-[180px] w-full mt-4 mb-3 select-none z-30">
+      {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
+      <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ЛЕВЫЙ БЛОК: Основной баннер со свайпом и анимацией */}
-        <div className="flex-1 relative h-full">
-          <AnimatePresence initial={false} mode="wait">
-            {mainView === 'groups' ? (
-              /* СЛАЙД 1: ГРУППЫ */
-              <motion.div
-                key="groups-slide"
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.2}
-                onDragEnd={(_, info) => {
-                  if (info.offset.x < -40) {
-                    setIsFilterOpen(false);
-                    setMainView('settings');
-                    setActiveTab('directions');
-                  }
-                }}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.25 }}
-                style={{ backgroundColor: accentColor || '#CCFF00' }}
-                className="absolute inset-0 p-5 rounded-outer shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none"
-              >
-                <div>
-                  <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 leading-tight">
-                    Группы
-                  </h2>
-                </div>
-
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-black text-slate-900 font-mono tracking-tight leading-none">
-                    {filteredGroups.length}
-                  </span>
-                  <span className="text-[10px] font-bold text-slate-900/70 uppercase tracking-wide leading-tight">
-                    активных<br/>групп
-                  </span>
-                </div>
-
-                {/* Низ баннера: Круглая кнопка Фильтров */}
-                <div className="relative flex items-center justify-between z-[100]">
-                  <div className="relative">
-                    <button 
-                      onPointerDown={(e) => e.stopPropagation()}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsFilterOpen(!isFilterOpen);
-                      }} 
-                      className="w-11 h-11 rounded-full bg-black/10 hover:bg-black/15 text-slate-900 flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
-                    >
-                      <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                      {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-slate-900 shrink-0" />}
-                    </button>
-
-                    {isFilterOpen && (
-                      <div 
-                        onPointerDown={(e) => e.stopPropagation()}
-                        onClick={(e) => e.stopPropagation()} 
-                        className="absolute top-[110%] left-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl w-72 origin-top-left"
-                      >
-                        <div>
-                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Филиал</label>
-                          <select
-                            value={selectedBranch}
-                            onChange={(e) => setSelectedBranch(e.target.value)}
-                            className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
-                          >
-                            <option value="Все филиалы">Все филиалы</option>
-                            {branchesList.map(b => <option key={b} value={b}>{b}</option>)}
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Зал</label>
-                          <select
-                            value={selectedHall}
-                            onChange={(e) => setSelectedHall(e.target.value)}
-                            className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
-                          >
-                            <option value="Все залы">Все залы</option>
-                            {HALLS_LIST.map(h => <option key={h} value={h}>{h}</option>)}
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Направление</label>
-                          <select
-                            value={selectedDirection}
-                            onChange={(e) => setSelectedDirection(e.target.value)}
-                            className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
-                          >
-                            <option value="Все направления">Все направления</option>
-                            {directions.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Возраст</label>
-                          <select
-                            value={selectedAge}
-                            onChange={(e) => setSelectedAge(e.target.value)}
-                            className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
-                          >
-                            <option value="Все возраста">Все возраста</option>
-                            {ages.map(a => <option key={a.id} value={a.name}>{a.name} ({a.range})</option>)}
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Педагог</label>
-                          <select
-                            value={selectedCoach}
-                            onChange={(e) => setSelectedCoach(e.target.value)}
-                            className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
-                          >
-                            <option value="Все педагоги">Все педагоги</option>
-                            {COACHES_LIST.map(c => <option key={c} value={c}>{c}</option>)}
-                          </select>
-                        </div>
-
-                        <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
-                          <button 
-                            type="button" 
-                            onClick={() => setIsFilterOpen(false)} 
-                            className="flex-1 bg-[#CCFF00] text-black text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-all cursor-pointer"
-                          >
-                            Применить
-                          </button>
-                          <button 
-                            type="button" 
-                            onClick={() => { 
-                              setSelectedBranch('Все филиалы'); 
-                              setSelectedHall('Все залы'); 
-                              setSelectedDirection('Все направления'); 
-                              setSelectedAge('Все возраста'); 
-                              setSelectedCoach('Все педагоги'); 
-                            }} 
-                            className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer"
-                          >
-                            Сброс
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            ) : (
-              /* СЛАЙД 2: НАСТРОЙКИ */
-              <motion.div
-                key="settings-slide"
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.2}
-                onDragEnd={(_, info) => {
-                  if (info.offset.x > 40) {
-                    setIsFilterOpen(false);
-                    setMainView('groups');
-                    setActiveTab('groups');
-                  }
-                }}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.25 }}
-                className="absolute inset-0 p-5 rounded-outer shadow-md flex flex-col justify-between bg-[#DDE2E5] dark:bg-[#161618] border border-slate-300/40 dark:border-white/10 cursor-grab active:cursor-grabbing !overflow-visible select-none"
-              >
-                <div>
-                  <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 dark:text-white leading-tight">
-                    Настройки
-                  </h2>
-                </div>
-
-                {/* Сводка со счетчиками */}
-                <div className="grid grid-cols-3 gap-2 bg-white/60 dark:bg-black/40 rounded-2xl p-3 backdrop-blur-sm">
-                  <div className="flex flex-col">
-                    <span className="text-2xl font-black text-slate-900 dark:text-white font-mono leading-none">
-                      {directions.length}
-                    </span>
-                    <span className="text-[9px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider mt-1 leading-tight">
-                      Направлений
-                    </span>
-                  </div>
-
-                  <div className="flex flex-col">
-                    <span className="text-2xl font-black text-slate-900 dark:text-white font-mono leading-none">
-                      {ages.length}
-                    </span>
-                    <span className="text-[9px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider mt-1 leading-tight">
-                      Возрастов
-                    </span>
-                  </div>
-
-                  <div className="flex flex-col">
-                    <span className="text-2xl font-black text-slate-900 dark:text-white font-mono leading-none">
-                      {levels.length}
-                    </span>
-                    <span className="text-[9px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider mt-1 leading-tight">
-                      Уровней
-                    </span>
-                  </div>
-                </div>
-
-                <div className="h-2" />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* ПРАВЫЙ БЛОК: Вертикальная пилюля (Группы / Настройки) */}
-        <div className="w-[64px] bg-white/60 dark:bg-[#161618]/90 border border-black/5 dark:border-white/10 rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-sm shrink-0 backdrop-blur-md">
-          <button 
-            onClick={() => { setMainView('groups'); setActiveTab('groups'); }}
-            className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
-              mainView === 'groups' 
-                ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
-            }`}
-            title="Группы"
-          >
-            <Calendar size={20} className="stroke-[2.5]" />
-          </button>
+        {/* ─── ВЕРХНИЙ БЛОК: Слайдер + Вертикальная навигация ─── */}
+        <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
           
-          <button 
-            onClick={() => { setMainView('settings'); setActiveTab('directions'); }}
-            className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
-              mainView === 'settings' 
-                ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
-            }`}
-            title="Настройки"
-          >
-            <Settings size={20} className="stroke-[2.5]" />
-          </button>
+          {/* Левый баннер со свайпом */}
+          <div className="flex-1 relative h-full">
+            <AnimatePresence initial={false} mode="wait">
+              {mainView === 'groups' ? (
+                /* СЛАЙД 1: ГРУППЫ */
+                <motion.div
+                  key="groups-slide"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x < -40) {
+                      setIsFilterOpen(false);
+                      setMainView('settings');
+                      setActiveTab('directions');
+                    }
+                  }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.25 }}
+                  style={{ backgroundColor: accentColor || '#CCFF00' }}
+                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none"
+                >
+                  <div>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 leading-tight">
+                      Группы
+                    </h2>
+                  </div>
+
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-black text-slate-900 font-mono tracking-tight leading-none">
+                      {filteredGroups.length}
+                    </span>
+                    <span className="text-[10px] font-bold text-slate-900/70 uppercase tracking-wide leading-tight">
+                      активных<br/>групп
+                    </span>
+                  </div>
+
+                  <div className="relative flex items-center justify-between z-[100]">
+                    <div className="relative">
+                      <button 
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsFilterOpen(!isFilterOpen);
+                        }} 
+                        className="w-11 h-11 rounded-full bg-black/10 hover:bg-black/15 text-slate-900 flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                      >
+                        <SlidersHorizontal size={20} className="stroke-[2.5]" />
+                        {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-slate-900 shrink-0" />}
+                      </button>
+
+                      {isFilterOpen && (
+                        <div 
+                          onPointerDown={(e) => e.stopPropagation()}
+                          onClick={(e) => e.stopPropagation()} 
+                          className="absolute top-[110%] left-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl w-72 origin-top-left"
+                        >
+                          <div>
+                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Филиал</label>
+                            <select
+                              value={selectedBranch}
+                              onChange={(e) => setSelectedBranch(e.target.value)}
+                              className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
+                            >
+                              <option value="Все филиалы">Все филиалы</option>
+                              {branchesList.map(b => <option key={b} value={b}>{b}</option>)}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Зал</label>
+                            <select
+                              value={selectedHall}
+                              onChange={(e) => setSelectedHall(e.target.value)}
+                              className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
+                            >
+                              <option value="Все залы">Все залы</option>
+                              {HALLS_LIST.map(h => <option key={h} value={h}>{h}</option>)}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Направление</label>
+                            <select
+                              value={selectedDirection}
+                              onChange={(e) => setSelectedDirection(e.target.value)}
+                              className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
+                            >
+                              <option value="Все направления">Все направления</option>
+                              {directions.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Возраст</label>
+                            <select
+                              value={selectedAge}
+                              onChange={(e) => setSelectedAge(e.target.value)}
+                              className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
+                            >
+                              <option value="Все возраста">Все возраста</option>
+                              {ages.map(a => <option key={a.id} value={a.name}>{a.name} ({a.range})</option>)}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Педагог</label>
+                            <select
+                              value={selectedCoach}
+                              onChange={(e) => setSelectedCoach(e.target.value)}
+                              className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
+                            >
+                              <option value="Все педагоги">Все педагоги</option>
+                              {COACHES_LIST.map(c => <option key={c} value={c}>{c}</option>)}
+                            </select>
+                          </div>
+
+                          <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
+                            <button 
+                              type="button" 
+                              onClick={() => setIsFilterOpen(false)} 
+                              className="flex-1 bg-[#CCFF00] text-black text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-all cursor-pointer"
+                            >
+                              Применить
+                            </button>
+                            <button 
+                              type="button" 
+                              onClick={() => { 
+                                setSelectedBranch('Все филиалы'); 
+                                setSelectedHall('Все залы'); 
+                                setSelectedDirection('Все направления'); 
+                                setSelectedAge('Все возраста'); 
+                                setSelectedCoach('Все педагоги'); 
+                              }} 
+                              className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer"
+                            >
+                              Сброс
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              ) : (
+                /* СЛАЙД 2: НАСТРОЙКИ */
+                <motion.div
+                  key="settings-slide"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x > 40) {
+                      setIsFilterOpen(false);
+                      setMainView('groups');
+                      setActiveTab('groups');
+                    }
+                  }}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.25 }}
+                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between bg-[#DDE2E5] dark:bg-[#161618] border border-slate-300/40 dark:border-white/10 cursor-grab active:cursor-grabbing !overflow-visible select-none"
+                >
+                  <div>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 dark:text-white leading-tight">
+                      Настройки
+                    </h2>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2 bg-white/60 dark:bg-black/40 rounded-2xl p-3 backdrop-blur-sm">
+                    <div className="flex flex-col">
+                      <span className="text-2xl font-black text-slate-900 dark:text-white font-mono leading-none">
+                        {directions.length}
+                      </span>
+                      <span className="text-[9px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider mt-1 leading-tight">
+                        Направлений
+                      </span>
+                    </div>
+
+                    <div className="flex flex-col">
+                      <span className="text-2xl font-black text-slate-900 dark:text-white font-mono leading-none">
+                        {ages.length}
+                      </span>
+                      <span className="text-[9px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider mt-1 leading-tight">
+                        Возрастов
+                      </span>
+                    </div>
+
+                    <div className="flex flex-col">
+                      <span className="text-2xl font-black text-slate-900 dark:text-white font-mono leading-none">
+                        {levels.length}
+                      </span>
+                      <span className="text-[9px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider mt-1 leading-tight">
+                        Уровней
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="h-2" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Правая вертикальная пилюля */}
+          <div className="w-[64px] bg-white/40 dark:bg-[#161618]/90 border border-black/5 dark:border-white/10 rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-sm shrink-0 backdrop-blur-md">
+            <button 
+              onClick={() => { setMainView('groups'); setActiveTab('groups'); }}
+              className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+                mainView === 'groups' 
+                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
+                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+              }`}
+              title="Группы"
+            >
+              <Calendar size={20} className="stroke-[2.5]" />
+            </button>
+            
+            <button 
+              onClick={() => { setMainView('settings'); setActiveTab('directions'); }}
+              className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+                mainView === 'settings' 
+                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
+                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+              }`}
+              title="Настройки"
+            >
+              <Settings size={20} className="stroke-[2.5]" />
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* ВНУТРЕННИЕ ТАБЫ НАСТРОЕК */}
-      {mainView === 'settings' && (
-        <div className="ui-tab-container bg-[#CDD2D7] dark:bg-[#18181b]/80 backdrop-blur-md border border-black/10 dark:border-white/10 !rounded-full h-14 py-1.5 px-1.5 flex items-center justify-between w-full mb-4 shadow-md shrink-0 animate-in fade-in slide-in-from-top-2 duration-200">
-          {[
-            { id: 'directions', label: 'НАПРАВЛЕНИЯ' },
-            { id: 'ages', label: 'ВОЗРАСТ' },
-            { id: 'levels', label: 'УРОВНИ' }
-          ].map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`ui-tab-item font-bold text-xs uppercase tracking-wider rounded-full px-3 transition-all border-none outline-none cursor-pointer flex-1 text-center h-full ${
-                  isActive
-                    ? 'bg-[#CCFF00] text-black shadow-md'
-                    : 'bg-transparent text-slate-700 dark:text-zinc-400 hover:text-black dark:hover:text-white'
-                }`}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
-      )}
+        {/* ─── ВНУТРЕННИЕ ТАБЫ НАСТРОЕК ─── */}
+        {mainView === 'settings' && (
+          <div className="bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-full h-12 p-1 flex items-center justify-between w-full shadow-none shrink-0 animate-in fade-in slide-in-from-top-2 duration-200">
+            {[
+              { id: 'directions', label: 'НАПРАВЛЕНИЯ' },
+              { id: 'ages', label: 'ВОЗРАСТ' },
+              { id: 'levels', label: 'УРОВНИ' }
+            ].map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`font-bold text-xs uppercase tracking-wider rounded-full px-3 transition-all border-none outline-none cursor-pointer flex-1 text-center h-full flex items-center justify-center ${
+                    isActive
+                      ? 'bg-[#CCFF00] text-black shadow-sm'
+                      : 'bg-transparent text-slate-700 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
 
-      {/* Floating Action Button (+) */}
-      {currentRole !== 'trainer' && (
-        <FloatingActionButton
-          onClick={handleOpenAddModal}
-          ariaLabel="Добавить"
-        />
-      )}
-
-      {/* List Content */}
-      <div className="flex-1 pb-6">
+        {/* ─── СПИСКИ КАРТОЧЕК С ЕДИНЫМ GAP-2.5 ─── */}
         <AnimatePresence mode="wait">
           {activeTab === 'directions' && (
             <motion.div
@@ -936,14 +925,13 @@ export function DirectionsAndGroupsManager() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.15 }}
-              className="space-y-3"
+              className="flex flex-col gap-2.5"
             >
               {directions.map((dir) => (
                 <div
                   key={dir.id}
                   onClick={() => setSelectedDetail({ type: 'direction', item: dir })}
-                  style={{ borderRadius: '42px' }}
-                  className="w-full text-left !bg-[#18181b] border !border-zinc-800 p-4 flex flex-col gap-3 relative shadow-lg shadow-black/10 transition-all duration-200 cursor-pointer hover:border-white/20 hover:bg-white/[0.04] hover:scale-[1.01] !rounded-[42px] overflow-hidden"
+                  className="w-full text-left bg-white/40 dark:bg-black/35 backdrop-blur-md border-none p-5 flex flex-col gap-3 rounded-[42px] shadow-none transition-all duration-200 cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 overflow-hidden group"
                 >
                   <div className="flex justify-between items-start gap-2">
                     <div>
@@ -952,20 +940,20 @@ export function DirectionsAndGroupsManager() {
                           className="w-2.5 h-2.5 rounded-full shrink-0" 
                           style={{ backgroundColor: dir.colorTag }} 
                         />
-                        <h3 className="text-base font-medium text-white">{dir.name}</h3>
+                        <h3 className="text-base font-bold text-slate-950 dark:text-white group-hover:text-lime-600 dark:group-hover:text-[#CCFF00] transition-colors">{dir.name}</h3>
                       </div>
-                      <p className="text-xs text-zinc-400 font-medium">{dir.description}</p>
+                      <p className="text-xs text-slate-500 dark:text-zinc-400 font-medium">{dir.description}</p>
                     </div>
 
                     <div className="flex items-center gap-1.5 shrink-0">
-                      <span className="ui-tag text-xs px-2.5 py-1 font-bold uppercase tracking-wider bg-zinc-800 text-zinc-300 border border-zinc-700 !rounded-full">
+                      <span className="text-[10px] px-2.5 py-1 font-bold uppercase tracking-wider bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-300 rounded-full">
                         {dir.category}
                       </span>
                       {currentRole !== 'trainer' && (
                         <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); handleEditDirection(dir); }}
-                          className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer border-none outline-none"
+                          className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 flex items-center justify-center text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors cursor-pointer border-none outline-none"
                           title="Редактировать"
                         >
                           <Pencil size={14} />
@@ -975,7 +963,7 @@ export function DirectionsAndGroupsManager() {
                         <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); setDeleteConfirm({ type: 'direction', id: dir.id, name: dir.name }); }}
-                          className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center text-red-400 hover:text-red-300 transition-colors cursor-pointer ml-1.5 border-none outline-none"
+                          className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center text-red-500 hover:text-red-600 transition-colors cursor-pointer ml-1 border-none outline-none"
                           title="Удалить"
                         >
                           <Trash2 size={14} />
@@ -984,16 +972,16 @@ export function DirectionsAndGroupsManager() {
                     </div>
                   </div>
 
-                  <div className="h-px bg-zinc-800/80 w-full" />
+                  <div className="h-px bg-black/5 dark:bg-white/5 w-full" />
 
                   <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-                    <div className="flex items-center gap-1.5 text-zinc-400">
-                      <Users size={14} className="text-zinc-500" />
+                    <div className="flex items-center gap-1.5 text-slate-500 dark:text-zinc-400">
+                      <Users size={14} className="text-slate-400 dark:text-zinc-500" />
                       <span>Преподаватели:</span>
-                      <span className="font-medium text-white">{dir.coaches.join(', ')}</span>
+                      <span className="font-bold text-slate-900 dark:text-white">{dir.coaches.join(', ')}</span>
                     </div>
 
-                    <span className="ui-tag text-xs font-bold uppercase text-[#CCFF00] bg-[#CCFF00]/10 px-2.5 py-1 border border-[#CCFF00]/20 !rounded-full tracking-wide">
+                    <span className="text-xs font-bold uppercase text-slate-900 dark:text-[#CCFF00] bg-[#CCFF00]/15 px-2.5 py-1 rounded-full tracking-wide">
                       {dir.level}
                     </span>
                   </div>
@@ -1009,15 +997,14 @@ export function DirectionsAndGroupsManager() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.15 }}
-              className="space-y-3"
+              className="flex flex-col gap-2.5"
             >
               {filteredGroups.length > 0 ? (
                 filteredGroups.map((group) => (
                   <div
                     key={group.id}
                     onClick={() => setSelectedDetail({ type: 'group', item: group })}
-                    style={{ borderRadius: '42px' }}
-                    className="w-full text-left !bg-[#18181b] border !border-zinc-800 p-4 flex flex-col gap-3 relative shadow-lg shadow-black/10 transition-all duration-200 cursor-pointer hover:border-white/20 hover:bg-white/[0.04] hover:scale-[1.01] !rounded-[42px] overflow-hidden"
+                    className="w-full text-left bg-white/40 dark:bg-black/35 backdrop-blur-md border-none p-5 flex flex-col gap-3 rounded-[42px] shadow-none transition-all duration-200 cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 overflow-hidden group"
                   >
                     <div className="flex justify-between items-start gap-2">
                       <div className="space-y-1.5">
@@ -1029,23 +1016,23 @@ export function DirectionsAndGroupsManager() {
                             return (
                               <span
                                 style={{ backgroundColor: bgCol, color: isLime ? '#000000' : '#ffffff' }}
-                                className="ui-tag font-bold text-xs px-3.5 py-1 uppercase tracking-wide shadow-sm !rounded-full"
+                                className="font-bold text-xs px-3.5 py-1 uppercase tracking-wide shadow-xs rounded-full"
                               >
                                 {group.direction}
                               </span>
                             );
                           })()}
 
-                          <span className="ui-tag bg-white/10 text-zinc-200 border border-white/10 font-bold text-xs px-2.5 py-1 uppercase tracking-wide !rounded-full">
+                          <span className="bg-black/5 dark:bg-white/10 text-slate-800 dark:text-zinc-200 font-bold text-xs px-2.5 py-1 uppercase tracking-wide rounded-full">
                             {group.level || 'Beginners Pro'}
                           </span>
 
-                          <span className="ui-tag bg-white/5 text-zinc-400 font-bold text-xs px-2.5 py-1 border border-white/5 uppercase !rounded-full">
+                          <span className="bg-black/5 dark:bg-white/5 text-slate-500 dark:text-zinc-400 font-bold text-xs px-2.5 py-1 uppercase rounded-full">
                             {group.age || '16+ Лет'}
                           </span>
                         </div>
 
-                        <p className="text-xs text-zinc-400 flex items-center gap-1 font-medium">
+                        <p className="text-xs text-slate-600 dark:text-zinc-400 flex items-center gap-1.5 font-medium">
                           <Calendar size={13} style={{ color: accentColor }} />
                           <span>{group.schedule}</span>
                         </p>
@@ -1056,7 +1043,7 @@ export function DirectionsAndGroupsManager() {
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); handleEditGroup(group); }}
-                            className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-[#CDD2D7] dark:text-zinc-400 hover:text-white transition-colors cursor-pointer border-none outline-none"
+                            className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 flex items-center justify-center text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors cursor-pointer border-none outline-none"
                             title="Редактировать"
                           >
                             <Pencil size={14} />
@@ -1066,7 +1053,7 @@ export function DirectionsAndGroupsManager() {
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); setDeleteConfirm({ type: 'group', id: group.id, name: group.name }); }}
-                            className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center text-red-400 hover:text-red-300 transition-colors cursor-pointer ml-1.5 border-none outline-none"
+                            className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center text-red-500 hover:text-red-600 transition-colors cursor-pointer ml-1 border-none outline-none"
                             title="Удалить"
                           >
                             <Trash2 size={14} />
@@ -1075,30 +1062,30 @@ export function DirectionsAndGroupsManager() {
                       </div>
                     </div>
 
-                    <div className="h-px bg-zinc-800/80 w-full" />
+                    <div className="h-px bg-black/5 dark:bg-white/5 w-full" />
 
                     <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="flex items-center gap-1.5 text-zinc-400">
-                        <Users size={14} className="text-zinc-500" />
-                        <span className="truncate">Тренер: <strong className="text-white">{group.coach}</strong></span>
+                      <div className="flex items-center gap-1.5 text-slate-500 dark:text-zinc-400">
+                        <Users size={14} className="text-slate-400 dark:text-zinc-500" />
+                        <span className="truncate">Тренер: <strong className="text-slate-900 dark:text-white">{group.coach}</strong></span>
                       </div>
 
-                      <div className="flex items-center gap-1.5 text-zinc-400 justify-end">
-                        <Building2 size={14} className="text-zinc-500" />
+                      <div className="flex items-center gap-1.5 text-slate-500 dark:text-zinc-400 justify-end">
+                        <Building2 size={14} className="text-slate-400 dark:text-zinc-500" />
                         <span className="truncate">{group.hall}</span>
                       </div>
                     </div>
 
-                    <div className="ui-strip flex items-center justify-between bg-zinc-950/60 p-2.5 border border-zinc-800/60 mt-1">
-                      <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Вместимость зала:</span>
-                      <span className="text-xs font-medium text-white">
+                    <div className="flex items-center justify-between bg-black/5 dark:bg-white/5 p-3 rounded-2xl mt-1">
+                      <span className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Вместимость зала:</span>
+                      <span className="text-xs font-bold text-slate-900 dark:text-white">
                         <span style={{ color: accentColor }}>{group.enrolled}</span> / {group.capacity} мест
                       </span>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="p-8 text-center text-xs font-bold uppercase tracking-wider text-slate-500">
+                <div className="p-12 text-center text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
                   Группы по выбранным фильтрам не найдены
                 </div>
               )}
@@ -1112,34 +1099,33 @@ export function DirectionsAndGroupsManager() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.15 }}
-              className="space-y-3"
+              className="flex flex-col gap-2.5"
             >
               {ages.map((age) => (
                 <div
                   key={age.id}
                   onClick={() => setSelectedDetail({ type: 'age', item: age })}
-                  style={{ borderRadius: '42px' }}
-                  className="w-full text-left !bg-[#18181b] border !border-zinc-800 p-4 flex flex-col gap-3 relative shadow-lg shadow-black/10 transition-all duration-200 cursor-pointer hover:border-white/20 hover:bg-white/[0.04] hover:scale-[1.01] !rounded-[42px] overflow-hidden"
+                  className="w-full text-left bg-white/40 dark:bg-black/35 backdrop-blur-md border-none p-5 flex flex-col gap-3 rounded-[42px] shadow-none transition-all duration-200 cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 overflow-hidden group"
                 >
                   <div className="flex justify-between items-start gap-2">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
-                        <Baby size={18} />
+                      <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0">
+                        <Baby size={22} />
                       </div>
                       <div>
-                        <h3 className="text-base font-medium text-white">{age.name}</h3>
-                        <p className="text-xs text-zinc-400 mt-0.5">{age.description}</p>
+                        <h3 className="text-base font-bold text-slate-950 dark:text-white group-hover:text-amber-500 transition-colors">{age.name}</h3>
+                        <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">{age.description}</p>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-1.5 shrink-0">
-                      <span style={{ borderRadius: '10px' }} className="text-xs font-bold px-2.5 py-1 uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                      <span className="text-xs font-bold px-3 py-1 uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full">
                         {age.range}
                       </span>
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); handleEditAge(age); }}
-                        className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer border-none outline-none"
+                        className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 flex items-center justify-center text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors cursor-pointer border-none outline-none"
                         title="Редактировать"
                       >
                         <Pencil size={14} />
@@ -1147,7 +1133,7 @@ export function DirectionsAndGroupsManager() {
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); setDeleteConfirm({ type: 'age', id: age.id, name: age.name }); }}
-                        className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center text-red-400 hover:text-red-300 transition-colors cursor-pointer ml-1.5 border-none outline-none"
+                        className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center text-red-500 hover:text-red-600 transition-colors cursor-pointer ml-1 border-none outline-none"
                         title="Удалить"
                       >
                         <Trash2 size={14} />
@@ -1155,11 +1141,11 @@ export function DirectionsAndGroupsManager() {
                     </div>
                   </div>
 
-                  <div className="h-px bg-zinc-800/80 w-full" />
+                  <div className="h-px bg-black/5 dark:bg-white/5 w-full" />
 
-                  <div className="flex items-center justify-between text-xs text-zinc-400">
+                  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
                     <span>Связанных групп в расписании:</span>
-                    <span style={{ borderRadius: '10px' }} className="font-medium text-white bg-zinc-800 px-2.5 py-0.5 border border-zinc-700">
+                    <span className="font-bold text-slate-900 dark:text-white bg-black/5 dark:bg-white/10 px-3 py-1 rounded-full">
                       {age.count} групп
                     </span>
                   </div>
@@ -1175,34 +1161,33 @@ export function DirectionsAndGroupsManager() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.15 }}
-              className="space-y-3"
+              className="flex flex-col gap-2.5"
             >
               {levels.map((lvl) => (
                 <div
                   key={lvl.id}
                   onClick={() => setSelectedDetail({ type: 'level', item: lvl })}
-                  style={{ borderRadius: '42px' }}
-                  className="w-full text-left !bg-[#18181b] border !border-zinc-800 p-4 flex flex-col gap-3 relative shadow-lg shadow-black/10 transition-all duration-200 cursor-pointer hover:border-white/20 hover:bg-white/[0.04] hover:scale-[1.01] !rounded-[42px] overflow-hidden"
+                  className="w-full text-left bg-white/40 dark:bg-black/35 backdrop-blur-md border-none p-5 flex flex-col gap-3 rounded-[42px] shadow-none transition-all duration-200 cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 overflow-hidden group"
                 >
                   <div className="flex justify-between items-start gap-2">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0">
-                        <GraduationCap size={18} />
+                      <div className="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-500 shrink-0">
+                        <GraduationCap size={22} />
                       </div>
                       <div>
-                        <h3 className="text-base font-medium text-white">{lvl.name}</h3>
-                        <p className="text-xs text-zinc-400 mt-0.5">{lvl.description}</p>
+                        <h3 className="text-base font-bold text-slate-950 dark:text-white group-hover:text-cyan-500 transition-colors">{lvl.name}</h3>
+                        <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">{lvl.description}</p>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-1.5 shrink-0">
-                      <span style={{ borderRadius: '10px' }} className="text-xs font-bold px-2.5 py-1 uppercase tracking-wider bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                      <span className="text-xs font-bold px-3 py-1 uppercase tracking-wider bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 rounded-full">
                         {lvl.tag}
                       </span>
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); handleEditLevel(lvl); }}
-                        className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer border-none outline-none"
+                        className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 flex items-center justify-center text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors cursor-pointer border-none outline-none"
                         title="Редактировать"
                       >
                         <Pencil size={14} />
@@ -1210,7 +1195,7 @@ export function DirectionsAndGroupsManager() {
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); setDeleteConfirm({ type: 'level', id: lvl.id, name: lvl.name }); }}
-                        className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center text-red-400 hover:text-red-300 transition-colors cursor-pointer ml-1.5 border-none outline-none"
+                        className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center text-red-500 hover:text-red-600 transition-colors cursor-pointer ml-1 border-none outline-none"
                         title="Удалить"
                       >
                         <Trash2 size={14} />
@@ -1218,11 +1203,11 @@ export function DirectionsAndGroupsManager() {
                     </div>
                   </div>
 
-                  <div className="h-px bg-zinc-800/80 w-full" />
+                  <div className="h-px bg-black/5 dark:bg-white/5 w-full" />
 
-                  <div className="flex items-center justify-between text-xs text-zinc-400">
+                  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
                     <span>Связанных дисциплин и групп:</span>
-                    <span style={{ borderRadius: '10px' }} className="font-medium text-white bg-zinc-800 px-2.5 py-0.5 border border-zinc-700">
+                    <span className="font-bold text-slate-900 dark:text-white bg-black/5 dark:bg-white/10 px-3 py-1 rounded-full">
                       {lvl.count} групп
                     </span>
                   </div>
@@ -1231,9 +1216,17 @@ export function DirectionsAndGroupsManager() {
             </motion.div>
           )}
         </AnimatePresence>
+
       </div>
 
-      {/* Urban Glass Center Modal Dialog Template */}
+      {currentRole !== 'trainer' && (
+        <FloatingActionButton
+          onClick={handleOpenAddModal}
+          ariaLabel="Добавить"
+        />
+      )}
+
+      {/* МОДАЛЬНОЕ ОКНО ДОБАВЛЕНИЯ/РЕДАКТИРОВАНИЯ */}
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -1250,7 +1243,7 @@ export function DirectionsAndGroupsManager() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
-              className="relative z-10 w-full max-w-md p-6 rounded-[28px] border shadow-2xl backdrop-blur-xl bg-zinc-900/95 border-zinc-800 text-white max-h-[90dvh] overflow-y-auto scrollbar-none"
+              className="relative z-10 w-full max-w-md p-6 rounded-[28px] border shadow-2xl backdrop-blur-xl bg-[#18181b] border-zinc-800 text-white max-h-[90dvh] overflow-y-auto scrollbar-none"
             >
               <div className="flex justify-between items-center mb-5">
                 <div>
@@ -1434,7 +1427,7 @@ export function DirectionsAndGroupsManager() {
                               type="button"
                               onClick={() => toggleDaySelect(day)}
                               style={selected ? { backgroundColor: accentColor, color: activeTextColor } : {}}
-                              className={`flex-1 min-w-[36px] h-10 rounded-full font-bold text-xs transition-all border-none outline-none cursor-pointer flex items-center justify-center${
+                              className={`flex-1 min-w-[36px] h-10 rounded-full font-bold text-xs transition-all border-none outline-none cursor-pointer flex items-center justify-center ${
                                 selected ? 'shadow-md scale-105' : 'bg-zinc-800 text-zinc-400 hover:text-white'
                               }`}
                             >
@@ -1555,7 +1548,7 @@ export function DirectionsAndGroupsManager() {
                   <button
                     type="submit"
                     style={{ backgroundColor: accentColor, color: activeTextColor }}
-                    className="w-full h-14 font-bold text-sm uppercase rounded-full flex items-center justify-center gap-2 shadow-lg hover:brightness-105 active:scale-[0.98] transition-all cursor-pointer border-none outline-none"
+                    className="w-full h-14 font-black text-sm uppercase rounded-full flex items-center justify-center gap-2 shadow-lg hover:brightness-105 active:scale-[0.98] transition-all cursor-pointer border-none outline-none"
                   >
                     <Check size={18} strokeWidth={3} />
                     {editingId !== null

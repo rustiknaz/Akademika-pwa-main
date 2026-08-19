@@ -566,7 +566,7 @@ export default function Admin() {
         style={cls.color ? { borderLeftColor: cls.color, borderLeftWidth: '5px' } : {}}
         className={`bg-[#161618] ${
           isCancelled ? 'opacity-75' : ''
-        } rounded-[24px] p-5 shadow-lg cursor-pointer relative overflow-hidden transition-all group`}
+        } rounded-[42px] p-6 shadow-md cursor-pointer relative overflow-hidden transition-all group`}
       >
         <div className="absolute top-5 right-5 text-zinc-500 group-hover:text-white transition-colors pointer-events-none">
           <ArrowUpRight size={16} />
@@ -646,17 +646,9 @@ export default function Admin() {
     <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col relative font-sans transition-colors duration-300 ${
       theme === 'light' ? 'bg-transparent text-slate-900' : 'bg-transparent text-white'
     }`}>
-      <AdminHeader
-        user={currentUserProfile || { full_name: 'Мария', role: 'admin' }}
-        view={view}
-        onNavigateProfile={() => setLocation('/Profile')}
-        onLogout={async () => {
-          await supabase.auth.signOut();
-          setLocation('/Login');
-        }}
-      />
-
-      <div className="flex-1 px-3 pb-32">
+      
+      {/* ─── ЕДИНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ВКЛАДОК ─── */}
+      <div className="flex-1 px-3 pb-32 flex flex-col gap-2.5">
         <AnimatePresence mode="wait">
           
           {/* TAB: Главная (Dashboard) */}
@@ -667,8 +659,38 @@ export default function Admin() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.15 }}
-              className="space-y-6 pb-20"
+              className="flex flex-col gap-2.5"
             >
+              {/* 1. Верхний баннер-шапка (ТЕПЕРЬ ТОЛЬКО НА ГЛАВНОЙ) */}
+              <div 
+                className="w-full min-h-[calc(200px+env(safe-area-inset-top))] pt-[calc(1.25rem+env(safe-area-inset-top))] pb-6 px-6 rounded-b-[42px] relative transition-colors duration-300 flex flex-col justify-end bg-white/20 dark:bg-black/20 backdrop-blur-sm border-none shadow-none text-slate-900 dark:text-white select-none"
+              >
+                <div className="flex items-center justify-between gap-4 w-full">
+                  <div className="flex flex-col">
+                    <span className="text-xl sm:text-2xl font-light text-slate-800 dark:text-white/90 leading-tight">
+                      Добрый<br />день,
+                    </span>
+                    <h1 className="text-3xl sm:text-4xl font-black tracking-tight leading-tight text-slate-950 dark:text-white mt-1">
+                      {currentUserProfile?.full_name || 'Администратор'}
+                    </h1>
+                    <span className="text-xs font-bold text-slate-600 dark:text-zinc-400 mt-0.5">
+                      ({currentUserProfile?.role === 'owner' ? 'Владелец' : 'Администратор'})
+                    </span>
+                  </div>
+
+                  <div 
+                    onClick={() => setLocation('/Profile')}
+                    className="relative shrink-0 cursor-pointer group"
+                  >
+                    <div className="w-16 h-16 rounded-full bg-white/30 dark:bg-white/10 backdrop-blur-md text-slate-900 dark:text-white flex items-center justify-center font-black text-2xl shadow-none border-none group-hover:scale-105 transition-transform">
+                      {(currentUserProfile?.full_name || 'А').charAt(0).toUpperCase()}
+                    </div>
+                    <span className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-emerald-400 border-2 border-white dark:border-[#161618] shadow-sm" />
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. Баннер Финансовой сводки / Задач */}
               <div className="relative h-[184px] w-full overflow-hidden rounded-[42px] cursor-pointer shadow-lg group">
                 <AnimatePresence mode="wait">
                   {activeSlide === 0 ? (
@@ -767,71 +789,69 @@ export default function Admin() {
                 </div>
               </div>
 
-{/* НОВЫЙ БАННЕР БЫСТРЫХ ДЕЙСТВИЙ */}
-<div 
-        className="rounded-outer p-5 shadow-md flex flex-col mt-2"
-        style={{ backgroundColor: accentColor || '#CCFF00' }}
-      >
-        <div className="flex items-center justify-between mb-4 px-1">
-          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-black/60">
-            Быстрые действия
-          </span>
-        </div>
+              {/* 3. Баннер быстрых действий */}
+              <div 
+                className="rounded-[42px] p-5 shadow-md flex flex-col"
+                style={{ backgroundColor: accentColor || '#CCFF00' }}
+              >
+                <div className="flex items-center justify-between mb-4 px-1">
+                  <span className="text-[10px] font-black uppercase tracking-[0.15em] text-black/60">
+                    Быстрые действия
+                  </span>
+                </div>
 
-        <div className="flex justify-between items-start gap-1 px-1">
-          {/* Записать */}
-          <button 
-            onClick={() => toast({ title: "В разработке", description: "Модуль записи в группу" })}
-            className="flex flex-col items-center justify-start gap-2.5 group w-[72px] cursor-pointer outline-none border-none bg-transparent p-0"
-          >
-            <div className="w-14 h-14 rounded-full bg-black/10 flex items-center justify-center text-black hover:bg-black/20 transition-colors shadow-sm">
-              <CalendarPlus size={24} className="stroke-[2.5]" />
-            </div>
-            <span className="text-[10px] font-bold text-black text-center leading-tight">
-              Записать
-            </span>
-          </button>
+                <div className="flex justify-between items-start gap-1 px-1">
+                  <button 
+                    onClick={() => toast({ title: "В разработке", description: "Модуль записи в группу" })}
+                    className="flex flex-col items-center justify-start gap-2.5 group w-[72px] cursor-pointer outline-none border-none bg-transparent p-0"
+                  >
+                    <div className="w-14 h-14 rounded-full bg-black/10 flex items-center justify-center text-black hover:bg-black/20 transition-colors shadow-sm">
+                      <CalendarPlus size={24} className="stroke-[2.5]" />
+                    </div>
+                    <span className="text-[10px] font-bold text-black text-center leading-tight">
+                      Записать
+                    </span>
+                  </button>
 
-          {/* Продать абонемент */}
-          <button 
-            onClick={() => setLocation('/admin/services')}
-            className="flex flex-col items-center justify-start gap-2.5 group w-[72px] cursor-pointer outline-none border-none bg-transparent p-0"
-          >
-            <div className="w-14 h-14 rounded-full bg-black/10 flex items-center justify-center text-black hover:bg-black/20 transition-colors shadow-sm">
-              <Ticket size={24} className="stroke-[2.5]" />
-            </div>
-            <span className="text-[10px] font-bold text-black text-center leading-tight">
-              Продать<br/>абонемент
-            </span>
-          </button>
+                  <button 
+                    onClick={() => setLocation('/admin/services')}
+                    className="flex flex-col items-center justify-start gap-2.5 group w-[72px] cursor-pointer outline-none border-none bg-transparent p-0"
+                  >
+                    <div className="w-14 h-14 rounded-full bg-black/10 flex items-center justify-center text-black hover:bg-black/20 transition-colors shadow-sm">
+                      <Ticket size={24} className="stroke-[2.5]" />
+                    </div>
+                    <span className="text-[10px] font-bold text-black text-center leading-tight">
+                      Продать<br/>абонемент
+                    </span>
+                  </button>
 
-          {/* Принять оплату */}
-          <button 
-            onClick={() => setLocation('/admin/finance')}
-            className="flex flex-col items-center justify-start gap-2.5 group w-[72px] cursor-pointer outline-none border-none bg-transparent p-0"
-          >
-            <div className="w-14 h-14 rounded-full bg-black/10 flex items-center justify-center text-black hover:bg-black/20 transition-colors shadow-sm">
-              <Wallet size={24} className="stroke-[2.5]" />
-            </div>
-            <span className="text-[10px] font-bold text-black text-center leading-tight">
-              Принять<br/>оплату
-            </span>
-          </button>
+                  <button 
+                    onClick={() => setLocation('/admin/finance')}
+                    className="flex flex-col items-center justify-start gap-2.5 group w-[72px] cursor-pointer outline-none border-none bg-transparent p-0"
+                  >
+                    <div className="w-14 h-14 rounded-full bg-black/10 flex items-center justify-center text-black hover:bg-black/20 transition-colors shadow-sm">
+                      <Wallet size={24} className="stroke-[2.5]" />
+                    </div>
+                    <span className="text-[10px] font-bold text-black text-center leading-tight">
+                      Принять<br/>оплату
+                    </span>
+                  </button>
 
-          {/* Создать лид */}
-          <button 
-            onClick={() => toast({ title: "В разработке", description: "Модуль добавления лида" })}
-            className="flex flex-col items-center justify-start gap-2.5 group w-[72px] cursor-pointer outline-none border-none bg-transparent p-0"
-          >
-            <div className="w-14 h-14 rounded-full bg-black/10 flex items-center justify-center text-black hover:bg-black/20 transition-colors shadow-sm">
-              <UserPlus size={24} className="stroke-[2.5]" />
-            </div>
-            <span className="text-[10px] font-bold text-black text-center leading-tight">
-              Создать<br/>лид
-            </span>
-          </button>
-        </div>
-      </div>              {/* Widget 3: Активные записи */}
+                  <button 
+                    onClick={() => toast({ title: "В разработке", description: "Модуль добавления лида" })}
+                    className="flex flex-col items-center justify-start gap-2.5 group w-[72px] cursor-pointer outline-none border-none bg-transparent p-0"
+                  >
+                    <div className="w-14 h-14 rounded-full bg-black/10 flex items-center justify-center text-black hover:bg-black/20 transition-colors shadow-sm">
+                      <UserPlus size={24} className="stroke-[2.5]" />
+                    </div>
+                    <span className="text-[10px] font-bold text-black text-center leading-tight">
+                      Создать<br/>лид
+                    </span>
+                  </button>
+                </div>
+              </div>           
+      
+      {/* Widget 3: Активные записи */}
               <div
                 style={{ borderRadius: '42px' }}
                 className="bg-[#DDE2E5] dark:bg-[#161618] p-5 md:p-6 shadow-none overflow-hidden !rounded-[42px]"
@@ -1121,7 +1141,7 @@ export default function Admin() {
             </motion.div>
           )}
 
-          {/* TAB: Занятия (Schedule / Controls) */}
+          {/* TAB: Занятия (Расписание) */}
           {view === 'classes' && (
             <motion.div
               key="classes-tab"
@@ -1129,14 +1149,14 @@ export default function Admin() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.15 }}
-              className="space-y-5"
+              className="flex flex-col gap-2.5 pt-3"
             >
-              {/* Единый баннер с календарем и фильтром */}
+              {/* 1. Главный баннер календаря с фильтрами */}
               <div 
-                className="p-5 rounded-outer transition-all shadow-md flex flex-col justify-between my-3 relative select-none !overflow-visible"
+                className="p-5 rounded-[42px] transition-all shadow-md flex flex-col justify-between select-none !overflow-visible"
                 style={{ backgroundColor: accentColor || '#CCFF00' }}
               >
-                {/* ВЕРХНЯЯ СТРОКА: Заголовок слева, Месяц справа (в едином стиле) */}
+                {/* ВЕРХНЯЯ СТРОКА: Расписание + Месяц */}
                 <div className="flex items-center justify-between px-1 mb-2">
                   <h2 className="text-xl font-black uppercase tracking-wider text-slate-900">
                     Расписание
@@ -1158,9 +1178,9 @@ export default function Admin() {
                   />
                 </div>
 
-                {/* НИЖНЯЯ СТРОКА: Круглый фильтр слева, Пилюля с датой справа */}
+                {/* НИЖНЯЯ СТРОКА: Фильтр слева, Пилюля с датой справа */}
                 <div className="flex items-center justify-between pt-2 px-1 relative z-30">
-                  {/* Кнопка Фильтров (Круглая) */}
+                  {/* Кнопка фильтров */}
                   <div className="relative">
                     <button 
                       onClick={() => setIsFilterOpen(!isFilterOpen)}
@@ -1249,7 +1269,7 @@ export default function Admin() {
                     )}
                   </div>
 
-                  {/* Пилюля выбора даты (В правом нижнем углу) */}
+                  {/* Пилюля выбора даты */}
                   <button
                     type="button"
                     onClick={() => {
@@ -1266,7 +1286,7 @@ export default function Admin() {
                 </div>
               </div>
 
-              {/* Class Cards with AnimatePresence depending on viewMode */}
+              {/* 2. Список карточек уроков или пустое состояние с шагом gap-2.5 */}
               <AnimatePresence mode="wait">
                 {viewMode === 'day' ? (
                   <motion.div
@@ -1275,17 +1295,17 @@ export default function Admin() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -12 }}
                     transition={{ duration: 0.2 }}
-                    className="space-y-4"
+                    className="flex flex-col gap-2.5"
                   >
                     {selectedDateClasses.length > 0 ? (
                       selectedDateClasses.map((cls) => renderClassCard(cls))
                     ) : (
-                      <div className={`p-6 rounded-outer min-h-[110px] flex flex-col items-center justify-center text-center shadow-sm ${
+                      <div className={`p-8 rounded-[42px] min-h-[140px] flex flex-col items-center justify-center text-center shadow-none transition-colors ${
                         theme === 'light'
-                          ? 'bg-white text-black'
-                          : 'bg-[#1A1A1C] text-white'
+                          ? 'bg-white/60 text-slate-900'
+                          : 'bg-[#161618] text-white'
                       }`}>
-                        <span className="font-bold text-xs uppercase tracking-wider text-[#121214] dark:text-stone-300">
+                        <span className="font-bold text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400">
                           Занятия на выбранный день отсутствуют
                         </span>
                       </div>
@@ -1298,7 +1318,7 @@ export default function Admin() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -12 }}
                     transition={{ duration: 0.2 }}
-                    className="space-y-6 pb-32"
+                    className="flex flex-col gap-2.5 pb-32"
                   >
                     {getDaysOfWeek(currentWeekStart).map((day) => {
                       const isTodayDay = isDateToday(day);
@@ -1314,9 +1334,9 @@ export default function Admin() {
                       }).filter(isClassMatchingFilter);
 
                       return (
-                        <div key={day.toISOString()} className="space-y-3">
-                          <div className="flex items-center gap-2 mt-4 mb-2 pl-1">
-                            <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">
+                        <div key={day.toISOString()} className="flex flex-col gap-2.5">
+                          <div className="flex items-center gap-2 mt-2 pl-2">
+                            <span className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
                               {capitalizedWeekday}, {formattedDate}
                             </span>
                             {isTodayDay && (
@@ -1325,21 +1345,21 @@ export default function Admin() {
                                   backgroundColor: `${accentColor || '#CCFF00'}1F`,
                                   color: accentColor || '#CCFF00',
                                 }}
-                                className="text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wider"
+                                className="text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider"
                               >
                                 Сегодня
                               </span>
                             )}
                           </div>
                           
-                          <div className="space-y-3">
+                          <div className="flex flex-col gap-2.5">
                             {dayClasses.length > 0 ? (
                               dayClasses.map((cls) => renderClassCard(cls))
                             ) : (
-                              <div className={`rounded-outer py-5 px-6 text-center flex items-center justify-center transition-colors ${
+                              <div className={`rounded-[42px] py-6 px-6 text-center flex items-center justify-center transition-colors ${
                                 theme === 'light'
-                                  ? 'bg-white text-zinc-600'
-                                  : 'bg-[#1A1A1C] text-stone-400'
+                                  ? 'bg-white/60 text-slate-500'
+                                  : 'bg-[#161618] text-zinc-400'
                               }`}>
                                 <span className="font-bold text-xs uppercase tracking-wider">Занятий нет</span>
                               </div>
@@ -1349,122 +1369,6 @@ export default function Admin() {
                       );
                     })}
                   </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Date Picker Dialog */}
-              <AnimatePresence>
-                {isDatePickerOpen && (
-                  <>
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      onClick={() => setIsDatePickerOpen(false)}
-                      className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] cursor-pointer"
-                    />
-
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95, y: "-45%", x: "-50%" }}
-                      animate={{ opacity: 1, scale: 1, y: "-50%", x: "-50%" }}
-                      exit={{ opacity: 0, scale: 0.95, y: "-45%", x: "-50%" }}
-                      transition={{ type: "spring", damping: 25, stiffness: 220 }}
-                      onClick={(e) => e.stopPropagation()}
-                      className="fixed top-1/2 left-1/2 w-[calc(100%-2rem)] max-w-sm bg-[#161618] rounded-[24px] p-6 shadow-2xl shadow-black/80 z-[101] select-none text-white flex flex-col"
-                    >
-                      <div className="flex justify-between items-center mb-5">
-                        <h3 className="text-sm font-bold text-white tracking-wide">
-                          {pickerCurrentDate.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }).replace(/\s*г\./, '').toLowerCase()}
-                        </h3>
-                        
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => setPickerCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))}
-                            className="w-9 h-9 rounded-full flex items-center justify-center text-zinc-400 hover:text-[#CCFF00] bg-zinc-900/50 hover:bg-zinc-800 transition-colors cursor-pointer"
-                          >
-                            <ChevronLeft size={16} />
-                          </button>
-                          <button
-                            onClick={() => setPickerCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))}
-                            className="w-9 h-9 rounded-full flex items-center justify-center text-zinc-400 hover:text-[#CCFF00] bg-zinc-900/50 hover:bg-zinc-800 transition-colors cursor-pointer"
-                          >
-                            <ChevronRight size={16} />
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-7 gap-1 text-center mb-2">
-                        {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map(wd => (
-                          <span key={wd} className="text-xs font-bold text-stone-500 uppercase tracking-widest py-1">
-                            {wd}
-                          </span>
-                        ))}
-                      </div>
-
-                      <div className="grid grid-cols-7 gap-1">
-                        {(() => {
-                          const year = pickerCurrentDate.getFullYear();
-                          const month = pickerCurrentDate.getMonth();
-                          
-                          const firstDayDate = new Date(year, month, 1);
-                          let startDayOfWeek = firstDayDate.getDay();
-                          startDayOfWeek = startDayOfWeek === 0 ? 6 : startDayOfWeek - 1;
-
-                          const daysInMonth = new Date(year, month + 1, 0).getDate();
-                          const prevMonthDaysCount = new Date(year, month, 0).getDate();
-
-                          const cells = [];
-
-                          for (let i = startDayOfWeek - 1; i >= 0; i--) {
-                            const d = new Date(year, month - 1, prevMonthDaysCount - i);
-                            cells.push({ date: d, isCurrentMonth: false });
-                          }
-
-                          for (let i = 1; i <= daysInMonth; i++) {
-                            const d = new Date(year, month, i);
-                            cells.push({ date: d, isCurrentMonth: true });
-                          }
-
-                          const remaining = 42 - cells.length;
-                          for (let i = 1; i <= remaining; i++) {
-                            const d = new Date(year, month + 1, i);
-                            cells.push({ date: d, isCurrentMonth: false });
-                          }
-
-                          return cells.map((cell, idx) => {
-                            const isSel = isSameDay(cell.date, selectedDate);
-                            const isTod = isDateToday(cell.date);
-                            
-                            return (
-                              <div key={idx} className="h-10 flex items-center justify-center">
-                                <button
-                                  onClick={() => handleSelectDatePickerDate(cell.date)}
-                                  className={`text-xs transition-all cursor-pointer ${
-                                    isSel
-                                      ? 'w-9 h-9 flex items-center justify-center !rounded-full bg-[#CCFF00] text-black font-bold font-mono text-sm shadow-[0_0_10px_rgba(204,255,0,0.4)]'
-                                      : isTod
-                                        ? 'w-9 h-9 flex items-center justify-center border border-[#CCFF00]/40 text-white font-bold rounded-full bg-[#CCFF00]/5'
-                                        : cell.isCurrentMonth
-                                          ? 'w-9 h-9 flex items-center justify-center text-white hover:bg-zinc-900 rounded-full'
-                                          : 'w-9 h-9 flex items-center justify-center text-stone-600 hover:bg-zinc-900/50 rounded-full'
-                                  }`}
-                                >
-                                  {cell.date.getDate()}
-                                </button>
-                              </div>
-                            );
-                          });
-                        })()}
-                      </div>
-
-                      <button
-                        onClick={handleResetToToday}
-                        className="w-full py-3 bg-[#1A1A1C] hover:bg-zinc-800 rounded-full text-[#CCFF00] font-bold text-center mt-4 transition-colors border border-white/10 cursor-pointer"
-                      >
-                        Сегодня
-                      </button>
-                    </motion.div>
-                  </>
                 )}
               </AnimatePresence>
             </motion.div>
