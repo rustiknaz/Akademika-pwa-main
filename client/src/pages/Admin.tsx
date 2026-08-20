@@ -977,170 +977,6 @@ export default function Admin() {
             </motion.div>
           )}
 
-          {/* TAB: Активные (Today's Visits) */}
-          {view === 'active' && (
-            <motion.div
-              key="active-tab"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.15 }}
-              className="space-y-6"
-            >
-              <div className="flex justify-between items-stretch bg-[#CDD2D7] dark:bg-[#161618] border border-black/10 dark:border-white/10 p-1.5 pl-4 rounded-[24px] min-h-[44px]">
-                <div className="flex items-center gap-2 py-1">
-                  <Calendar className="w-4 h-4 text-[#121214] dark:text-[#CCFF00]" />
-                  <span className="text-xs font-bold text-[#121214] dark:text-white uppercase tracking-wider">Посещения сегодня</span>
-                </div>
-                <span 
-                  style={{ backgroundColor: accentColor, color: activeTextColor }}
-                  className="self-stretch flex items-center justify-center px-3.5 rounded-control text-xs font-bold uppercase tracking-wider shadow-xs"
-                >
-                  {new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' })}
-                </span>
-              </div>
-
-              <div className="space-y-3">
-                <h2 className="text-xs font-bold text-stone-400 uppercase tracking-widest pl-1">Основной список ({todayMainBookings.length})</h2>
-                
-                {todayMainBookings.length > 0 ? (
-                  todayMainBookings.map((booking) => {
-                    const classTime = new Date(booking.classes.start_time).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-                    
-                    return (
-                      <div 
-                        key={booking.id}
-                        className="bg-[#161618] border border-white/10 rounded-[24px] p-4 flex items-center justify-between shadow-md group relative overflow-hidden transition-all duration-200"
-                      >
-                        <div className={`absolute left-0 top-0 bottom-0 w-[3px] ${
-                          booking.status === 'completed' ? 'bg-emerald-500' :
-                          booking.status === 'missed' ? 'bg-red-500' : 'bg-amber-500/60'
-                        }`} />
-
-                        <div className="space-y-1 pl-1">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-medium text-stone-400">{classTime}</span>
-                            <span className="text-stone-600">•</span>
-                            <span className="text-xs font-medium text-white">{booking.classes.title}</span>
-                          </div>
-                          
-                          <h4 className="text-sm font-medium text-white">
-                            {booking.profiles.full_name || 'Танцор AkademikA'}
-                          </h4>
-                          <p className="text-xs text-stone-500 font-bold font-mono leading-none tracking-wide">
-                            {booking.profiles.phone || '89112223344'}
-                          </p>
-                        </div>
-
-                        <div>
-                          {booking.status === 'booked' ? (
-                            <div className="flex items-center gap-2">
-                              <Button
-                                size="icon"
-                                onClick={() => handleCheckIn(booking.id, booking.user_id)}
-                                className="w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-black transition-all flex items-center justify-center focus:outline-none"
-                                title="Отметить визит"
-                              >
-                                <CheckCircle2 className="w-5 h-5" />
-                              </Button>
-
-                              <Button
-                                size="icon"
-                                onClick={() => handleMissed(booking.id)}
-                                className="w-9 h-9 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-black transition-all flex items-center justify-center focus:outline-none"
-                                title="Отметить пропуск"
-                              >
-                                <XCircle className="w-5 h-5" />
-                              </Button>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-2">
-                              <span className={`text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border${
-                                booking.status === 'completed' 
-                                  ? 'bg-emerald-950/40 text-emerald-400 border-emerald-500/20' 
-                                  : 'bg-red-950/40 text-red-400 border-red-500/20'
-                              }`}>
-                                {booking.status === 'completed' ? '✓ ПОСЕТИЛ' : '✖ ПРОПУСК'}
-                              </span>
-
-                              <button
-                                onClick={() => handleUndoStatus(booking.id, booking.status, booking.user_id)}
-                                className="text-xs font-bold text-stone-500 hover:text-[#CCFF00] hover:bg-zinc-800 px-2.5 py-1.5 rounded-full transition-colors uppercase tracking-wider"
-                                title="Изменить решение"
-                              >
-                                Сбросить
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div style={{ borderRadius: '16px' }} className="bg-white dark:bg-[#18181b] border border-black/10 dark:border-zinc-800/80 border-dashed rounded-xl py-10 text-center text-slate-400 dark:text-stone-400 font-medium text-xs shadow-xs">
-                    Нет активных записей на сегодня
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-3 pt-2">
-                <div className="flex justify-between items-center px-1">
-                  <h2 className="text-xs font-bold text-stone-400 uppercase tracking-widest">СПИСОК ОЖИДАНИЯ ({todayWaitingBookings.length})</h2>
-                  {todayWaitingBookings.length > 0 && (
-                    <span className="text-xs font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                      {todayWaitingBookings.length} чел
-                    </span>
-                  )}
-                </div>
-
-                {todayWaitingBookings.length > 0 ? (
-                  todayWaitingBookings.map((booking) => {
-                    const classTime = new Date(booking.classes.start_time).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-                    
-                    return (
-                      <div 
-                        key={booking.id}
-                        className="bg-zinc-900/80 backdrop-blur-sm border-2 border-amber-500/40 rounded-[24px] p-4 flex items-center justify-between shadow-lg shadow-amber-500/5 relative overflow-hidden group"
-                      >
-                        <div className="absolute top-4 right-4 text-zinc-500 group-hover:text-[#CCFF00] transition-colors pointer-events-none">
-                          <ArrowUpRight size={14} />
-                        </div>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-bold text-amber-400 bg-amber-400/10 border border-amber-400/20 px-2.5 py-1 rounded-full uppercase tracking-wider">Очередь</span>
-                            <span className="text-xs font-medium text-stone-400">{classTime}</span>
-                            <span className="text-xs font-medium text-white">{booking.classes.title}</span>
-                          </div>
-                          
-                          <h4 className="text-sm font-medium text-white mt-1">
-                            {booking.profiles.full_name || 'Ученик ожидания'}
-                          </h4>
-                          <p className="text-[10px] text-stone-500 font-mono leading-none">
-                            {booking.profiles.phone || '89112223344'}
-                          </p>
-                        </div>
-
-                        <div>
-                          <Button
-                            size="sm"
-                            onClick={() => handlePromoteFromWaiting(booking.id, booking.class_id)}
-                            className="bg-amber-500 hover:bg-amber-600 text-black text-xs font-bold uppercase tracking-wider px-4 py-2 h-auto rounded-full transition-colors shadow-sm"
-                          >
-                            В основу
-                          </Button>
-                        </div>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div style={{ borderRadius: '16px' }} className="bg-white dark:bg-[#18181b] border border-black/10 dark:border-zinc-800/80 border-dashed rounded-xl py-8 text-center text-slate-400 dark:text-stone-400 font-medium text-xs shadow-xs">
-                    Список ожидания пуст
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          )}
-
           {/* TAB: Занятия (Расписание) */}
           {view === 'classes' && (
             <motion.div
@@ -1151,137 +987,168 @@ export default function Admin() {
               transition={{ duration: 0.15 }}
               className="flex flex-col gap-2.5 pt-3"
             >
-              {/* 1. Главный баннер календаря с фильтрами */}
-              <div 
-                className="p-5 rounded-[42px] transition-all shadow-md flex flex-col justify-between select-none !overflow-visible"
-                style={{ backgroundColor: accentColor || '#CCFF00' }}
-              >
-                {/* ВЕРХНЯЯ СТРОКА: Расписание + Месяц */}
-                <div className="flex items-center justify-between px-1 mb-2">
-                  <h2 className="text-xl font-black uppercase tracking-wider text-slate-900">
-                    Расписание
-                  </h2>
+              {/* ─── ВЕРХНИЙ БЛОК: Слайдер + Вертикальная навигация ─── */}
+              <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
+                
+                {/* 1. Главный баннер календаря */}
+                <div 
+                  className="flex-1 p-5 rounded-[42px] shadow-md flex flex-col justify-between select-none !overflow-visible h-full transition-all"
+                  style={{ backgroundColor: accentColor || '#CCFF00' }}
+                >
+                  {/* ВЕРХНЯЯ СТРОКА: Расписание + Месяц */}
+                  <div className="flex items-center justify-between px-1">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 leading-tight">
+                      Расписание
+                    </h2>
 
-                  <h2 className="text-xl font-black uppercase tracking-wider text-slate-900">
-                    {selectedDate.toLocaleDateString('ru-RU', { month: 'long' }).toUpperCase()}
-                  </h2>
-                </div>
-
-                {/* СРЕДНЯЯ СТРОКА: Полоса дней недели */}
-                <div className="bg-black/5 p-1 rounded-full backdrop-blur-sm my-1">
-                  <HorizontalCalendar
-                    selectedDate={selectedDate}
-                    onSelectDate={(d) => {
-                      setSelectedDate(d);
-                      setViewMode('day');
-                    }}
-                  />
-                </div>
-
-                {/* НИЖНЯЯ СТРОКА: Фильтр слева, Пилюля с датой справа */}
-                <div className="flex items-center justify-between pt-2 px-1 relative z-30">
-                  {/* Кнопка фильтров */}
-                  <div className="relative">
-                    <button 
-                      onClick={() => setIsFilterOpen(!isFilterOpen)}
-                      type="button"
-                      className="w-11 h-11 rounded-full bg-black/10 hover:bg-black/15 text-slate-900 flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
-                    >
-                      <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                      {(selectedBranch !== 'Все филиалы' || selectedHall !== 'Все залы' || selectedDirection !== 'Все направления' || selectedAge !== 'Все возраста' || selectedType !== 'Все типы') && (
-                        <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-slate-900 shrink-0" />
-                      )}
-                    </button>
-
-                    {isFilterOpen && (
-                      <div className="absolute top-[110%] left-0 z-50 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl w-72 origin-top-left">
-                        <div>
-                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Филиал</label>
-                          <CustomFilterDropdown
-                            value={selectedBranch}
-                            options={['Все филиалы', ...branchesList]}
-                            onChange={(newBranch) => {
-                              setSelectedBranch(newBranch);
-                              setSelectedHall('Все залы');
-                            }}
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Зал</label>
-                          <CustomFilterDropdown
-                            value={selectedHall}
-                            options={['Все залы', ...availableHalls]}
-                            onChange={(newHall) => setSelectedHall(newHall)}
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Направление</label>
-                          <CustomFilterDropdown
-                            value={selectedDirection}
-                            options={['Все направления', ...directionsList]}
-                            onChange={(newDir) => setSelectedDirection(newDir)}
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Возраст</label>
-                          <CustomFilterDropdown
-                            value={selectedAge}
-                            options={['Все возраста', ...agesList]}
-                            onChange={(newAge) => setSelectedAge(newAge)}
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Тип занятия</label>
-                          <CustomFilterDropdown
-                            value={selectedType}
-                            options={['Все типы', ...typesList]}
-                            onChange={(newType) => setSelectedType(newType)}
-                          />
-                        </div>
-
-                        <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
-                          <button 
-                            type="button" 
-                            onClick={() => setIsFilterOpen(false)} 
-                            className="flex-1 bg-[#CCFF00] text-black text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-all cursor-pointer"
-                          >
-                            Применить
-                          </button>
-                          <button 
-                            type="button" 
-                            onClick={() => { 
-                              setSelectedBranch('Все филиалы'); 
-                              setSelectedHall('Все залы'); 
-                              setSelectedDirection('Все направления');
-                              setSelectedAge('Все возраста');
-                              setSelectedType('Все типы');
-                            }} 
-                            className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer"
-                          >
-                            Сброс
-                          </button>
-                        </div>
-                      </div>
-                    )}
+                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 leading-tight">
+                      {selectedDate.toLocaleDateString('ru-RU', { month: 'long' }).toUpperCase()}
+                    </h2>
                   </div>
 
-                  {/* Пилюля выбора даты */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPickerCurrentDate(new Date(selectedDate));
-                      setIsDatePickerOpen(true);
-                    }}
-                    className="flex items-center gap-1.5 bg-black/10 hover:bg-black/15 text-slate-900 text-xs font-bold px-4 py-2.5 rounded-full backdrop-blur-sm transition-all cursor-pointer border-none shadow-none"
+                  {/* СРЕДНЯЯ СТРОКА: Полоса дней недели (компактная) */}
+                  <div className="bg-black/5 p-1 rounded-full backdrop-blur-sm -my-1">
+                    <HorizontalCalendar
+                      selectedDate={selectedDate}
+                      onSelectDate={(d) => {
+                        setSelectedDate(d);
+                        setViewMode('day');
+                      }}
+                    />
+                  </div>
+
+                  {/* НИЖНЯЯ СТРОКА: Фильтр слева, Пилюля с датой справа (отступ от низа как в Базе) */}
+                  <div className="relative flex items-center justify-between z-[100]">
+                    {/* Кнопка фильтров */}
+                    <div className="relative">
+                      <button 
+                        onClick={() => setIsFilterOpen(!isFilterOpen)}
+                        type="button"
+                        className="w-11 h-11 rounded-full bg-black/10 hover:bg-black/15 text-slate-900 flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                      >
+                        <SlidersHorizontal size={20} className="stroke-[2.5]" />
+                        {(selectedBranch !== 'Все филиалы' || selectedHall !== 'Все залы' || selectedDirection !== 'Все направления' || selectedAge !== 'Все возраста' || selectedType !== 'Все типы') && (
+                          <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-slate-900 shrink-0" />
+                        )}
+                      </button>
+
+                      {isFilterOpen && (
+                        <div className="absolute top-[110%] left-0 z-50 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl w-72 origin-top-left">
+                          <div>
+                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Филиал</label>
+                            <CustomFilterDropdown
+                              value={selectedBranch}
+                              options={['Все филиалы', ...branchesList]}
+                              onChange={(newBranch) => {
+                                setSelectedBranch(newBranch);
+                                setSelectedHall('Все залы');
+                              }}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Зал</label>
+                            <CustomFilterDropdown
+                              value={selectedHall}
+                              options={['Все залы', ...availableHalls]}
+                              onChange={(newHall) => setSelectedHall(newHall)}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Направление</label>
+                            <CustomFilterDropdown
+                              value={selectedDirection}
+                              options={['Все направления', ...directionsList]}
+                              onChange={(newDir) => setSelectedDirection(newDir)}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Возраст</label>
+                            <CustomFilterDropdown
+                              value={selectedAge}
+                              options={['Все возраста', ...agesList]}
+                              onChange={(newAge) => setSelectedAge(newAge)}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Тип занятия</label>
+                            <CustomFilterDropdown
+                              value={selectedType}
+                              options={['Все типы', ...typesList]}
+                              onChange={(newType) => setSelectedType(newType)}
+                            />
+                          </div>
+
+                          <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
+                            <button 
+                              type="button" 
+                              onClick={() => setIsFilterOpen(false)} 
+                              className="flex-1 bg-[#CCFF00] text-black text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-all cursor-pointer"
+                            >
+                              Применить
+                            </button>
+                            <button 
+                              type="button" 
+                              onClick={() => { 
+                                setSelectedBranch('Все филиалы'); 
+                                setSelectedHall('Все залы'); 
+                                setSelectedDirection('Все направления');
+                                setSelectedAge('Все возраста');
+                                setSelectedType('Все типы');
+                              }} 
+                              className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer"
+                            >
+                              Сброс
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Пилюля выбора даты */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPickerCurrentDate(new Date(selectedDate));
+                        setIsDatePickerOpen(true);
+                      }}
+                      className="flex items-center gap-1.5 bg-black/10 hover:bg-black/15 text-slate-900 text-xs font-bold px-4 py-2.5 rounded-full backdrop-blur-sm transition-all cursor-pointer border-none shadow-none"
+                    >
+                      <span className="text-[11px] uppercase tracking-wider">
+                        {selectedDate.toLocaleDateString('ru-RU', { weekday: 'short' })}, {selectedDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
+                      </span>
+                      <ChevronDown size={14} className="text-slate-900 shrink-0 stroke-[2.5]" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* 2. Правая вертикальная пилюля (День / Неделя) */}
+                <div className="w-[64px] bg-white/40 dark:bg-[#161618]/90 border border-black/5 dark:border-white/10 rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-sm shrink-0 backdrop-blur-md">
+                  <button 
+                    onClick={() => setViewMode('day')}
+                    className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+                      viewMode === 'day' 
+                        ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
+                        : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                    }`}
+                    title="Расписание на день"
                   >
-                    <span className="text-[11px] uppercase tracking-wider">
-                      {selectedDate.toLocaleDateString('ru-RU', { weekday: 'short' })}, {selectedDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
-                    </span>
-                    <ChevronDown size={14} className="text-slate-900 shrink-0 stroke-[2.5]" />
+                    <Calendar size={20} className="stroke-[2.5]" />
+                  </button>
+                  
+                  <button 
+                    onClick={() => setViewMode('week')}
+                    className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+                      viewMode === 'week' 
+                        ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
+                        : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                    }`}
+                    title="Расписание на неделю"
+                  >
+                    <CalendarDays size={20} className="stroke-[2.5]" />
                   </button>
                 </div>
               </div>
