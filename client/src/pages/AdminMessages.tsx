@@ -137,11 +137,11 @@ export default function AdminMessages() {
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНИЙ БЛОК: Баннер со свайпом + Вертикальная навигация ─── */}
+        {/* ─── ВЕРХНИЙ БЛОК: Матовый слайдер, уходящий наверх + Пилюля ─── */}
         <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
           
-          {/* Баннер-слайдер */}
-          <div className="flex-1 relative h-full">
+          {/* Баннер-слайдер (уходит за верхний край экрана) */}
+          <div className="flex-1 relative h-[calc(100%+12px)] -mt-3">
             <AnimatePresence initial={false} mode="wait">
               {activeSlide === 0 ? (
                 <motion.div
@@ -156,31 +156,30 @@ export default function AdminMessages() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: accentColor || '#CCFF00' }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing select-none"
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-950 dark:text-white leading-tight">
                       Уведомления
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-slate-900 font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-slate-950 dark:text-white font-mono tracking-tight leading-none">
                       {unreadCount}
                     </span>
-                    <span className="text-[10px] font-bold text-slate-900/70 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
                       новых<br/>входящих
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/10 text-slate-900 backdrop-blur-sm">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-300 backdrop-blur-sm">
                       Все каналы связи
                     </span>
                     <button 
                       onClick={() => setIsSearchVisible(!isSearchVisible)}
-                      className="w-11 h-11 rounded-full bg-black/10 hover:bg-black/15 text-slate-900 flex items-center justify-center transition-all cursor-pointer border-none"
+                      className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white flex items-center justify-center transition-all cursor-pointer border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
@@ -200,16 +199,16 @@ export default function AdminMessages() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between bg-[#DDE2E5] dark:bg-[#161618] border border-slate-300/40 dark:border-white/10 cursor-grab active:cursor-grabbing select-none"
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 dark:text-white leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-950 dark:text-white leading-tight">
                       Лиды и заявки
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-slate-900 dark:text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-slate-950 dark:text-white font-mono tracking-tight leading-none">
                       {MOCK_MESSAGES.filter(m => m.type === 'lead').length}
                     </span>
                     <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
@@ -218,12 +217,12 @@ export default function AdminMessages() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-400">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-300">
                       Потенциальные клиенты
                     </span>
                     <button 
                       onClick={() => setIsSearchVisible(!isSearchVisible)}
-                      className="w-11 h-11 rounded-full bg-black/5 dark:bg-white/10 text-slate-900 dark:text-white flex items-center justify-center transition-all cursor-pointer border-none"
+                      className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white flex items-center justify-center transition-all cursor-pointer border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
@@ -242,16 +241,16 @@ export default function AdminMessages() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between bg-[#DDE2E5] dark:bg-[#161618] border border-slate-300/40 dark:border-white/10 cursor-grab active:cursor-grabbing select-none"
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 dark:text-white leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-950 dark:text-white leading-tight">
                       Ученики
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-slate-900 dark:text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-slate-950 dark:text-white font-mono tracking-tight leading-none">
                       {MOCK_MESSAGES.filter(m => m.type === 'client').length}
                     </span>
                     <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
@@ -260,12 +259,12 @@ export default function AdminMessages() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-400">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-300">
                       Действующая база
                     </span>
                     <button 
                       onClick={() => setIsSearchVisible(!isSearchVisible)}
-                      className="w-11 h-11 rounded-full bg-black/5 dark:bg-white/10 text-slate-900 dark:text-white flex items-center justify-center transition-all cursor-pointer border-none"
+                      className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white flex items-center justify-center transition-all cursor-pointer border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
@@ -276,7 +275,7 @@ export default function AdminMessages() {
           </div>
 
           {/* Правая вертикальная пилюля */}
-          <div className="w-[64px] bg-white/40 dark:bg-[#161618]/90 border border-black/5 dark:border-white/10 rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-sm shrink-0 backdrop-blur-md">
+          <div className="w-[64px] h-[184px] bg-white/40 dark:bg-[#161618]/90 border border-black/5 dark:border-white/10 rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-sm shrink-0 backdrop-blur-md">
             <button 
               onClick={() => setActiveSlide(0)}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${

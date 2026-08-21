@@ -114,11 +114,11 @@ export default function AdminStaff() {
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНИЙ БЛОК: Слайдер + Вертикальная навигация ─── */}
+        {/* ─── ВЕРХНИЙ БЛОК: Матовый слайдер, уходящий наверх + Пилюля ─── */}
         <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
           
-          {/* Левый баннер со свайпом */}
-          <div className="flex-1 relative h-full">
+          {/* Левый баннер со свайпом (уходит за верхний край экрана) */}
+          <div className="flex-1 relative h-[calc(100%+12px)] -mt-3">
             <AnimatePresence initial={false} mode="wait">
               {activeSlide === 0 ? (
                 /* СЛАЙД 1: КОМАНДА */
@@ -137,20 +137,19 @@ export default function AdminStaff() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: accentColor || '#CCFF00' }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none"
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-950 dark:text-white leading-tight">
                       Сотрудники
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-slate-900 font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-slate-950 dark:text-white font-mono tracking-tight leading-none">
                       {displayedStaff.length}
                     </span>
-                    <span className="text-[10px] font-bold text-slate-900/70 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
                       активных<br/>в штате
                     </span>
                   </div>
@@ -164,7 +163,7 @@ export default function AdminStaff() {
                           e.stopPropagation();
                           setIsFilterOpen(!isFilterOpen);
                         }} 
-                        className="w-11 h-11 rounded-full bg-black/10 hover:bg-black/15 text-slate-900 flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                        className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
                         {roleFilter !== 'Все сотрудники' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-slate-900 shrink-0" />}
@@ -174,7 +173,7 @@ export default function AdminStaff() {
                         <div 
                           onPointerDown={(e) => e.stopPropagation()}
                           onClick={(e) => e.stopPropagation()} 
-                          className="absolute top-[110%] left-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl w-64 origin-top-left"
+                          className="absolute top-[110%] left-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-[24px] p-4 flex flex-col gap-3 shadow-2xl w-64 origin-top-left"
                         >
                           <div>
                             <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Роль</label>
@@ -221,7 +220,7 @@ export default function AdminStaff() {
                         e.stopPropagation(); 
                         setIsSearchVisible(!isSearchVisible); 
                       }} 
-                      className="w-11 h-11 rounded-full bg-black/10 hover:bg-black/15 text-slate-900 flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
+                      className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
@@ -244,16 +243,16 @@ export default function AdminStaff() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between bg-[#DDE2E5] dark:bg-[#161618] border border-slate-300/40 dark:border-white/10 cursor-grab active:cursor-grabbing !overflow-visible select-none"
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 dark:text-white leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-950 dark:text-white leading-tight">
                       Зарплаты
                     </h2>
                   </div>
 
                   <div className="flex flex-col gap-0 px-0.5">
-                    <span className="text-4xl font-black text-slate-900 dark:text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-slate-950 dark:text-white font-mono tracking-tight leading-none">
                       {totalPayroll.toLocaleString('ru-RU')} ₽
                     </span>
                     <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide mt-1.5">
@@ -269,17 +268,17 @@ export default function AdminStaff() {
                           e.stopPropagation();
                           setIsFilterOpen(!isFilterOpen);
                         }} 
-                        className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 text-slate-900 dark:text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                        className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {roleFilter !== 'Все сотрудники' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-slate-900 dark:bg-white shrink-0" />}
+                        {roleFilter !== 'Все сотрудники' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-slate-900 shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
                         <div 
-                          onPointerDown={(e) => e.stopPropagation()}
+                          onPointerDown={(e) => e.stopPropagation()} 
                           onClick={(e) => e.stopPropagation()} 
-                          className="absolute top-[110%] left-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl w-64 origin-top-left"
+                          className="absolute top-[110%] left-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-[24px] p-4 flex flex-col gap-3 shadow-2xl w-64 origin-top-left"
                         >
                           <div>
                             <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Роль</label>
@@ -326,7 +325,7 @@ export default function AdminStaff() {
                         e.stopPropagation(); 
                         setIsSearchVisible(!isSearchVisible); 
                       }} 
-                      className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 text-slate-900 dark:text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
+                      className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
@@ -337,7 +336,7 @@ export default function AdminStaff() {
           </div>
 
           {/* Правая вертикальная пилюля */}
-          <div className="w-[64px] bg-white/40 dark:bg-[#161618]/90 border border-black/5 dark:border-white/10 rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-sm shrink-0 backdrop-blur-md">
+          <div className="w-[64px] h-[184px] bg-white/40 dark:bg-[#161618]/90 border border-black/5 dark:border-white/10 rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-sm shrink-0 backdrop-blur-md">
             <button 
               onClick={() => { setIsFilterOpen(false); setActiveSlide(0); }}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
