@@ -28,13 +28,13 @@ export default function BottomNav() {
   const baseInactive =
     "w-[68px] h-[68px] flex items-center justify-center bg-transparent text-slate-600 dark:text-zinc-400";
 
-  // Универсальный класс для АКТИВНОЙ кнопки
+  // Универсальный класс для АКТИВНОЙ кнопки (без теней и свечения)
   const baseActive =
-    "w-[68px] h-[68px] rounded-full flex items-center justify-center text-black shadow-md";
+    "w-[68px] h-[68px] rounded-full flex items-center justify-center text-black shadow-none";
 
-  // Постоянный градиентный стиль для кнопки AI Ассистента
+  // Постоянный градиентный стиль для кнопки AI Ассистента (без теней и свечения)
   const aiButtonGradient =
-    "w-[68px] h-[68px] rounded-full flex items-center justify-center bg-gradient-to-tr from-[#CCFF00] via-[#00F0FF] to-[#BD00FF] text-black shadow-lg hover:shadow-cyan-500/25 transition-all hover:scale-105 active:scale-95";
+    "w-[68px] h-[68px] rounded-full flex items-center justify-center bg-gradient-to-tr from-[#CCFF00] via-[#00F0FF] to-[#BD00FF] text-black shadow-none transition-all hover:scale-105 active:scale-95";
 
   // -----------
   // Определения режима и флагов страниц
@@ -72,13 +72,13 @@ export default function BottomNav() {
           menuZindex={94}
         />
         
-        {/* ─── ОБЩИЙ КОНТЕЙНЕР (СБЛИЖАЕМ ПИЛЮЛЮ И AI ВПЛОТНУЮ) ─── */}
+        {/* ─── ОБЩИЙ КОНТЕЙНЕР ─── */}
         <div className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-[95] flex items-center justify-center gap-1.5 pointer-events-none select-none max-w-full">
           
-          {/* 1. ОСНОВНАЯ ПИЛЮЛЯ НАВИГАЦИИ (ОПТИМАЛЬНЫЙ ПАДДИНГ P-2) */}
+          {/* 1. ОСНОВНАЯ ПИЛЮЛЯ НАВИГАЦИИ */}
           <nav
             id="urban-glass-admin-nav"
-            className="p-2 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-lg flex gap-1.5 items-center rounded-full w-max pointer-events-auto transition-colors duration-300 border-none"
+            className="p-2 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-none flex gap-1.5 items-center rounded-full w-max pointer-events-auto transition-colors duration-300 border-none"
           >
             {/* 1. Главная */}
             <Link
@@ -92,7 +92,7 @@ export default function BottomNav() {
               }}
             >
               <span 
-                style={isHomeTabActive ? { backgroundColor: accentColor || '#CCFF00' } : {}}
+                style={isHomeTabActive ? { backgroundColor: accentColor || '#CCFF00', boxShadow: 'none' } : {}}
                 className={isHomeTabActive ? baseActive : baseInactive}
               >
                 <Home size={28} className={iconClass} />
@@ -111,7 +111,7 @@ export default function BottomNav() {
               }}
             >
               <span 
-                style={isScheduleTabActive ? { backgroundColor: accentColor || '#CCFF00' } : {}}
+                style={isScheduleTabActive ? { backgroundColor: accentColor || '#CCFF00', boxShadow: 'none' } : {}}
                 className={isScheduleTabActive ? baseActive : baseInactive}
               >
                 <Calendar size={28} className={iconClass} />
@@ -131,7 +131,7 @@ export default function BottomNav() {
                 }}
               >
                 <span 
-                  style={isStudentsTabActive ? { backgroundColor: accentColor || '#CCFF00' } : {}}
+                  style={isStudentsTabActive ? { backgroundColor: accentColor || '#CCFF00', boxShadow: 'none' } : {}}
                   className={isStudentsTabActive ? baseActive : baseInactive}
                 >
                   <Users size={28} className={iconClass} />
@@ -139,7 +139,7 @@ export default function BottomNav() {
               </Link>
             )}
 
-            {/* 4. Меню шторки (для тренера — профиль, для админа — LayoutGrid) */}
+            {/* 4. Меню шторки */}
             {currentRole === 'trainer' ? (
               <Link
                 href="/profile"
@@ -179,8 +179,8 @@ export default function BottomNav() {
             )}
           </nav>
 
-          {/* 2. ОТДЕЛЬНАЯ КРУГЛАЯ КНОПКА AI (ПАДДИНГ P-2) */}
-          <div className="p-2 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-lg rounded-full flex items-center justify-center pointer-events-auto transition-colors duration-300 border-none shrink-0">
+          {/* 2. ОТДЕЛЬНАЯ КРУГЛАЯ КНОПКА AI */}
+          <div className="p-2 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-none rounded-full flex items-center justify-center pointer-events-auto transition-colors duration-300 border-none shrink-0">
             <Link
               href="/admin/ai"
               className={navBtnClass}
@@ -192,7 +192,7 @@ export default function BottomNav() {
               }}
             >
               <span className={aiButtonGradient}>
-                <Sparkles size={28} className="w-7 h-7 stroke-[2.5] text-black drop-shadow-sm" />
+                <Sparkles size={28} className="w-7 h-7 stroke-[2.5] text-black" />
               </span>
             </Link>
           </div>
@@ -207,14 +207,10 @@ export default function BottomNav() {
   const isScheduleTabActive = !isMenuOpen && (location === '/schedule' || location === '/schedule/');
   const isProfileTabActive = !isMenuOpen && (location === '/profile' || location === '/profile/');
 
-  const mainClientRoutes = ['/', '/schedule', '/profile'];
-  const isMainPageClient = mainClientRoutes.some(route => location === route || location === route + '/');
-  const isMoreActiveClient = !isMainPageClient;
-
   return (
     <nav
       id="urban-glass-client-nav"
-      className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 p-2 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-lg flex gap-1.5 items-center z-[95] rounded-full w-max pointer-events-auto transition-colors duration-300 border-none"
+      className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 p-2 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-none flex gap-1.5 items-center z-[95] rounded-full w-max pointer-events-auto transition-colors duration-300 border-none"
     >
       <Link
         href="/"
@@ -226,7 +222,7 @@ export default function BottomNav() {
         }}
       >
         <span 
-          style={isHomeTabActive ? { backgroundColor: accentColor || '#CCFF00' } : {}}
+          style={isHomeTabActive ? { backgroundColor: accentColor || '#CCFF00', boxShadow: 'none' } : {}}
           className={isHomeTabActive ? baseActive : baseInactive}
         >
           <Home size={28} className={iconClass} />
@@ -242,7 +238,7 @@ export default function BottomNav() {
         }}
       >
         <span 
-          style={isScheduleTabActive ? { backgroundColor: accentColor || '#CCFF00' } : {}}
+          style={isScheduleTabActive ? { backgroundColor: accentColor || '#CCFF00', boxShadow: 'none' } : {}}
           className={isScheduleTabActive ? baseActive : baseInactive}
         >
           <Calendar size={28} className={iconClass} />
@@ -269,13 +265,12 @@ export default function BottomNav() {
         className={navBtnClass}
         onClick={e => {
           e.preventDefault();
-          if (!isMoreActiveClient) { setLocation('/settings'); }
+          setLocation('/settings');
           setIsMenuOpen(false);
         }}
       >
         <span 
-          style={isMoreActiveClient ? { backgroundColor: accentColor || '#CCFF00' } : {}}
-          className={isMoreActiveClient ? baseActive : baseInactive}
+          className={baseInactive}
         >
           <Settings size={28} className={iconClass} />
         </span>
