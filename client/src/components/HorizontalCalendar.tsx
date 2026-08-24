@@ -7,6 +7,8 @@ interface HorizontalCalendarProps {
   className?: string;
 }
 
+const BATCH_DAYS = 30; // Порция подгрузки дней в каждую сторону
+
 export const HorizontalCalendar: React.FC<HorizontalCalendarProps> = ({
   selectedDate,
   onSelectDate,
@@ -15,19 +17,19 @@ export const HorizontalCalendar: React.FC<HorizontalCalendarProps> = ({
   const { theme, accentColor, accentConfig } = useTheme();
   const activeTextColor = accentConfig?.textColor === 'text-black' ? '#000000' : '#ffffff';
 
-  const [days, setDays] = useState<Date[]>([]);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const dList: Date[] = [];
-    const centerDate = new Date(selectedDate);
-    for (let i = -14; i <= 14; i++) {
-      const d = new Date(centerDate);
-      d.setDate(centerDate.getDate() + i);
-      dList.push(d);
+  const [days, setDays] = useState<Date[]>(() => {
+    const list: Date[] = [];
+    const base = new Date(selectedDate);
+    for (let i = -BATCH_DAYS; i <= BATCH_DAYS; i++) {
+      const d = new Date(base);
+      d.setDate(base.getDate() + i);
+      list.push(d);
     }
-    setDays(dList);
-  }, []);
+    return list;
+  });
+
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isInitialScrollDone = useRef<boolean>(false);
 
   const isSameDay = (d1: Date, d2: Date) => {
     return (
@@ -42,11 +44,24 @@ export const HorizontalCalendar: React.FC<HorizontalCalendarProps> = ({
     return (
       d.getDate() === today.getDate() &&
       d.getMonth() === today.getMonth() &&
-      d.getFullYear() === today.getFullYear();
+      d.getFullYear() === today.getFullYear()
+    );
   };
 
+  // Первоначальное центрирование выбранного дня
   useEffect(() => {
-    if (scrollContainerRef.current) {
+    if (scrollContainerRef.current && !isInitialScrollDone.current) {
+      const activeEl = scrollContainerRef.current.querySelector('[data-selected="true"]');
+      if (activeEl) {
+        activeEl.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
+        isInitialScrollDone.current = true;
+      }
+    }
+  }, [days, selectedDate]);
+
+  // Скролл к выбранной дате при смене через внешний пикер
+  useEffect(() => {
+    if (scrollContainerRef.current && isInitialScrollDone.current) {
       const activeEl = scrollContainerRef.current.querySelector('[data-selected="true"]');
       if (activeEl) {
         activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
@@ -54,9 +69,52 @@ export const HorizontalCalendar: React.FC<HorizontalCalendarProps> = ({
     }
   }, [selectedDate]);
 
+  // Бесконечная подгрузка дней при приближении к границам
+  const handleScroll = () => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const { scrollLeft, scrollWidth, clientWidth } = container;
+
+    // Подгрузка в прошлое (скролл влево)
+    if (scrollLeft < 150) {
+      const firstDay = days[0];
+      const newPastDays: Date[] = [];
+      for (let i = BATCH_DAYS; i >= 1; i--) {
+        const d = new Date(firstDay);
+        d.setDate(firstDay.getDate() - i);
+        newPastDays.push(d);
+      }
+
+      const prevScrollWidth = container.scrollWidth;
+      setDays(prev => [...newPastDays, ...prev]);
+
+      // Корректируем позицию скролла, чтобы интерфейс не дергался
+      requestAnimationFrame(() => {
+        if (container) {
+          const addedWidth = container.scrollWidth - prevScrollWidth;
+          container.scrollLeft += addedWidth;
+        }
+      });
+    }
+
+    // Подгрузка в будущее (скролл вправо)
+    if (scrollWidth - (scrollLeft + clientWidth) < 150) {
+      const lastDay = days[days.length - 1];
+      const newFutureDays: Date[] = [];
+      for (let i = 1; i <= BATCH_DAYS; i++) {
+        const d = new Date(lastDay);
+        d.setDate(lastDay.getDate() + i);
+        newFutureDays.push(d);
+      }
+      setDays(prev => [...prev, ...newFutureDays]);
+    }
+  };
+
   return (
     <div
       ref={scrollContainerRef}
+      onScroll={handleScroll}
       className={`w-full flex items-center gap-2 overflow-x-auto scrollbar-none touch-pan-x snap-x snap-mandatory py-1 px-5 select-none ${className}`}
     >
       {days.map((day) => {

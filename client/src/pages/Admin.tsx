@@ -60,11 +60,18 @@ const TEACHERS = [
   "Евгения Морозова"
 ];
 
+// 6 акцентных цветов Pantone для карточек
+const PANTONE_COLORS = ['#CCFF00', '#FF4500', '#6B52E1', '#4A3728', '#00A86B', '#E03C7A'];
+const TIME_SLOTS = [
+  '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', 
+  '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'
+];
+
 export default function Admin() {
   const [location, setLocation] = useLocation();
   const { theme, accentColor, accentConfig } = useTheme();
   const { currentRole } = useRole();
-  const activeTextColor = accentConfig.textColor === 'text-black' ? '#000000' : '#ffffff';
+  const activeTextColor = accentConfig?.textColor === 'text-black' ? '#000000' : '#ffffff';
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [currentUserProfile, setCurrentUserProfile] = useState<any>(null);
@@ -115,7 +122,6 @@ export default function Admin() {
     }
   }, [location]);
 
-  const [cancelingIds, setCancelingIds] = useState<Set<number>>(new Set());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [viewMode, setViewMode] = useState<'day' | 'week' | 'month'>('day');
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
@@ -161,28 +167,6 @@ export default function Admin() {
     monday.setHours(0, 0, 0, 0);
     return monday;
   });
-
-  const handleSelectDatePickerDate = (date: Date) => {
-    setSelectedDate(date);
-    const d = new Date(date);
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-    const monday = new Date(d.setDate(diff));
-    monday.setHours(0, 0, 0, 0);
-    setCurrentWeekStart(monday);
-    setIsDatePickerOpen(false);
-  };
-
-  const handleResetToToday = () => {
-    const today = new Date();
-    setSelectedDate(today);
-    const day = today.getDay();
-    const diff = today.getDate() - day + (day === 0 ? -6 : 1);
-    const monday = new Date(today.setDate(diff));
-    monday.setHours(0, 0, 0, 0);
-    setCurrentWeekStart(monday);
-    setIsDatePickerOpen(false);
-  };
 
   const getDaysOfWeek = (start: Date) => {
     const days = [];
@@ -661,7 +645,7 @@ export default function Admin() {
               transition={{ duration: 0.15 }}
               className="flex flex-col gap-2.5"
             >
-              {/* 1. Верхний баннер-шапка (ТЕПЕРЬ ТОЛЬКО НА ГЛАВНОЙ) */}
+              {/* 1. Верхний баннер-шапка */}
               <div 
                 className="w-full min-h-[calc(200px+env(safe-area-inset-top))] pt-[calc(1.25rem+env(safe-area-inset-top))] pb-6 px-6 rounded-b-[42px] relative transition-colors duration-300 flex flex-col justify-end bg-white/20 dark:bg-black/20 backdrop-blur-sm border-none shadow-none text-slate-900 dark:text-white select-none"
               >
@@ -851,7 +835,7 @@ export default function Admin() {
                 </div>
               </div>           
       
-      {/* Widget 3: Активные записи */}
+              {/* Widget 3: Активные записи */}
               <div
                 style={{ borderRadius: '42px' }}
                 className="bg-[#DDE2E5] dark:bg-[#161618] p-5 md:p-6 shadow-none overflow-hidden !rounded-[42px]"
@@ -987,7 +971,7 @@ export default function Admin() {
               transition={{ duration: 0.15 }}
               className="flex flex-col gap-2.5 pt-3 w-full max-w-full overflow-x-hidden"
             >
-              {/* ─── ВЕРХНИЙ БЛОК: Слайдер + Вертикальная навигация (1 в 1 как в Базе Клиентов) ─── */}
+              {/* ─── ВЕРХНИЙ БЛОК: Слайдер + Вертикальная навигация ─── */}
               <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
                 
                 {/* 1. Левая карточка (уходит за верхний край экрана) */}
@@ -1011,7 +995,6 @@ export default function Admin() {
                         selectedDate={selectedDate}
                         onSelectDate={(d) => {
                           setSelectedDate(d);
-                          setViewMode('day');
                         }}
                       />
                     </div>
@@ -1161,7 +1144,7 @@ export default function Admin() {
                 </div>
               </div>
 
-              {/* 2. Список карточек уроков или пустое состояние с шагом gap-2.5 */}
+              {/* 2. Список карточек на день ИЛИ Недельный таймлайн со шкалой времени */}
               <AnimatePresence mode="wait">
                 {viewMode === 'day' ? (
                   <motion.div
@@ -1187,62 +1170,115 @@ export default function Admin() {
                     )}
                   </motion.div>
                 ) : (
+                  /* ─── ВАРИАНТ 1: НЕДЕЛЬНЫЙ ТАЙМЛАЙН СО ШКАЛОЙ ВРЕМЕНИ СЛЕВА ─── */
                   <motion.div
-                    key="week-view"
+                    key="week-timeline-view"
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -12 }}
                     transition={{ duration: 0.2 }}
-                    className="flex flex-col gap-2.5 pb-32"
+                    className="flex flex-col gap-3 pb-32 w-full"
                   >
-                    {getDaysOfWeek(currentWeekStart).map((day) => {
-                      const isTodayDay = isDateToday(day);
-                      const weekdayStr = day.toLocaleDateString('ru-RU', { weekday: 'short' });
-                      const capitalizedWeekday = weekdayStr.charAt(0).toUpperCase() + weekdayStr.slice(1);
-                      const formattedDate = day.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+                    <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md rounded-[42px] p-5 shadow-none flex flex-col gap-4 border-none select-none overflow-hidden">
                       
-                      const dayClasses = classes.filter(cls => {
-                        const d = new Date(cls.start_time);
-                        return d.getDate() === day.getDate() &&
-                               d.getMonth() === day.getMonth() &&
-                               d.getFullYear() === day.getFullYear();
-                      }).filter(isClassMatchingFilter);
-
-                      return (
-                        <div key={day.toISOString()} className="flex flex-col gap-2.5">
-                          <div className="flex items-center gap-2 mt-2 pl-2">
-                            <span className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
-                              {capitalizedWeekday}, {formattedDate}
-                            </span>
-                            {isTodayDay && (
-                              <span 
-                                style={{
-                                  backgroundColor: `${accentColor || '#CCFF00'}1F`,
-                                  color: accentColor || '#CCFF00',
-                                }}
-                                className="text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider"
-                              >
-                                Сегодня
-                              </span>
-                            )}
-                          </div>
-                          
-                          <div className="flex flex-col gap-2.5">
-                            {dayClasses.length > 0 ? (
-                              dayClasses.map((cls) => renderClassCard(cls))
-                            ) : (
-                              <div className={`rounded-[42px] py-6 px-6 text-center flex items-center justify-center transition-colors ${
-                                theme === 'light'
-                                  ? 'bg-white/60 text-slate-500'
-                                  : 'bg-[#161618] text-zinc-400'
-                              }`}>
-                                <span className="font-bold text-xs uppercase tracking-wider">Занятий нет</span>
-                              </div>
-                            )}
-                          </div>
+                      {/* Шапка дней недели (ПН - ВС) с возможностью переключения */}
+                      <div className="grid grid-cols-[54px_repeat(7,1fr)] gap-1.5 items-center text-center">
+                        <div className="text-[10px] font-black uppercase text-slate-400 dark:text-zinc-500 font-mono">
+                          ВРЕМЯ
                         </div>
-                      );
-                    })}
+                        {getDaysOfWeek(currentWeekStart).map((day) => {
+                          const isSel = isSameDay(day, selectedDate);
+                          const isTod = isDateToday(day);
+                          return (
+                            <button
+                              key={day.toISOString()}
+                              type="button"
+                              onClick={() => setSelectedDate(day)}
+                              className={`flex flex-col items-center justify-center py-1.5 rounded-2xl transition-all cursor-pointer border-none outline-none ${
+                                isSel
+                                  ? 'bg-[#CCFF00] text-black font-bold shadow-sm'
+                                  : isTod
+                                    ? 'bg-white/20 dark:bg-white/10 text-slate-950 dark:text-white font-medium'
+                                    : 'bg-transparent text-slate-600 dark:text-zinc-400 hover:bg-white/10'
+                              }`}
+                            >
+                              <span className="text-[9px] uppercase tracking-wider font-bold leading-none">
+                                {day.toLocaleDateString('ru-RU', { weekday: 'short' })}
+                              </span>
+                              <span className="text-xs font-mono font-black mt-0.5 leading-none">
+                                {day.getDate()}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Вертикальная сетка таймлайна */}
+                      <div className="flex flex-col gap-2 max-h-[520px] overflow-y-auto scrollbar-none pr-0.5">
+                        {TIME_SLOTS.map((timeStr) => {
+                          const hour = parseInt(timeStr.split(':')[0], 10);
+
+                          return (
+                            <div key={timeStr} className="grid grid-cols-[54px_repeat(7,1fr)] gap-1.5 min-h-[58px] items-stretch">
+                              {/* Вертикальная колонка времени слева */}
+                              <div className="flex items-start justify-center pt-1 font-mono text-[11px] font-black text-slate-500 dark:text-zinc-400">
+                                {timeStr}
+                              </div>
+
+                              {/* 7 колонок для каждого дня */}
+                              {getDaysOfWeek(currentWeekStart).map((day, dIdx) => {
+                                const daySlotClasses = classes.filter((cls) => {
+                                  const d = new Date(cls.start_time);
+                                  const matchesDay = d.getDate() === day.getDate() &&
+                                                     d.getMonth() === day.getMonth() &&
+                                                     d.getFullYear() === day.getFullYear();
+                                  const classHour = d.getHours();
+                                  return matchesDay && classHour === hour && isClassMatchingFilter(cls);
+                                });
+
+                                return (
+                                  <div
+                                    key={`${day.toISOString()}-${timeStr}`}
+                                    className="bg-black/5 dark:bg-white/5 rounded-[16px] p-1 flex flex-col gap-1 relative overflow-hidden group hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+                                  >
+                                    {daySlotClasses.map((cls, cIdx) => {
+                                      const cardColor = cls.color || PANTONE_COLORS[(cls.id || cIdx) % PANTONE_COLORS.length];
+                                      const isLimeOrYellow = cardColor === '#CCFF00';
+
+                                      return (
+                                        <button
+                                          key={cls.id}
+                                          type="button"
+                                          onClick={() => {
+                                            setSelectedClassForSheet(cls);
+                                            setIsCancelConfirmOpen(false);
+                                            setIsClassSheetOpen(true);
+                                          }}
+                                          style={{ backgroundColor: cardColor }}
+                                          className={`w-full p-1.5 rounded-[12px] flex flex-col justify-between text-left cursor-pointer border-none shadow-xs transition-transform active:scale-95 ${
+                                            isLimeOrYellow ? 'text-black' : 'text-white'
+                                          }`}
+                                          title={`${cls.title} • ${cls.teacher_name}`}
+                                        >
+                                          <span className="text-[9px] font-black uppercase tracking-wider truncate leading-tight">
+                                            {cls.title}
+                                          </span>
+                                          <div className="flex justify-between items-center mt-1 text-[8px] font-bold opacity-80 leading-none">
+                                            <span className="truncate max-w-[50px]">{cls.teacher_name?.split(' ')[0]}</span>
+                                            <span className="font-mono">{cls.hall ? cls.hall.slice(0, 3) : 'Зал'}</span>
+                                          </div>
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
