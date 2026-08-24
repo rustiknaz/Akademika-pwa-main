@@ -491,18 +491,18 @@ export default function AdminFinance() {
             displayedTransactions.map((t) => (
               <div
                 key={t.id}
-                className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] px-5 py-3 flex items-center gap-3.5 shadow-none transition group"
+                className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-2 pl-2.5 pr-5 flex items-center gap-3.5 shadow-none transition group"
               >
-                {/* Круглая иконка операции */}
-                <div className={`w-[52px] h-[52px] rounded-full flex items-center justify-center shrink-0 ${
+                {/* Круглая иконка операции (размер 70px) */}
+                <div className={`w-[70px] h-[70px] rounded-full flex items-center justify-center shrink-0 ${
                   t.type === 'income' 
                     ? 'bg-emerald-500/10 text-emerald-600 dark:text-[#CCFF00]' 
                     : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
                 }`}>
                   {t.type === 'income' ? (
-                    <ArrowUpRight size={24} className="stroke-[2.5]" />
+                    <ArrowUpRight size={28} className="stroke-[2.5]" />
                   ) : (
-                    <ArrowDownRight size={24} className="stroke-[2.5]" />
+                    <ArrowDownRight size={28} className="stroke-[2.5]" />
                   )}
                 </div>
 

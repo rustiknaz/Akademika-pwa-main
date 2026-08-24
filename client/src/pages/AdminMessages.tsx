@@ -347,14 +347,14 @@ export default function AdminMessages() {
               <div
                 key={chat.id}
                 onClick={() => setSelectedChat(chat)}
-                className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] px-5 py-3 flex items-center gap-3.5 shadow-none transition cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 group"
+                className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-2 pl-2.5 pr-5 flex items-center gap-3.5 shadow-none transition cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 group"
               >
-                {/* Аватар с каналом связи */}
+                {/* Аватар с каналом связи (размер 70px) */}
                 <div className="relative shrink-0">
-                  <div className="w-[52px] h-[52px] rounded-full bg-white/40 dark:bg-white/10 backdrop-blur-md flex items-center justify-center text-lg font-black text-slate-900 dark:text-white select-none">
+                  <div className="w-[70px] h-[70px] rounded-full bg-white/40 dark:bg-white/10 backdrop-blur-md flex items-center justify-center text-2xl font-black text-slate-900 dark:text-white select-none">
                     {chat.avatar}
                   </div>
-                  <span className={`absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full text-[9px] font-black flex items-center justify-center text-white border-2 border-white dark:border-[#161618] ${
+                  <span className={`absolute bottom-0.5 right-0.5 w-6 h-6 rounded-full text-[10px] font-black flex items-center justify-center text-white border-2 border-white dark:border-[#161618] ${
                     chat.channel === 'tg' ? 'bg-sky-500' : 'bg-emerald-500'
                   }`}>
                     {chat.channel === 'tg' ? 'TG' : 'WA'}

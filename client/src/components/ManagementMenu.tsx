@@ -120,11 +120,12 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
             className="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-[70] pointer-events-auto"
           />
 
+          {/* Контейнер расположен симметрично над основной левой пилюлей */}
           <div 
-            className="fixed bottom-[calc(max(1.5rem,env(safe-area-inset-bottom))+6.75rem)] w-[260px] z-[80] pointer-events-none"
+            className="fixed bottom-[calc(max(1.5rem,env(safe-area-inset-bottom))+6.5rem)] w-[260px] z-[80] pointer-events-none"
             style={{ 
               left: '50%', 
-              transform: 'translateX(-50%)'
+              transform: 'translateX(calc(-50% - 44px))'
             }}
           >
             <AnimatePresence mode="wait" initial={false}>
@@ -202,11 +203,12 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
                   animate={{ opacity: 1, x: 0, scale: 1 }}
                   exit={{ opacity: 0, x: 16, scale: 0.96 }}
                   transition={{ duration: 0.2 }}
-                  className="flex flex-col gap-2 pointer-events-auto items-center"
+                  className="relative flex flex-col gap-2 pointer-events-auto"
                 >
+                  {/* Кнопка «Назад» вынесена вправо и центрирована ровно между Абонементами и Рассылками */}
                   <button
                     onClick={() => setMenuView('main')}
-                    className="w-11 h-11 rounded-full flex items-center justify-center text-zinc-400 hover:text-white bg-zinc-900/80 hover:bg-zinc-800/90 border border-white/10 transition-all cursor-pointer shadow-xl backdrop-blur-xl mb-0.5 self-center"
+                    className="absolute -right-[76px] top-[154px] -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center text-zinc-400 hover:text-white bg-zinc-900/80 hover:bg-zinc-800/90 border border-white/10 transition-all cursor-pointer shadow-xl backdrop-blur-xl z-10"
                     title="Назад в меню"
                   >
                     <ChevronLeft size={20} className="stroke-[2.5]" />

@@ -396,9 +396,9 @@ export default function AdminStaff() {
               displayedStaff.map((staff) => (
                 <div
                   key={staff.id}
-                  className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] px-5 py-3 flex items-center gap-3.5 shadow-none transition group"
+                  className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-2 pl-2.5 pr-5 flex items-center gap-3.5 shadow-none transition group"
                 >
-                  <div className="w-[52px] h-[52px] rounded-full bg-white/40 dark:bg-white/10 backdrop-blur-md flex items-center justify-center text-lg font-black text-slate-900 dark:text-white shrink-0 select-none">
+                  <div className="w-[70px] h-[70px] rounded-full bg-white/40 dark:bg-white/10 backdrop-blur-md flex items-center justify-center text-2xl font-black text-slate-900 dark:text-white shrink-0 select-none">
                     {staff.avatar}
                   </div>
 
@@ -435,7 +435,7 @@ export default function AdminStaff() {
               displayedPayroll.map((payroll) => (
                 <div
                   key={payroll.id}
-                  className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] px-5 py-3 flex items-center gap-3.5 shadow-none transition"
+                  className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-2 pl-4 pr-3 flex items-center gap-3.5 shadow-none transition"
                 >
                   <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
                     <h4 className="font-bold text-base text-slate-950 dark:text-white truncate">

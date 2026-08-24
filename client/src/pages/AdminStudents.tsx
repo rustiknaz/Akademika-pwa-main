@@ -506,10 +506,10 @@ export default function AdminStudents() {
               const sourceInfo = SOURCES_CONFIG[sourceKey] || SOURCES_CONFIG.instagram;
 
               const avatar = student.avatar_url ? (
-                <img src={student.avatar_url} alt={student.full_name || ''} className="w-[56px] h-[56px] rounded-full object-cover flex items-center justify-center text-xl font-bold shrink-0" referrerPolicy="no-referrer" />
+                <img src={student.avatar_url} alt={student.full_name || ''} className="w-[70px] h-[70px] rounded-full object-cover flex items-center justify-center text-xl font-bold shrink-0" referrerPolicy="no-referrer" />
               ) : (
-                <div className="w-[56px] h-[56px] rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-black dark:text-white select-none text-xl font-bold shrink-0">
-                  {student.full_name?.trim()[0]?.toUpperCase() || <User size={28} className="text-zinc-400" />}
+                <div className="w-[70px] h-[70px] rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-black dark:text-white select-none text-2xl font-bold shrink-0">
+                  {student.full_name?.trim()[0]?.toUpperCase() || <User size={32} className="text-zinc-400" />}
                 </div>
               );
 
@@ -523,7 +523,7 @@ export default function AdminStudents() {
                 <button
                   key={student.id}
                   type="button"
-                  className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] px-5 py-3 flex items-center gap-3.5 shadow-none focus:outline-none transition group active:scale-[.99] cursor-pointer text-left"
+                  className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-2 pl-2.5 pr-5 flex items-center gap-3.5 shadow-none focus:outline-none transition group active:scale-[.99] cursor-pointer text-left"
                   onClick={() => setSelectedStudentForDrawer(student)}
                 >
                   {avatar}
