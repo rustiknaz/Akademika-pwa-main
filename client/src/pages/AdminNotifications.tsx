@@ -26,11 +26,11 @@ import { useTheme } from '@/context/ThemeContext';
 export default function AdminNotifications() {
   const [, setLocation] = useLocation();
   const { theme, accentColor, accentConfig } = useTheme();
-  const activeTextColor = accentConfig.textColor === 'text-black' ? '#000000' : '#ffffff';
+  const activeTextColor = accentConfig?.textColor === 'text-black' ? '#000000' : '#ffffff';
   const { toast } = useToast();
 
-  // 0 - Каналы, 1 - Рассылка, 2 - Триггеры
-  const [activeSlide, setActiveSlide] = useState<number>(0);
+  // 0 - Каналы, 1 - Рассылка, 2 - Триггеры (по умолчанию открываем Рассылку 1)
+  const [activeSlide, setActiveSlide] = useState<number>(1);
 
   // --- БЛОК 1: Каналы ---
   const [tgToken, setTgToken] = useState('7812938491:AAH_x98kL2mP01n9vXzR_qW8kL9s2t1uV4w');
@@ -150,7 +150,7 @@ export default function AdminNotifications() {
           <div className="flex-1 relative h-[calc(100%+12px)] -mt-3">
             <AnimatePresence initial={false} mode="wait">
               {activeSlide === 0 ? (
-                /* СЛАЙД 1: КАНАЛЫ */
+                /* СЛАЙД 0: КАНАЛЫ */
                 <motion.div
                   key="channels-slide"
                   drag="x"
@@ -187,7 +187,7 @@ export default function AdminNotifications() {
                   </div>
                 </motion.div>
               ) : activeSlide === 1 ? (
-                /* СЛАЙД 2: РАССЫЛКА */
+                /* СЛАЙД 1: РАССЫЛКА */
                 <motion.div
                   key="broadcast-slide"
                   drag="x"
@@ -225,7 +225,7 @@ export default function AdminNotifications() {
                   </div>
                 </motion.div>
               ) : (
-                /* СЛАЙД 3: ТРИГГЕРЫ */
+                /* СЛАЙД 2: ТРИГГЕРЫ */
                 <motion.div
                   key="triggers-slide"
                   drag="x"
@@ -265,20 +265,8 @@ export default function AdminNotifications() {
             </AnimatePresence>
           </div>
 
-          {/* Правая вертикальная пилюля */}
-          <div className="w-[64px] h-[184px] bg-white/40 dark:bg-[#161618]/90 border border-black/5 dark:border-white/10 rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-sm shrink-0 backdrop-blur-md">
-            <button 
-              onClick={() => setActiveSlide(0)}
-              className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
-                activeSlide === 0 
-                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
-              }`}
-              title="Каналы"
-            >
-              <Bot size={20} className="stroke-[2.5]" />
-            </button>
-            
+          {/* Правая вертикальная пилюля (Сверху вниз: Рассылка -> Триггеры -> Бот) */}
+          <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
             <button 
               onClick={() => setActiveSlide(1)}
               className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
@@ -301,6 +289,18 @@ export default function AdminNotifications() {
               title="Триггеры"
             >
               <Zap size={20} className="stroke-[2.5]" />
+            </button>
+
+            <button 
+              onClick={() => setActiveSlide(0)}
+              className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+                activeSlide === 0 
+                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
+                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+              }`}
+              title="Каналы"
+            >
+              <Bot size={20} className="stroke-[2.5]" />
             </button>
           </div>
         </div>

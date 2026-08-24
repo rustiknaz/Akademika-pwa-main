@@ -73,12 +73,12 @@ export default function BottomNav() {
         />
         
         {/* ─── ОБЩИЙ КОНТЕЙНЕР (СБЛИЖАЕМ ПИЛЮЛЮ И AI ВПЛОТНУЮ) ─── */}
-        <div className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-[95] flex items-center justify-center gap-1 pointer-events-none select-none max-w-full">
+        <div className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-[95] flex items-center justify-center gap-1.5 pointer-events-none select-none max-w-full">
           
-          {/* 1. ОСНОВНАЯ ПИЛЮЛЯ НАВИГАЦИИ (ПЛОТНЫЙ GAP-1.5 МЕЖДУ ЗНАЧКАМИ) */}
+          {/* 1. ОСНОВНАЯ ПИЛЮЛЯ НАВИГАЦИИ (ОПТИМАЛЬНЫЙ ПАДДИНГ P-2) */}
           <nav
             id="urban-glass-admin-nav"
-            className="p-3 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-lg flex gap-1.5 items-center rounded-full w-max pointer-events-auto transition-colors duration-300 border-none"
+            className="p-2 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-lg flex gap-1.5 items-center rounded-full w-max pointer-events-auto transition-colors duration-300 border-none"
           >
             {/* 1. Главная */}
             <Link
@@ -179,8 +179,8 @@ export default function BottomNav() {
             )}
           </nav>
 
-          {/* 2. ОТДЕЛЬНАЯ КРУГЛАЯ КНОПКА AI В ОДНОТИПНОЙ ПОДЛОЖКЕ */}
-          <div className="p-3 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-lg rounded-full flex items-center justify-center pointer-events-auto transition-colors duration-300 border-none shrink-0">
+          {/* 2. ОТДЕЛЬНАЯ КРУГЛАЯ КНОПКА AI (ПАДДИНГ P-2) */}
+          <div className="p-2 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-lg rounded-full flex items-center justify-center pointer-events-auto transition-colors duration-300 border-none shrink-0">
             <Link
               href="/admin/ai"
               className={navBtnClass}
@@ -214,7 +214,7 @@ export default function BottomNav() {
   return (
     <nav
       id="urban-glass-client-nav"
-      className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 p-3 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-lg flex gap-1.5 items-center z-[95] rounded-full w-max pointer-events-auto transition-colors duration-300 border-none"
+      className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 p-2 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-lg flex gap-1.5 items-center z-[95] rounded-full w-max pointer-events-auto transition-colors duration-300 border-none"
     >
       <Link
         href="/"
