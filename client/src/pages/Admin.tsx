@@ -1005,8 +1005,8 @@ export default function Admin() {
                       </h2>
                     </div>
 
-                    {/* СРЕДНЯЯ СТРОКА: Полоса дней недели */}
-                    <div className="bg-black/5 dark:bg-white/5 p-1 rounded-full backdrop-blur-sm -my-1 overflow-x-auto scrollbar-none w-full">
+                    {/* СРЕДНЯЯ СТРОКА: Полоса дней недели (на всю ширину до краев баннера) */}
+                    <div className="-mx-5 overflow-hidden w-[calc(100%+40px)] select-none">
                       <HorizontalCalendar
                         selectedDate={selectedDate}
                         onSelectDate={(d) => {

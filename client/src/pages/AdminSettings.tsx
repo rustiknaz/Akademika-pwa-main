@@ -152,19 +152,23 @@ export default function AdminSettings() {
               <label className="text-[10px] font-bold uppercase tracking-wider block text-slate-500 dark:text-zinc-400">
                 Цвет оформления (Pantone)
               </label>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
                 {[
-                  { id: 'yellow', alias: 'lime', hex: '#CCFF00', checkColor: '#000000' },
-                  { id: 'orange', alias: 'orange', hex: '#FF4500', checkColor: '#FFFFFF' },
-                  { id: 'purple', alias: 'violet', hex: '#6B52E1', checkColor: '#FFFFFF' },
+                  { id: 'yellow', alias: 'lime', hex: '#CCFF00', checkColor: '#000000', label: 'Lime' },
+                  { id: 'orange', alias: 'orange', hex: '#FF4500', checkColor: '#FFFFFF', label: 'Orange' },
+                  { id: 'purple', alias: 'violet', hex: '#6B52E1', checkColor: '#FFFFFF', label: 'Purple' },
+                  { id: 'coffee', alias: 'coffee', hex: '#4A3728', checkColor: '#FFFFFF', label: '19-1235 TSX' },
+                  { id: 'emerald', alias: 'emerald', hex: '#00A86B', checkColor: '#FFFFFF', label: '15-5534 TSX' },
+                  { id: 'pink', alias: 'pink', hex: '#E03C7A', checkColor: '#FFFFFF', label: '17-1937 TSX' },
                 ].map((item) => {
-                  const isActive = accent === item.id || accent === item.alias;
+                  const isActive = accent === item.id || accent === item.alias || accentColor?.toLowerCase() === item.hex.toLowerCase();
                   return (
                     <button
                       key={item.id}
                       type="button"
                       onClick={() => setAccent(item.id as any)}
                       style={{ backgroundColor: item.hex }}
+                      title={item.label}
                       className={`w-12 h-12 rounded-full flex items-center justify-center border-none cursor-pointer transition-all ${
                         isActive 
                           ? 'ring-2 ring-offset-2 ring-black dark:ring-white scale-105 shadow-md' 
