@@ -20,7 +20,6 @@ import {
   BarChart3
 } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
-import BottomNav from "../components/BottomNav";
 import CustomFilterDropdown from "../components/CustomFilterDropdown";
 import FloatingActionButton from "../components/FloatingActionButton";
 import { useTheme } from '@/context/ThemeContext';
@@ -657,7 +656,6 @@ export default function AdminFinance() {
         </DialogContent>
       </Dialog>
 
-      <BottomNav />
     </div>
   );
 }
