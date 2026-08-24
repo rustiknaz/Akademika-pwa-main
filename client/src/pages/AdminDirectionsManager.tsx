@@ -449,9 +449,9 @@ export function DirectionsAndGroupsManager() {
         .from('profiles')
         .select('role')
         .eq('id', session.user.id)
-        .single();
+        .maybeSingle();
 
-      if (profile?.role !== 'admin') {
+      if (profile && profile.role !== 'admin' && profile.role !== 'owner') {
         setLocation('/');
         return;
       }
