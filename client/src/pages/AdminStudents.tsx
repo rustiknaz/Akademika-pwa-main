@@ -17,7 +17,6 @@ import {
   Filter
 } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
-import BottomNav from "../components/BottomNav";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from '@/context/ThemeContext';
 import FloatingActionButton from "../components/FloatingActionButton";
@@ -178,8 +177,10 @@ export default function AdminStudents() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return setLocation('/Login');
 
-      const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
-      if (profile?.role !== 'admin') return setLocation('/');
+      const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).maybeSingle();
+      if (profile && profile.role !== 'admin' && profile.role !== 'owner') {
+        return setLocation('/');
+      }
 
       await fetchStudentsData();
       setLoading(false);
@@ -285,10 +286,27 @@ export default function AdminStudents() {
     );
   }
 
+  // Фирменный стиль матового блюра для выпадающего меню фильтров
+  const filterPopupStyle: React.CSSProperties = {
+    backdropFilter: 'blur(40px)',
+    WebkitBackdropFilter: 'blur(40px)',
+    backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.78)' : 'rgba(18, 18, 20, 0.85)',
+    boxShadow: '0 20px 50px rgba(0, 0, 0, 0.35)',
+    borderRadius: '36px'
+  };
+
+  // Фирменный стиль для строки поиска
+  const searchInputStyle: React.CSSProperties = {
+    backdropFilter: 'blur(30px)',
+    WebkitBackdropFilter: 'blur(30px)',
+    backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.65)' : 'rgba(18, 18, 20, 0.75)',
+    borderRadius: '9999px'
+  };
+
   return (
     <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col font-sans relative transition-colors duration-300 bg-transparent ${theme === 'light' ? 'text-black' : 'text-white'}`}>
       
-      {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-2 И GAP-2.5 ─── */}
+      {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
         {/* ─── ВЕРХНИЙ БЛОК: Матовый слайдер, уходящий наверх + Пилюля ─── */}
@@ -339,26 +357,48 @@ export default function AdminStudents() {
                       </button>
 
                       {isFilterOpen && (
-                        <div onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()} className="absolute top-[110%] left-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-[24px] p-4 flex flex-col gap-3 shadow-2xl w-72 origin-top-left">
+                        <div 
+                          onPointerDown={(e) => e.stopPropagation()} 
+                          onClick={(e) => e.stopPropagation()} 
+                          style={filterPopupStyle}
+                          className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-left pointer-events-auto select-none"
+                        >
                           <div>
-                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Филиал</label>
+                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Филиал</label>
                             <CustomFilterDropdown value={selectedBranch} options={['Все филиалы', ...branchesList]} onChange={(newBranch) => { setSelectedBranch(newBranch); setSelectedHall('Все залы'); }} />
                           </div>
                           <div>
-                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Зал</label>
+                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Зал</label>
                             <CustomFilterDropdown value={selectedHall} options={['Все залы', 'Зал 1 (Main Glass)', 'Зал 2 (Light Studio)', 'Зал 3 (VIP Room)']} onChange={(newHall) => setSelectedHall(newHall)} />
                           </div>
                           <div>
-                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Направление</label>
+                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Направление</label>
                             <CustomFilterDropdown value={selectedDirection} options={['Все направления', ...directionsList]} onChange={(newDir) => setSelectedDirection(newDir)} />
                           </div>
                           <div>
-                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Возраст</label>
+                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Возраст</label>
                             <CustomFilterDropdown value={selectedAge} options={['Все возраста', ...agesList]} onChange={(newAge) => setSelectedAge(newAge)} />
                           </div>
-                          <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
-                            <button type="button" onClick={() => setIsFilterOpen(false)} className="flex-1 bg-[#CCFF00] text-black text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-all cursor-pointer">Применить</button>
-                            <button type="button" onClick={() => { setSelectedBranch('Все филиалы'); setSelectedHall('Все залы'); setSelectedDirection('Все направления'); setSelectedAge('Все возраста'); }} className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer">Сброс</button>
+                          <div className="flex gap-2 pt-2 border-t border-black/5 dark:border-white/10">
+                            <button 
+                              type="button" 
+                              onClick={() => setIsFilterOpen(false)} 
+                              className="flex-1 bg-[#CCFF00] text-black text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                            >
+                              Применить
+                            </button>
+                            <button 
+                              type="button" 
+                              onClick={() => { 
+                                setSelectedBranch('Все филиалы'); 
+                                setSelectedHall('Все залы'); 
+                                setSelectedDirection('Все направления'); 
+                                setSelectedAge('Все возраста'); 
+                              }} 
+                              className="px-4 bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 text-xs font-bold rounded-full border-none hover:bg-black/10 dark:hover:bg-white/20 transition-all cursor-pointer outline-none"
+                            >
+                              Сброс
+                            </button>
                           </div>
                         </div>
                       )}
@@ -414,22 +454,43 @@ export default function AdminStudents() {
                       </button>
 
                       {isFilterOpen && (
-                        <div onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()} className="absolute top-[110%] left-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-[24px] p-4 flex flex-col gap-3 shadow-2xl w-72 origin-top-left">
+                        <div 
+                          onPointerDown={(e) => e.stopPropagation()} 
+                          onClick={(e) => e.stopPropagation()} 
+                          style={filterPopupStyle}
+                          className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-left pointer-events-auto select-none"
+                        >
                           <div>
-                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Этап воронки</label>
+                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Этап воронки</label>
                             <CustomFilterDropdown value={selectedFunnelStage} options={funnelStagesList} onChange={(newStage) => setSelectedFunnelStage(newStage)} />
                           </div>
                           <div>
-                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Источник лида</label>
+                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Источник лида</label>
                             <CustomFilterDropdown value={selectedFunnelSource} options={funnelSourcesList} onChange={(newSrc) => setSelectedFunnelSource(newSrc)} />
                           </div>
                           <div>
-                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Филиал</label>
+                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Филиал</label>
                             <CustomFilterDropdown value={selectedBranch} options={['Все филиалы', ...branchesList]} onChange={(newBranch) => setSelectedBranch(newBranch)} />
                           </div>
-                          <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
-                            <button type="button" onClick={() => setIsFilterOpen(false)} className="flex-1 bg-[#CCFF00] text-black text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-all cursor-pointer">Применить</button>
-                            <button type="button" onClick={() => { setSelectedFunnelStage('Все этапы'); setSelectedFunnelSource('Все источники'); setSelectedBranch('Все филиалы'); }} className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer">Сброс</button>
+                          <div className="flex gap-2 pt-2 border-t border-black/5 dark:border-white/10">
+                            <button 
+                              type="button" 
+                              onClick={() => setIsFilterOpen(false)} 
+                              className="flex-1 bg-[#CCFF00] text-black text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                            >
+                              Применить
+                            </button>
+                            <button 
+                              type="button" 
+                              onClick={() => { 
+                                setSelectedFunnelStage('Все этапы'); 
+                                setSelectedFunnelSource('Все источники'); 
+                                setSelectedBranch('Все филиалы'); 
+                              }} 
+                              className="px-4 bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 text-xs font-bold rounded-full border-none hover:bg-black/10 dark:hover:bg-white/20 transition-all cursor-pointer outline-none"
+                            >
+                              Сброс
+                            </button>
                           </div>
                         </div>
                       )}
@@ -466,26 +527,27 @@ export default function AdminStudents() {
           </div>
         </div>
 
-        {/* ─── ВЫЕЗЖАЮЩИЙ ПОИСК ─── */}
+        {/* ─── ВЫЕЗЖАЮЩИЙ ПОИСК (ЧИСТАЯ КАПСУЛА-ПИЛЮЛЯ С МАТОВЫМ БЛЮРОМ) ─── */}
         <AnimatePresence>
           {isSearchVisible && (
             <motion.div
-              initial={{ opacity: 0, height: 0, y: -10 }}
+              initial={{ opacity: 0, height: 0, y: -6 }}
               animate={{ opacity: 1, height: 'auto', y: 0 }}
-              exit={{ opacity: 0, height: 0, y: -10 }}
+              exit={{ opacity: 0, height: 0, y: -6 }}
               transition={{ duration: 0.2 }}
-              className="z-10 relative"
+              className="z-10 relative overflow-visible"
             >
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Search size={18} className="text-slate-400 dark:text-zinc-500" />
+              <div style={searchInputStyle} className="relative w-full h-14 flex items-center shadow-none border-none overflow-hidden">
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                  <Search size={20} className="text-slate-500 dark:text-zinc-400 stroke-[2.5]" />
                 </div>
-                <Input
+                <input
                   autoFocus
+                  type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder={activeSlide === 0 ? "Поиск по действующим ученикам..." : "Поиск по лидам и заявкам..."}
-                  className="w-full pl-11 h-14 !rounded-full bg-white dark:bg-[#1C1C1E] !border-none shadow-sm text-sm font-medium focus:!outline-none focus:!ring-0 focus-visible:!ring-0 focus-visible:!ring-offset-0 transition-all"
+                  className="w-full h-full pl-13 pr-6 bg-transparent text-sm font-bold text-slate-950 dark:text-white placeholder:text-slate-500 dark:placeholder:text-zinc-400 focus:outline-none border-none"
                 />
               </div>
             </motion.div>
@@ -653,7 +715,6 @@ export default function AdminStudents() {
 
       <FloatingActionButton onClick={() => setIsAddModalOpen(true)} ariaLabel="Добавить ученика" id="floating-add-student-btn" />
       <ModalDatePicker isOpen={selectedSubForDatePicker !== null} onClose={() => setSelectedSubForDatePicker(null)} expiresAt={selectedSubForDatePicker?.expiresAt || null} onUpdate={(dateStr) => { if (selectedSubForDatePicker) handleUpdateExpiry(selectedSubForDatePicker.id, dateStr); }} />
-      <BottomNav />
     </div>
   );
 }

@@ -17,28 +17,10 @@ export default function BottomNav() {
     setIsMenuOpen(false);
   }, [location]);
 
-  // Общий класс для иконок
   const iconClass = "w-7 h-7 stroke-[2]";
+  const navBtnClass = "relative w-[68px] h-[68px] rounded-full flex items-center justify-center cursor-pointer group focus:outline-none shrink-0 border-none outline-none bg-transparent p-0";
+  const activeBg = accentColor || '#CCFF00';
 
-  // Пресет для кнопки: оригинальный размер 68px
-  const navBtnClass =
-    "relative w-[68px] h-[68px] rounded-full flex items-center justify-center cursor-pointer group focus:outline-none shrink-0 transition-colors duration-300";
-
-  // Универсальный класс для НЕактивной кнопки
-  const baseInactive =
-    "w-[68px] h-[68px] flex items-center justify-center bg-transparent text-slate-600 dark:text-zinc-400";
-
-  // Универсальный класс для АКТИВНОЙ кнопки (без теней и свечения)
-  const baseActive =
-    "w-[68px] h-[68px] rounded-full flex items-center justify-center text-black shadow-none";
-
-  // Постоянный градиентный стиль для кнопки AI Ассистента (без теней и свечения)
-  const aiButtonGradient =
-    "w-[68px] h-[68px] rounded-full flex items-center justify-center bg-gradient-to-tr from-[#CCFF00] via-[#00F0FF] to-[#BD00FF] text-black shadow-none transition-all hover:scale-105 active:scale-95";
-
-  // -----------
-  // Определения режима и флагов страниц
-  // -----------
   const isAdminMode =
     currentRole === 'trainer' ||
     location === '/Admin' ||
@@ -48,22 +30,14 @@ export default function BottomNav() {
     location === '/profile' ||
     location === '/settings';
 
-  // NAVIGATION: ADMIN MODE
+  // Строго: если меню открыто (isMenuOpen === true), ВСЕ вкладки слева неактивны!
+  const isHomeActive = !isMenuOpen && (location === '/Admin' || location === '/Admin/' || location === '/admin');
+  const isScheduleActive = !isMenuOpen && (location === '/admin/schedule' || location === '/admin/schedule/');
+  const isStudentsActive = !isMenuOpen && (location === '/admin/students' || location === '/admin/students/');
+  const isProfileActive = !isMenuOpen && (location === '/profile' || location === '/profile/' || location === '/settings' || location === '/settings/');
+  const isMoreActive = isMenuOpen;
+
   if (isAdminMode) {
-    const isHomeTabActive = !isMenuOpen && (location === '/Admin' || location === '/Admin/' || location === '/admin');
-    const isScheduleTabActive = !isMenuOpen && (location === '/admin/schedule' || location === '/admin/schedule/');
-    const isStudentsTabActive = !isMenuOpen && (location === '/admin/students' || location === '/admin/students/');
-
-    // Проверка активности меню шторки
-    const mainRoutes = ['/Admin', '/admin', '/admin/schedule', '/admin/ai', '/admin/marketing'];
-    if (currentRole !== 'trainer') mainRoutes.push('/admin/students');
-
-    const isMainPage = mainRoutes.some(route => location === route || location === route + '/');
-    const isMoreActive = isMenuOpen || (!isMainPage && !location.startsWith('/admin/ai'));
-
-    // Для тренера: профиль/настройки
-    const isProfileSettingsTabActive = !isMenuOpen && (location === '/profile' || location === '/profile/' || location === '/settings' || location === '/settings/');
-
     return (
       <>
         <ManagementMenu
@@ -72,13 +46,10 @@ export default function BottomNav() {
           menuZindex={94}
         />
         
-        {/* ─── ОБЩИЙ КОНТЕЙНЕР ─── */}
         <div className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-[95] flex items-center justify-center gap-1.5 pointer-events-none select-none max-w-full">
-          
-          {/* 1. ОСНОВНАЯ ПИЛЮЛЯ НАВИГАЦИИ */}
           <nav
             id="urban-glass-admin-nav"
-            className="p-2 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-none flex gap-1.5 items-center rounded-full w-max pointer-events-auto transition-colors duration-300 border-none"
+            className="p-2 bg-[#e5e9eb]/80 dark:bg-[#1a1a1e]/85 shadow-none flex gap-1.5 items-center rounded-full w-max pointer-events-auto border-none"
           >
             {/* 1. Главная */}
             <Link
@@ -87,16 +58,21 @@ export default function BottomNav() {
               title="Главная"
               onClick={e => {
                 e.preventDefault();
-                if (!isHomeTabActive) { setLocation('/Admin'); }
                 setIsMenuOpen(false);
+                if (location !== '/Admin') setLocation('/Admin');
               }}
             >
-              <span 
-                style={isHomeTabActive ? { backgroundColor: accentColor || '#CCFF00', boxShadow: 'none' } : {}}
-                className={isHomeTabActive ? baseActive : baseInactive}
+              <div
+                style={{
+                  backgroundColor: isHomeActive ? activeBg : 'transparent',
+                  color: isHomeActive ? '#000000' : undefined
+                }}
+                className={`w-[68px] h-[68px] rounded-full flex items-center justify-center border-none shadow-none transition-colors duration-150 ${
+                  isHomeActive ? '' : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+                }`}
               >
                 <Home size={28} className={iconClass} />
-              </span>
+              </div>
             </Link>
 
             {/* 2. Расписание */}
@@ -106,19 +82,24 @@ export default function BottomNav() {
               title="Расписание"
               onClick={e => {
                 e.preventDefault();
-                if (!isScheduleTabActive) { setLocation('/admin/schedule'); }
                 setIsMenuOpen(false);
+                if (location !== '/admin/schedule') setLocation('/admin/schedule');
               }}
             >
-              <span 
-                style={isScheduleTabActive ? { backgroundColor: accentColor || '#CCFF00', boxShadow: 'none' } : {}}
-                className={isScheduleTabActive ? baseActive : baseInactive}
+              <div
+                style={{
+                  backgroundColor: isScheduleActive ? activeBg : 'transparent',
+                  color: isScheduleActive ? '#000000' : undefined
+                }}
+                className={`w-[68px] h-[68px] rounded-full flex items-center justify-center border-none shadow-none transition-colors duration-150 ${
+                  isScheduleActive ? '' : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+                }`}
               >
                 <Calendar size={28} className={iconClass} />
-              </span>
+              </div>
             </Link>
 
-            {/* 3. Ученики (не для тренера) */}
+            {/* 3. Ученики */}
             {currentRole !== 'trainer' && isAllowed('/admin/students') && (
               <Link
                 href="/admin/students"
@@ -126,20 +107,25 @@ export default function BottomNav() {
                 title="Ученики"
                 onClick={e => {
                   e.preventDefault();
-                  if (!isStudentsTabActive) { setLocation('/admin/students'); }
                   setIsMenuOpen(false);
+                  if (location !== '/admin/students') setLocation('/admin/students');
                 }}
               >
-                <span 
-                  style={isStudentsTabActive ? { backgroundColor: accentColor || '#CCFF00', boxShadow: 'none' } : {}}
-                  className={isStudentsTabActive ? baseActive : baseInactive}
+                <div
+                  style={{
+                    backgroundColor: isStudentsActive ? activeBg : 'transparent',
+                    color: isStudentsActive ? '#000000' : undefined
+                  }}
+                  className={`w-[68px] h-[68px] rounded-full flex items-center justify-center border-none shadow-none transition-colors duration-150 ${
+                    isStudentsActive ? '' : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+                  }`}
                 >
                   <Users size={28} className={iconClass} />
-                </span>
+                </div>
               </Link>
             )}
 
-            {/* 4. Меню шторки */}
+            {/* 4. Меню */}
             {currentRole === 'trainer' ? (
               <Link
                 href="/profile"
@@ -147,133 +133,151 @@ export default function BottomNav() {
                 title="Профиль/Настройки"
                 onClick={e => {
                   e.preventDefault();
-                  if (!isProfileSettingsTabActive) { setLocation('/profile'); }
                   setIsMenuOpen(false);
+                  if (location !== '/profile') setLocation('/profile');
                 }}
               >
-                <span 
-                  style={isProfileSettingsTabActive ? { backgroundColor: accentColor || '#CCFF00' } : {}}
-                  className={isProfileSettingsTabActive ? baseActive : baseInactive}
+                <div
+                  style={{
+                    backgroundColor: isProfileActive ? activeBg : 'transparent',
+                    color: isProfileActive ? '#000000' : undefined
+                  }}
+                  className={`w-[68px] h-[68px] rounded-full flex items-center justify-center border-none shadow-none transition-colors duration-150 ${
+                    isProfileActive ? '' : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+                  }`}
                 >
                   <Settings size={28} className={iconClass} />
-                </span>
+                </div>
               </Link>
             ) : (
               <button
                 ref={menuBtnRef}
                 onClick={e => {
                   e.stopPropagation();
-                  setIsMenuOpen((prev) => !prev);
+                  setIsMenuOpen(prev => !prev);
                 }}
                 className={navBtnClass}
                 title="Меню"
                 type="button"
               >
-                <span 
-                  style={isMoreActive ? { backgroundColor: accentColor || '#CCFF00' } : {}}
-                  className={isMoreActive ? baseActive : baseInactive}
+                <div
+                  style={{
+                    backgroundColor: isMoreActive ? activeBg : 'transparent',
+                    color: isMoreActive ? '#000000' : undefined
+                  }}
+                  className={`w-[68px] h-[68px] rounded-full flex items-center justify-center border-none shadow-none transition-colors duration-150 ${
+                    isMoreActive ? '' : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+                  }`}
                 >
                   <LayoutGrid size={28} className={iconClass} />
-                </span>
+                </div>
               </button>
             )}
           </nav>
 
-          {/* 2. ОТДЕЛЬНАЯ КРУГЛАЯ КНОПКА AI */}
-          <div className="p-2 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-none rounded-full flex items-center justify-center pointer-events-auto transition-colors duration-300 border-none shrink-0">
+          {/* AI Кнопка */}
+          <div className="p-2 bg-[#e5e9eb]/80 dark:bg-[#1a1a1e]/85 shadow-none rounded-full flex items-center justify-center pointer-events-auto border-none shrink-0">
             <Link
               href="/admin/ai"
               className={navBtnClass}
               title="AI Ассистент"
               onClick={e => {
                 e.preventDefault();
-                setLocation('/admin/ai');
                 setIsMenuOpen(false);
+                setLocation('/admin/ai');
               }}
             >
-              <span className={aiButtonGradient}>
+              <div className="w-[68px] h-[68px] rounded-full flex items-center justify-center bg-gradient-to-tr from-[#CCFF00] via-[#00F0FF] to-[#BD00FF] text-black shadow-none transition-all hover:scale-105 active:scale-95 border-none">
                 <Sparkles size={28} className="w-7 h-7 stroke-[2.5] text-black" />
-              </span>
+              </div>
             </Link>
           </div>
-
         </div>
       </>
     );
   }
 
-  // NAVIGATION: CLIENT
-  const isHomeTabActive = !isMenuOpen && (location === '/' || location === '//');
-  const isScheduleTabActive = !isMenuOpen && (location === '/schedule' || location === '/schedule/');
-  const isProfileTabActive = !isMenuOpen && (location === '/profile' || location === '/profile/');
+  // Клиентский режим
+  const isClientHomeActive = !isMenuOpen && (location === '/' || location === '//');
+  const isClientScheduleActive = !isMenuOpen && (location === '/schedule' || location === '/schedule/');
+  const isClientProfileActive = !isMenuOpen && (location === '/profile' || location === '/profile/');
 
   return (
     <nav
       id="urban-glass-client-nav"
-      className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 p-2 bg-white/30 dark:bg-black/25 backdrop-blur-md shadow-none flex gap-1.5 items-center z-[95] rounded-full w-max pointer-events-auto transition-colors duration-300 border-none"
+      className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 p-2 bg-[#e5e9eb]/80 dark:bg-[#1a1a1e]/85 shadow-none flex gap-1.5 items-center z-[95] rounded-full w-max pointer-events-auto border-none"
     >
       <Link
         href="/"
         className={navBtnClass}
         onClick={e => {
           e.preventDefault();
-          if (!isHomeTabActive) { setLocation('/'); }
-          setIsMenuOpen(false);
+          if (location !== '/') setLocation('/');
         }}
       >
-        <span 
-          style={isHomeTabActive ? { backgroundColor: accentColor || '#CCFF00', boxShadow: 'none' } : {}}
-          className={isHomeTabActive ? baseActive : baseInactive}
+        <div
+          style={{
+            backgroundColor: isClientHomeActive ? activeBg : 'transparent',
+            color: isClientHomeActive ? '#000000' : undefined
+          }}
+          className={`w-[68px] h-[68px] rounded-full flex items-center justify-center border-none shadow-none ${
+            isClientHomeActive ? '' : 'text-slate-600 dark:text-zinc-400'
+          }`}
         >
           <Home size={28} className={iconClass} />
-        </span>
+        </div>
       </Link>
       <Link
         href="/schedule"
         className={navBtnClass}
         onClick={e => {
           e.preventDefault();
-          if (!isScheduleTabActive) { setLocation('/schedule'); }
-          setIsMenuOpen(false);
+          if (location !== '/schedule') setLocation('/schedule');
         }}
       >
-        <span 
-          style={isScheduleTabActive ? { backgroundColor: accentColor || '#CCFF00', boxShadow: 'none' } : {}}
-          className={isScheduleTabActive ? baseActive : baseInactive}
+        <div
+          style={{
+            backgroundColor: isClientScheduleActive ? activeBg : 'transparent',
+            color: isClientScheduleActive ? '#000000' : undefined
+          }}
+          className={`w-[68px] h-[68px] rounded-full flex items-center justify-center border-none shadow-none ${
+            isClientScheduleActive ? '' : 'text-slate-600 dark:text-zinc-400'
+          }`}
         >
           <Calendar size={28} className={iconClass} />
-        </span>
+        </div>
       </Link>
       <Link
         href="/profile"
         className={navBtnClass}
         onClick={e => {
           e.preventDefault();
-          if (!isProfileTabActive) { setLocation('/profile'); }
-          setIsMenuOpen(false);
+          if (location !== '/profile') setLocation('/profile');
         }}
       >
-        <span 
-          style={isProfileTabActive ? { backgroundColor: accentColor || '#CCFF00' } : {}}
-          className={isProfileTabActive ? baseActive : baseInactive}
+        <div
+          style={{
+            backgroundColor: isClientProfileActive ? activeBg : 'transparent',
+            color: isClientProfileActive ? '#000000' : undefined
+          }}
+          className={`w-[68px] h-[68px] rounded-full flex items-center justify-center border-none shadow-none ${
+            isClientProfileActive ? '' : 'text-slate-600 dark:text-zinc-400'
+          }`}
         >
           <User size={28} className={iconClass} />
-        </span>
+        </div>
       </Link>
       <Link
         href="/settings"
         className={navBtnClass}
         onClick={e => {
           e.preventDefault();
-          setLocation('/settings');
-          setIsMenuOpen(false);
+          if (location !== '/settings') setLocation('/settings');
         }}
       >
-        <span 
-          className={baseInactive}
-        >
+        <div className="w-[68px] h-[68px] rounded-full flex items-center justify-center border-none shadow-none text-slate-600 dark:text-zinc-400">
           <Settings size={28} className={iconClass} />
-        </span>
+        </div>
       </Link>
     </nav>
   );
