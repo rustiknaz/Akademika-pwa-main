@@ -21,7 +21,6 @@ export default {
         'sm': '4px',
       },
       colors: {
-        // Dynamic Design System Theme variables
         "bg-main": "var(--bg-main)",
         "bg-card-custom": "var(--bg-card)",
         "accent-primary": "var(--primary-color)",
@@ -30,7 +29,6 @@ export default {
         "text-secondary-custom": "var(--text-secondary)",
         "border-custom": "var(--border-color)",
 
-        // Official Brand Colors
         primaryColor: "#CCFF00",
         lime: "#CCFF00",
         brandOrange: "#FF5528",
@@ -51,7 +49,6 @@ export default {
         "brand-iron": "#CDD2D7",
         "brand-sky": "#9DC4D5",
 
-        // Flat / base colors (regular buttons)
         background: "hsl(var(--background) / <alpha-value>)",
         foreground: "hsl(var(--foreground) / <alpha-value>)",
         border: "hsl(var(--border) / <alpha-value>)",
@@ -123,9 +120,10 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["var(--font-sans)"],
+        sans: ["var(--font-sans)", "Inter", "sans-serif"],
+        display: ["var(--font-display)", "Oswald", "sans-serif"],
         serif: ["var(--font-serif)"],
-        mono: ["var(--font-mono)"],
+        mono: ["var(--font-mono)", "monospace"],
       },
       keyframes: {
         "accordion-down": {
