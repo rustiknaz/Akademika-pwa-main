@@ -108,8 +108,8 @@ function ModalDatePicker({
         <div className="flex justify-between items-center mb-5">
           <h3 className="text-sm font-bold text-white tracking-wide">{viewDate.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }).replace(/\s*г\./, '').toLowerCase()}</h3>
           <div className="flex gap-2">
-            <button onClick={() => setViewDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))} className="w-9 h-9 border border-zinc-800 !rounded-[12px] flex items-center justify-center text-zinc-400 hover:text-[#CCFF00] bg-zinc-900/50 hover:bg-zinc-800 transition-colors cursor-pointer"><ChevronLeft size={16} /></button>
-            <button onClick={() => setViewDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))} className="w-9 h-9 border border-zinc-800 !rounded-[12px] flex items-center justify-center text-zinc-400 hover:text-[#CCFF00] bg-zinc-900/50 hover:bg-zinc-800 transition-colors cursor-pointer"><ChevronRight size={16} /></button>
+            <button onClick={() => setViewDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))} className="w-9 h-9 border border-zinc-800 !rounded-[12px] flex items-center justify-center text-zinc-400 hover:text-[#E58B58] bg-zinc-900/50 hover:bg-zinc-800 transition-colors cursor-pointer"><ChevronLeft size={16} /></button>
+            <button onClick={() => setViewDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))} className="w-9 h-9 border border-zinc-800 !rounded-[12px] flex items-center justify-center text-zinc-400 hover:text-[#E58B58] bg-zinc-900/50 hover:bg-zinc-800 transition-colors cursor-pointer"><ChevronRight size={16} /></button>
           </div>
         </div>
         <div className="grid grid-cols-7 gap-1 text-center mb-2">
@@ -121,14 +121,14 @@ function ModalDatePicker({
             const isTod = isDateToday(cell.date);
             return (
               <div key={idx} className="h-10 flex items-center justify-center">
-                <button onClick={() => handleSelect(cell.date)} className={`text-xs transition-all cursor-pointer ${isSel ? 'w-9 h-9 flex items-center justify-center !rounded-full bg-[#CCFF00] text-black font-bold font-mono text-sm shadow-[0_0_10px_rgba(204,255,0,0.4)]' : isTod ? 'w-9 h-9 flex items-center justify-center border border-[#CCFF00]/40 text-white font-medium rounded-xl bg-[#CCFF00]/5' : cell.isCurrentMonth ? 'w-9 h-9 flex items-center justify-center text-white hover:bg-zinc-900 rounded-xl' : 'w-9 h-9 flex items-center justify-center text-stone-600 hover:bg-zinc-900/50 rounded-xl'}`}>
+                <button onClick={() => handleSelect(cell.date)} className={`text-xs transition-all cursor-pointer ${isSel ? 'w-9 h-9 flex items-center justify-center !rounded-full bg-[#E58B58] text-white font-bold font-mono text-sm shadow-[0_0_10px_rgba(229,139,88,0.4)]' : isTod ? 'w-9 h-9 flex items-center justify-center border border-[#E58B58]/40 text-white font-medium rounded-xl bg-[#E58B58]/5' : cell.isCurrentMonth ? 'w-9 h-9 flex items-center justify-center text-white hover:bg-zinc-900 rounded-xl' : 'w-9 h-9 flex items-center justify-center text-stone-600 hover:bg-zinc-900/50 rounded-xl'}`}>
                   {cell.date.getDate()}
                 </button>
               </div>
             );
           })}
         </div>
-        <button onClick={handleResetToToday} className="w-full py-3 !bg-[#18181b] hover:bg-zinc-800 !rounded-full text-[#CCFF00] font-bold text-center mt-4 transition-colors border !border-zinc-800 cursor-pointer">Сегодня</button>
+        <button onClick={handleResetToToday} className="w-full py-3 !bg-[#18181b] hover:bg-zinc-800 !rounded-full text-[#E58B58] font-bold text-center mt-4 transition-colors border !border-zinc-800 cursor-pointer">Сегодня</button>
       </div>
     </div>
   );
@@ -136,7 +136,7 @@ function ModalDatePicker({
 
 export default function AdminStudents() {
   const [, setLocation] = useLocation();
-  const { theme, accentColor } = useTheme();
+  const { theme } = useTheme();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [students, setStudents] = useState<any[]>([]);
@@ -281,7 +281,7 @@ export default function AdminStudents() {
   if (loading) {
     return (
       <div className="min-h-screen page-root flex items-center justify-center bg-transparent text-slate-900">
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: accentColor }} />
+        <Loader2 className="w-8 h-8 animate-spin text-[#E58B58]" />
       </div>
     );
   }
@@ -290,7 +290,7 @@ export default function AdminStudents() {
   const filterPopupStyle: React.CSSProperties = {
     backdropFilter: 'blur(40px)',
     WebkitBackdropFilter: 'blur(40px)',
-    backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.78)' : 'rgba(18, 18, 20, 0.85)',
+    backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(18, 18, 20, 0.88)',
     boxShadow: '0 20px 50px rgba(0, 0, 0, 0.35)',
     borderRadius: '36px'
   };
@@ -309,7 +309,7 @@ export default function AdminStudents() {
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНИЙ БЛОК: Матовый слайдер, уходящий наверх + Пилюля ─── */}
+        {/* ─── ВЕРХНИЙ БЛОК: Сплошной баннер #E58B58, уходящий наверх + Пилюля ─── */}
         <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
           
           {/* Левая карточка со свайпом (уходит за верхний край экрана) */}
@@ -327,7 +327,8 @@ export default function AdminStudents() {
                   animate={{ opacity: 1, x: 0 }} 
                   exit={{ opacity: 0, x: -20 }} 
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-[#FF4500] text-white shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
+                  style={{ backgroundColor: '#E58B58', color: '#FFFFFF' }}
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
                 >
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">
@@ -353,7 +354,7 @@ export default function AdminStudents() {
                         className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {isBaseFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#FF4500] rounded-full bg-white shrink-0" />}
+                        {isBaseFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#E58B58] rounded-full bg-white shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
@@ -383,7 +384,8 @@ export default function AdminStudents() {
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              className="flex-1 bg-[#FF4500] text-white text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                              style={{ backgroundColor: '#E58B58', color: '#FFFFFF' }}
+                              className="flex-1 text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
                             </button>
@@ -425,7 +427,8 @@ export default function AdminStudents() {
                   animate={{ opacity: 1, x: 0 }} 
                   exit={{ opacity: 0, x: 20 }} 
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-[#FF4500] text-white shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
+                  style={{ backgroundColor: '#E58B58', color: '#FFFFFF' }}
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
                 >
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">ВОРОНКА ЛИДОВ</span>
@@ -450,7 +453,7 @@ export default function AdminStudents() {
                         className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {isFunnelFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#FF4500] rounded-full bg-white shrink-0" />}
+                        {isFunnelFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#E58B58] rounded-full bg-white shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
@@ -476,7 +479,8 @@ export default function AdminStudents() {
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              className="flex-1 bg-[#FF4500] text-white text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                              style={{ backgroundColor: '#E58B58', color: '#FFFFFF' }}
+                              className="flex-1 text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
                             </button>
@@ -513,9 +517,10 @@ export default function AdminStudents() {
           <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
             <button 
               onClick={() => { setIsFilterOpen(false); setActiveSlide(0); }}
+              style={activeSlide === 0 ? { backgroundColor: '#E58B58', color: '#FFFFFF' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 0 
-                  ? 'bg-[#FF4500] text-white shadow-md scale-100' 
+                  ? 'shadow-md scale-100' 
                   : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
               }`}
               title="База учеников"
@@ -525,9 +530,10 @@ export default function AdminStudents() {
             
             <button 
               onClick={() => { setIsFilterOpen(false); setActiveSlide(1); }}
+              style={activeSlide === 1 ? { backgroundColor: '#E58B58', color: '#FFFFFF' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 1 
-                  ? 'bg-[#FF4500] text-white shadow-md scale-100' 
+                  ? 'shadow-md scale-100' 
                   : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
               }`}
               title="Воронка продаж"
@@ -585,7 +591,7 @@ export default function AdminStudents() {
                 </div>
               );
 
-              let badgeClass = "w-9 h-9 rounded-full bg-[#CCFF00] text-black font-black flex items-center justify-center text-sm font-mono shadow-sm";
+              let badgeClass = "w-9 h-9 rounded-full bg-[#E58B58] text-white font-black flex items-center justify-center text-sm font-mono shadow-sm";
               if (visits <= 0 || isExpired) badgeClass = "w-9 h-9 rounded-full bg-rose-500 text-white font-black flex items-center justify-center text-sm font-mono shadow-sm";
               else if (visits >= 1 && visits <= 3) badgeClass = "w-9 h-9 rounded-full bg-amber-400 text-black font-black flex items-center justify-center text-sm font-mono shadow-sm";
 
@@ -601,7 +607,7 @@ export default function AdminStudents() {
                   {avatar}
                   <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-base text-slate-950 dark:text-white truncate max-w-[170px] group-hover:text-lime-600 dark:group-hover:text-[#CCFF00]">{student.full_name || 'Без имени'}</span>
+                      <span className="font-bold text-base text-slate-950 dark:text-white truncate max-w-[170px] group-hover:text-[#E58B58]">{student.full_name || 'Без имени'}</span>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${sourceInfo.bg} ${sourceInfo.text}`}><span>{sourceInfo.icon}</span><span>{sourceInfo.label}</span></span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -643,7 +649,7 @@ export default function AdminStudents() {
                     <div className="flex flex-col items-start justify-center gap-1.5 min-w-0">
                       <h2 className="text-2xl font-semibold text-white leading-tight truncate">{selectedStudentForDrawer.full_name || 'Без имени'}</h2>
                       {selectedStudentForDrawer.phone && (
-                        <a href={`tel:${selectedStudentForDrawer.phone}`} className="!rounded-full bg-zinc-900 border border-zinc-800 px-3 py-1 flex items-center gap-2 text-sm text-zinc-300 w-fit select-none m-0 ml-0"><Phone size={13} className="text-[#CCFF00]" /><span className="truncate">{selectedStudentForDrawer.phone}</span></a>
+                        <a href={`tel:${selectedStudentForDrawer.phone}`} className="!rounded-full bg-zinc-900 border border-zinc-800 px-3 py-1 flex items-center gap-2 text-sm text-zinc-300 w-fit select-none m-0 ml-0"><Phone size={13} className="text-[#E58B58]" /><span className="truncate">{selectedStudentForDrawer.phone}</span></a>
                       )}
                     </div>
                   </div>
@@ -664,7 +670,7 @@ export default function AdminStudents() {
                   <div className="grid grid-cols-2 gap-3.5 my-4">
                     <div className="!bg-[#18181b] border !border-zinc-800 p-4 !rounded-[24px] flex flex-col gap-1">
                       <span className="text-zinc-500 text-xs font-bold uppercase tracking-wider">Остаток занятий</span>
-                      <span className="text-[#CCFF00] text-lg font-medium font-mono">{selectedStudentForDrawer.subscriptions?.[0]?.visits_left ?? 0}</span>
+                      <span className="text-[#E58B58] text-lg font-medium font-mono">{selectedStudentForDrawer.subscriptions?.[0]?.visits_left ?? 0}</span>
                     </div>
                     <div className="!bg-[#18181b] border !border-zinc-800 p-4 !rounded-[24px] flex flex-col gap-1 min-w-0">
                       <span className="text-zinc-500 text-xs font-bold uppercase tracking-wider">Источник</span>
@@ -673,7 +679,7 @@ export default function AdminStudents() {
                   </div>
                   <div className="flex gap-3 mt-2">
                     <button onClick={() => { toast({ title: "Заморозка абонемента", description: `Абонемент для ${selectedStudentForDrawer.full_name} успешно заморожен на 14 дней`, }); setSelectedStudentForDrawer(null); }} className="flex-1 py-3 text-xs font-bold border border-zinc-800 hover:bg-zinc-800/60 rounded-full transition-colors cursor-pointer text-center text-stone-300">Заморозить</button>
-                    <button onClick={() => { toast({ title: "История посещений", description: "Раздел истории посещений в разработке", }); }} className="flex-1 py-3 text-xs font-bold border border-[#CCFF00]/30 text-[#CCFF00] hover:bg-[#CCFF00]/10 rounded-full transition-all cursor-pointer text-center">История</button>
+                    <button onClick={() => { toast({ title: "История посещений", description: "Раздел истории посещений в разработке", }); }} className="flex-1 py-3 text-xs font-bold border border-[#E58B58]/30 text-[#E58B58] hover:bg-[#E58B58]/10 rounded-full transition-all cursor-pointer text-center">История</button>
                   </div>
                 </div>
               </div>
@@ -690,32 +696,32 @@ export default function AdminStudents() {
           <form onSubmit={handleAddStudent} className="space-y-4 pt-3">
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Имя Фамилия</label>
-              <Input required value={newStudent.full_name} onChange={(e) => setNewStudent({...newStudent, full_name: e.target.value})} placeholder="Иван Иванов" className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#FF4500]/30 bg-black/40 text-white placeholder:text-stone-600 text-sm font-medium px-5 focus-visible:border-[#FF4500]" />
+              <Input required value={newStudent.full_name} onChange={(e) => setNewStudent({...newStudent, full_name: e.target.value})} placeholder="Иван Иванов" className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#E58B58]/30 bg-black/40 text-white placeholder:text-stone-600 text-sm font-medium px-5 focus-visible:border-[#E58B58]" />
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Телефон</label>
-              <Input required value={newStudent.phone} onChange={(e) => setNewStudent({...newStudent, phone: e.target.value.replace(/\D/g, '')})} placeholder="79001234567" className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#FF4500]/30 bg-black/40 text-white placeholder:text-stone-600 text-sm font-medium px-5 focus-visible:border-[#FF4500]" />
+              <Input required value={newStudent.phone} onChange={(e) => setNewStudent({...newStudent, phone: e.target.value.replace(/\D/g, '')})} placeholder="79001234567" className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#E58B58]/30 bg-black/40 text-white placeholder:text-stone-600 text-sm font-medium px-5 focus-visible:border-[#E58B58]" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Источник</label>
-                <select value={newStudent.source} onChange={(e) => setNewStudent({ ...newStudent, source: e.target.value as LeadSource })} className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3.5 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#FF4500]">
+                <select value={newStudent.source} onChange={(e) => setNewStudent({ ...newStudent, source: e.target.value as LeadSource })} className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3.5 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#E58B58]">
                   <option value="instagram">📸 Instagram</option><option value="site">🌐 Сайт</option><option value="referral">👥 Сарафан</option><option value="ads">⚡ Реклама</option>
                 </select>
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Этап сделки</label>
-                <select value={newStudent.stage} onChange={(e) => setNewStudent({ ...newStudent, stage: e.target.value as LeadStage })} className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3.5 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#FF4500]">
+                <select value={newStudent.stage} onChange={(e) => setNewStudent({ ...newStudent, stage: e.target.value as LeadStage })} className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3.5 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#E58B58]">
                   <option value="bought">Купил (Действующий)</option><option value="new">Новая заявка</option><option value="trial_scheduled">Назначен пробный</option><option value="trial_attended">Пришел на пробный</option><option value="lost">Отказ</option>
                 </select>
               </div>
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Начальный баланс (занятий)</label>
-              <Input required type="number" value={newStudent.initial_visits} onChange={(e) => setNewStudent({...newStudent, initial_visits: parseInt(e.target.value)})} className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#FF4500]/30 bg-black/40 text-white text-sm font-medium px-5 focus-visible:border-[#FF4500]" />
+              <Input required type="number" value={newStudent.initial_visits} onChange={(e) => setNewStudent({...newStudent, initial_visits: parseInt(e.target.value)})} className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#E58B58]/30 bg-black/40 text-white text-sm font-medium px-5 focus-visible:border-[#E58B58]" />
             </div>
             <DialogFooter className="pt-3">
-              <Button type="submit" disabled={isCreating} className="w-full bg-[#FF4500] hover:bg-[#E03D00] text-white rounded-full h-12 font-bold text-sm tracking-wide shadow-md shadow-[#FF4500]/20 border-none cursor-pointer">
+              <Button type="submit" disabled={isCreating} style={{ backgroundColor: '#E58B58', color: '#FFFFFF' }} className="w-full rounded-full h-12 font-bold text-sm tracking-wide shadow-md hover:opacity-90 border-none cursor-pointer">
                 {isCreating ? "Создание..." : "Сохранить"}
               </Button>
             </DialogFooter>
@@ -727,8 +733,8 @@ export default function AdminStudents() {
         onClick={() => setIsAddModalOpen(true)} 
         ariaLabel={activeSlide === 0 ? "Добавить ученика" : "Добавить лид"} 
         id="floating-add-student-btn"
-        style={{ backgroundColor: '#FF4500', color: '#FFFFFF' }}
-        className="!bg-[#FF4500] !text-white shadow-lg shadow-[#FF4500]/30 hover:opacity-95"
+        style={{ backgroundColor: '#E58B58', color: '#FFFFFF' }}
+        className="!bg-[#E58B58] !text-white shadow-lg shadow-[#E58B58]/30 hover:opacity-95"
       />
       <ModalDatePicker isOpen={selectedSubForDatePicker !== null} onClose={() => setSelectedSubForDatePicker(null)} expiresAt={selectedSubForDatePicker?.expiresAt || null} onUpdate={(dateStr) => { if (selectedSubForDatePicker) handleUpdateExpiry(selectedSubForDatePicker.id, dateStr); }} />
     </div>

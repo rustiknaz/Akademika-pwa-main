@@ -1,429 +1,386 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { supabase } from '../lib/supabase';
 import { 
-  ArrowLeft, 
-  Loader2, 
-  Save, 
-  Building, 
-  MapPin, 
-  Sliders, 
+  Settings, 
+  Building2, 
   Palette, 
-  Sun, 
-  Moon, 
+  ShieldCheck, 
+  SlidersHorizontal, 
+  Save, 
   Check, 
-  Plus 
+  MapPin, 
+  Clock, 
+  Sparkles,
+  Smartphone,
+  Globe,
+  Lock
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import BottomNav from "../components/BottomNav";
-import { useTheme, PRESET_BG_IMAGES } from '@/context/ThemeContext';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '@/context/ThemeContext';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function AdminSettings() {
   const [, setLocation] = useLocation();
+  const { theme, setTheme } = useTheme();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(true);
-  const bgFileInputRef = React.useRef<HTMLInputElement>(null);
 
-  // Theme Context
-  const { theme, setTheme, accent, setAccent, accentColor, accentConfig, bgImage, setBgImage, removeBgImage } = useTheme();
-  const activeTextColor = accentConfig.textColor === 'text-black' ? '#000000' : '#ffffff';
+  // 0 - Общие / Студия, 1 - Безопасность / Доступы
+  const [activeSlide, setActiveSlide] = useState<number>(0);
+  const [activeTab, setActiveTab] = useState<'general' | 'integrations' | 'security'>('general');
 
-  // Studio Settings State
-  const [studioName, setStudioName] = useState('AkademikA Dance Studio');
-  const [studioPhone, setStudioPhone] = useState('+7 (495) 123-45-67');
-  const [studioAddress, setStudioAddress] = useState('г. Москва, ул. Арбат, д. 12');
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [pwaInstallPrompt, setPwaInstallPrompt] = useState(true);
+  // Данные настроек студии
+  const [studioConfig, setStudioConfig] = useState({
+    name: 'AKADEMIKA DANCE CENTER',
+    phone: '+7 (911) 234-56-78',
+    address: 'Санкт-Петербург, Невский пр-т, 100',
+    workHours: '09:00 - 22:00',
+    tgBotToken: '••••••••••••••••••••••••',
+    smsApiKey: '••••••••••••••••',
+    autoReminders: true,
+    ofdFiscalization: true
+  });
 
-  useEffect(() => {
-    async function checkAdmin() {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        setLocation('/Login');
-        return;
-      }
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', session.user.id)
-        .maybeSingle();
-
-      if (profile && profile.role !== 'admin' && profile.role !== 'owner') {
-        setLocation('/');
-        return;
-      }
-
-      setLoading(false);
-    }
-    checkAdmin();
-  }, [setLocation]);
-
-  const handleSaveSettings = (e: React.FormEvent) => {
+  const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
-      title: "Настройки сохранены!",
-      description: "Все параметры студии успешно обновлены в системе.",
+      title: "Настройки сохранены ✨",
+      description: "Все параметры студии успешно обновлены в системе."
     });
   };
-
-  if (loading) {
-    return (
-      <div className={`min-h-screen page-root flex items-center justify-center transition-colors duration-300 bg-transparent text-slate-900`}>
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: accentColor }} />
-      </div>
-    );
-  }
 
   return (
     <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col font-sans relative transition-colors duration-300 bg-transparent ${
       theme === 'light' ? 'text-black' : 'text-white'
     }`}>
-      
+
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНИЙ БЛОК: Матовая шапка ─── */}
-        <div className="relative h-[184px] w-full select-none z-30">
-          <div className="relative h-[calc(100%+12px)] -mt-3 w-full">
-            <div className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between select-none border-none">
-              <div className="flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={() => setLocation('/Admin')}
-                  className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white transition-all cursor-pointer border-none flex items-center justify-center shrink-0"
+        {/* ─── ВЕРХНИЙ БЛОК: Сплошной баннер #A86C78, уходящий наверх + Пилюля ─── */}
+        <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
+          
+          {/* Левый баннер-слайдер */}
+          <div className="flex-1 relative h-[calc(100%+12px)] -mt-3">
+            <AnimatePresence initial={false} mode="wait">
+              {activeSlide === 0 ? (
+                /* СЛАЙД 1: Студия и филиалы */
+                <motion.div
+                  key="studio-slide"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x < -40) setActiveSlide(1);
+                  }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.25 }}
+                  style={{ backgroundColor: '#A86C78', color: '#FFFFFF' }}
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing select-none border-none"
                 >
-                  <ArrowLeft size={20} className="stroke-[2.5]" />
-                </button>
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400">
-                  КОНФИГУРАЦИЯ
-                </span>
-              </div>
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">
+                      КОНФИГУРАЦИЯ СТУДИИ
+                    </span>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-white mt-0.5">
+                      Настройки
+                    </h2>
+                  </div>
 
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight leading-tight text-slate-950 dark:text-white">
-                  Настройки
-                </h1>
-                <p className="text-xs font-bold text-slate-500 dark:text-zinc-400 mt-0.5">
-                  Управление параметрами студии AkademikA
-                </p>
-              </div>
-            </div>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-2xl font-black text-white truncate max-w-[240px]">
+                      {studioConfig.name}
+                    </span>
+                    <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
+                      2 филиала • 3 зала активны
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/20 text-white backdrop-blur-sm">
+                      Основной профиль
+                    </span>
+                    <span className="text-[10px] font-bold text-white/70 uppercase">
+                      Смахните для доступов →
+                    </span>
+                  </div>
+                </motion.div>
+              ) : (
+                /* СЛАЙД 2: Безопасность и роли */
+                <motion.div
+                  key="security-slide"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x > 40) setActiveSlide(0);
+                  }}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.25 }}
+                  style={{ backgroundColor: '#A86C78', color: '#FFFFFF' }}
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing select-none border-none"
+                >
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">
+                      БЕЗОПАСНОСТЬ & ПРАВА
+                    </span>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-white mt-0.5">
+                      Доступы
+                    </h2>
+                  </div>
+
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-black text-white font-mono tracking-tight leading-none">
+                      3
+                    </span>
+                    <span className="text-[10px] font-bold text-white/80 uppercase tracking-wide leading-tight">
+                      уровня прав<br/>(Владелец / Админ / Тренер)
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/20 text-white backdrop-blur-sm">
+                      Шифрование активно
+                    </span>
+                    <span className="text-[10px] font-bold text-white/70 uppercase">
+                      ← Смахните назад
+                    </span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Правая вертикальная пилюля */}
+          <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
+            <button 
+              onClick={() => { setActiveSlide(0); setActiveTab('general'); }}
+              style={activeSlide === 0 ? { backgroundColor: '#A86C78', color: '#FFFFFF' } : {}}
+              className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+                activeSlide === 0 
+                  ? 'shadow-md scale-100' 
+                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
+              }`}
+              title="Параметры студии"
+            >
+              <Building2 size={20} className="stroke-[2.5]" />
+            </button>
+            
+            <button 
+              onClick={() => { setActiveSlide(1); setActiveTab('security'); }}
+              style={activeSlide === 1 ? { backgroundColor: '#A86C78', color: '#FFFFFF' } : {}}
+              className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+                activeSlide === 1 
+                  ? 'shadow-md scale-100' 
+                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
+              }`}
+              title="Безопасность"
+            >
+              <ShieldCheck size={20} className="stroke-[2.5]" />
+            </button>
           </div>
         </div>
 
-        {/* ─── ФОРМА НАСТРОЕК С ЕДИНЫМ GAP-2.5 ─── */}
-        <form onSubmit={handleSaveSettings} className="flex flex-col gap-2.5">
-          
-          {/* БЛОК 1: ОФОРМЛЕНИЕ И ТЕМА */}
-          <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-md space-y-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Palette className="w-5 h-5" style={{ color: accentColor }} />
-              <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">
-                ОФОРМЛЕНИЕ И ТЕМА
-              </h3>
-            </div>
+        {/* ─── ВНУТРЕННИЕ ТАБЫ (ПИЛЮЛЯ) ─── */}
+        <div className="bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-full h-12 p-1 flex items-center justify-between w-full shadow-md shrink-0 select-none">
+          {[
+            { id: 'general', label: 'СТУДИЯ' },
+            { id: 'integrations', label: 'СВЯЗЬ & ОФД' },
+            { id: 'security', label: 'ТЕМА & ДОСТУП' }
+          ].map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id as any)}
+                style={isActive ? { backgroundColor: '#A86C78', color: '#FFFFFF' } : {}}
+                className={`font-bold text-xs uppercase tracking-wider rounded-full px-3 transition-all border-none outline-none cursor-pointer flex-1 text-center h-full flex items-center justify-center ${
+                  isActive
+                    ? 'shadow-sm'
+                    : 'bg-transparent text-slate-700 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
 
-            {/* ТЕМА ИНТЕРФЕЙСА */}
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-wider block text-slate-500 dark:text-zinc-400">
-                Тема оформления
-              </label>
-              <div className="grid grid-cols-2 gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => setTheme('light')}
-                  style={theme === 'light' ? { backgroundColor: accentColor, color: activeTextColor } : {}}
-                  className={`h-12 rounded-full font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all border-none cursor-pointer ${
-                    theme === 'light' ? 'shadow-sm' : 'bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 hover:bg-black/10 dark:hover:bg-white/15'
-                  }`}
-                >
-                  <Sun size={16} />
-                  <span>Светлая</span>
-                </button>
+        {/* ─── КОНТЕНТ НАСТРОЕК (ФОРМА В СТЕКЛЯННЫХ КАРТОЧКАХ) ─── */}
+        <form onSubmit={handleSave} className="flex flex-col gap-2.5">
+          <AnimatePresence mode="wait">
+            {activeTab === 'general' && (
+              <motion.div
+                key="general-tab"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.15 }}
+                className="flex flex-col gap-2.5"
+              >
+                <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md rounded-[42px] p-5 shadow-md flex flex-col gap-3.5 text-left">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider">
+                      Название танцевального центра
+                    </label>
+                    <Input
+                      value={studioConfig.name}
+                      onChange={(e) => setStudioConfig({ ...studioConfig, name: e.target.value })}
+                      className="rounded-2xl border-zinc-800/20 dark:border-zinc-800 h-12 bg-white/60 dark:bg-black/40 text-slate-950 dark:text-white text-sm font-bold px-4 focus-visible:border-[#A86C78]"
+                    />
+                  </div>
 
-                <button
-                  type="button"
-                  onClick={() => setTheme('dark')}
-                  style={theme === 'dark' ? { backgroundColor: accentColor, color: activeTextColor } : {}}
-                  className={`h-12 rounded-full font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all border-none cursor-pointer ${
-                    theme === 'dark' ? 'shadow-sm' : 'bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 hover:bg-black/10 dark:hover:bg-white/15'
-                  }`}
-                >
-                  <Moon size={16} />
-                  <span>Темная</span>
-                </button>
-              </div>
-            </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider">
+                        Телефон студии
+                      </label>
+                      <Input
+                        value={studioConfig.phone}
+                        onChange={(e) => setStudioConfig({ ...studioConfig, phone: e.target.value })}
+                        className="rounded-2xl border-zinc-800/20 dark:border-zinc-800 h-12 bg-white/60 dark:bg-black/40 text-slate-950 dark:text-white text-xs font-bold px-4 focus-visible:border-[#A86C78]"
+                      />
+                    </div>
 
-            {/* ВЫБОР ЦВЕТА (PANTONE) */}
-            <div className="space-y-2 pt-1">
-              <label className="text-[10px] font-bold uppercase tracking-wider block text-slate-500 dark:text-zinc-400">
-                Цвет оформления (Pantone)
-              </label>
-              <div className="flex items-center gap-3 flex-wrap">
-                {[
-                  { id: 'yellow', alias: 'lime', hex: '#CCFF00', checkColor: '#000000', label: 'Lime' },
-                  { id: 'orange', alias: 'orange', hex: '#FF4500', checkColor: '#FFFFFF', label: 'Orange' },
-                  { id: 'purple', alias: 'violet', hex: '#6B52E1', checkColor: '#FFFFFF', label: 'Purple' },
-                  { id: 'coffee', alias: 'coffee', hex: '#4A3728', checkColor: '#FFFFFF', label: '19-1235 TSX' },
-                  { id: 'emerald', alias: 'emerald', hex: '#00A86B', checkColor: '#FFFFFF', label: '15-5534 TSX' },
-                  { id: 'pink', alias: 'pink', hex: '#E03C7A', checkColor: '#FFFFFF', label: '17-1937 TSX' },
-                ].map((item) => {
-                  const isActive = accent === item.id || accent === item.alias || accentColor?.toLowerCase() === item.hex.toLowerCase();
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setAccent(item.id as any)}
-                      style={{ backgroundColor: item.hex }}
-                      title={item.label}
-                      className={`w-12 h-12 rounded-full flex items-center justify-center border-none cursor-pointer transition-all ${
-                        isActive 
-                          ? 'ring-2 ring-offset-2 ring-black dark:ring-white scale-105 shadow-md' 
-                          : 'opacity-80 hover:opacity-100 hover:scale-105'
-                      }`}
-                    >
-                      {isActive && <Check color={item.checkColor} size={20} strokeWidth={3}/>}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider">
+                        Часы работы
+                      </label>
+                      <Input
+                        value={studioConfig.workHours}
+                        onChange={(e) => setStudioConfig({ ...studioConfig, workHours: e.target.value })}
+                        className="rounded-2xl border-zinc-800/20 dark:border-zinc-800 h-12 bg-white/60 dark:bg-black/40 text-slate-950 dark:text-white text-xs font-bold px-4 focus-visible:border-[#A86C78]"
+                      />
+                    </div>
+                  </div>
 
-            {/* ФОН ПРИЛОЖЕНИЯ (BACKGROUND) */}
-            <div className="space-y-2 pt-1">
-              <label className="text-[10px] font-bold uppercase tracking-wider block text-slate-500 dark:text-zinc-400">
-                ФОН ПРИЛОЖЕНИЯ (BACKGROUND)
-              </label>
-              <div className="flex items-center gap-3">
-                {/* Без фона */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    removeBgImage();
-                    toast({
-                      title: "Стандартный фон",
-                      description: "Установлен сплошной цвет темы по умолчанию.",
-                    });
-                  }}
-                  className={`w-11 h-11 rounded-full border-2 cursor-pointer transition-all flex items-center justify-center font-bold text-xs uppercase tracking-wide ${
-                    !bgImage 
-                      ? 'border-[#CCFF00] ring-2 ring-offset-2 ring-black/40 dark:ring-white/40 scale-105 shadow-sm bg-black/10 dark:bg-white/20 text-black dark:text-white'
-                      : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-slate-500 dark:text-zinc-400 hover:border-black/30'
-                  }`}
-                  title="Сплошной цвет темы"
-                >
-                  НЕТ
-                </button>
-
-                {/* Пресеты */}
-                {PRESET_BG_IMAGES.map((preset) => {
-                  const isSelected = bgImage === preset.url;
-                  return (
-                    <button
-                      key={preset.id}
-                      type="button"
-                      onClick={() => {
-                        setBgImage(preset.url);
-                        toast({
-                          title: "Фон обновлен",
-                          description: `Установлен пресет "${preset.name}".`,
-                        });
-                      }}
-                      style={{ backgroundImage: `url(${preset.url})` }}
-                      className={`w-11 h-11 rounded-full border-2 bg-cover bg-center cursor-pointer transition-all relative overflow-hidden ${
-                        isSelected
-                          ? 'border-[#CCFF00] ring-2 ring-offset-2 ring-black/40 dark:ring-white/40 scale-105 shadow-sm'
-                          : 'border-transparent opacity-80 hover:opacity-100 hover:scale-105'
-                      }`}
-                      title={preset.name}
-                    >
-                      {isSelected && (
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                          <Check size={16} className="text-white stroke-[3px]" />
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
-
-                {/* Загрузка своего фона */}
-                <div className="relative">
-                  <input
-                    type="file"
-                    ref={bgFileInputRef}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      if (file.size > 5 * 1024 * 1024) {
-                        toast({
-                          variant: "destructive",
-                          title: "Ошибка",
-                          description: "Файл слишком большой. Выберите изображение до 5 МБ.",
-                        });
-                        return;
-                      }
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        const base64 = reader.result as string;
-                        setBgImage(base64);
-                        toast({
-                          title: "Свой фон установлен!",
-                          description: "Пользовательское изображение установлено на фон приложения.",
-                        });
-                      };
-                      reader.readAsDataURL(file);
-                    }}
-                    accept="image/*"
-                    className="hidden"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => bgFileInputRef.current?.click()}
-                    className={`w-11 h-11 rounded-full border-2 cursor-pointer transition-all flex items-center justify-center ${
-                      bgImage && !PRESET_BG_IMAGES.some(p => p.url === bgImage)
-                        ? 'border-[#CCFF00] ring-2 ring-offset-2 ring-black/40 dark:ring-white/40 bg-zinc-800 text-white scale-105 shadow-sm'
-                        : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/10 text-slate-800 dark:text-zinc-200 hover:bg-black/10'
-                    }`}
-                    title="Загрузить свое изображение"
-                  >
-                    <Plus size={18} className="stroke-[2.5px]" />
-                  </button>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider">
+                      Юридический адрес
+                    </label>
+                    <Input
+                      value={studioConfig.address}
+                      onChange={(e) => setStudioConfig({ ...studioConfig, address: e.target.value })}
+                      className="rounded-2xl border-zinc-800/20 dark:border-zinc-800 h-12 bg-white/60 dark:bg-black/40 text-slate-950 dark:text-white text-xs font-medium px-4 focus-visible:border-[#A86C78]"
+                    />
+                  </div>
                 </div>
-              </div>
+              </motion.div>
+            )}
 
-              {bgImage && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    removeBgImage();
-                    toast({
-                      title: "Фон сброшен",
-                      description: "Возвращен стандартный цвет темы.",
-                    });
-                  }}
-                  className="text-xs text-rose-500 hover:underline mt-2 flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 font-bold"
-                >
-                  Сбросить фон
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* БЛОК 2: ОСНОВНЫЕ ДАННЫЕ */}
-          <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-md space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
-              <Building size={16} style={{ color: accentColor }} /> Основные данные
-            </h3>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-wider pl-2 text-slate-500 dark:text-zinc-400">
-                Название студии
-              </label>
-              <input 
-                type="text"
-                value={studioName}
-                onChange={(e) => setStudioName(e.target.value)}
-                className="w-full h-13 px-5 text-sm font-bold rounded-[20px] focus:outline-none transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-950 dark:text-white"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-wider pl-2 text-slate-500 dark:text-zinc-400">
-                Телефон студии
-              </label>
-              <input 
-                type="tel"
-                value={studioPhone}
-                onChange={(e) => setStudioPhone(e.target.value)}
-                className="w-full h-13 px-5 text-sm font-bold font-mono rounded-[20px] focus:outline-none transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-950 dark:text-white"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-wider pl-2 text-slate-500 dark:text-zinc-400">
-                Адрес студии
-              </label>
-              <div className="relative">
-                <input 
-                  type="text"
-                  value={studioAddress}
-                  onChange={(e) => setStudioAddress(e.target.value)}
-                  className="w-full h-13 pl-5 pr-12 text-sm font-bold rounded-[20px] focus:outline-none transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-950 dark:text-white"
-                />
-                <MapPin size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
-              </div>
-            </div>
-          </div>
-
-          {/* БЛОК 3: СИСТЕМНЫЕ ПАРАМЕТРЫ */}
-          <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-md space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
-              <Sliders size={16} style={{ color: accentColor }} /> Системные параметры
-            </h3>
-
-            <div className="flex items-center justify-between py-1">
-              <div>
-                <p className="text-xs font-bold text-slate-950 dark:text-white">Push-уведомления</p>
-                <p className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 mt-0.5">
-                  Оповещения о новых бронированиях
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setNotificationsEnabled(!notificationsEnabled)}
-                style={notificationsEnabled ? { backgroundColor: accentColor } : {}}
-                className={`w-12 h-6 flex items-center rounded-full p-1 transition-all cursor-pointer border-none ${
-                  notificationsEnabled ? '' : 'bg-black/10 dark:bg-zinc-800'
-                }`}
+            {activeTab === 'integrations' && (
+              <motion.div
+                key="integrations-tab"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.15 }}
+                className="flex flex-col gap-2.5"
               >
-                <div 
-                  style={notificationsEnabled ? { backgroundColor: activeTextColor } : {}}
-                  className={`w-4 h-4 rounded-full transition-all transform ${
-                    notificationsEnabled ? 'translate-x-6' : 'translate-x-0 bg-zinc-400'
-                  }`} 
-                />
-              </button>
-            </div>
+                <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md rounded-[42px] p-5 shadow-md flex flex-col gap-3.5 text-left">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider">
+                      Telegram Bot Token
+                    </label>
+                    <Input
+                      value={studioConfig.tgBotToken}
+                      onChange={(e) => setStudioConfig({ ...studioConfig, tgBotToken: e.target.value })}
+                      className="rounded-2xl border-zinc-800/20 dark:border-zinc-800 h-12 bg-white/60 dark:bg-black/40 text-slate-950 dark:text-white text-xs font-mono px-4 focus-visible:border-[#A86C78]"
+                    />
+                  </div>
 
-            <div className="h-px bg-black/5 dark:bg-white/5" />
+                  <div 
+                    onClick={() => setStudioConfig({ ...studioConfig, autoReminders: !studioConfig.autoReminders })}
+                    className="p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 flex items-center justify-between cursor-pointer"
+                  >
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold text-slate-950 dark:text-white">Авто-напоминания об уроках</span>
+                      <span className="text-[10px] text-slate-500 dark:text-zinc-400">Отправка за 2 часа до начала занятия</span>
+                    </div>
+                    <div className={`w-11 h-6 rounded-full p-0.5 transition-colors ${studioConfig.autoReminders ? 'bg-[#A86C78]' : 'bg-zinc-600'}`}>
+                      <div className={`w-5 h-5 rounded-full bg-white transition-transform ${studioConfig.autoReminders ? 'translate-x-5' : 'translate-x-0'}`} />
+                    </div>
+                  </div>
 
-            <div className="flex items-center justify-between py-1">
-              <div>
-                <p className="text-xs font-bold text-slate-950 dark:text-white">Установка PWA баннера</p>
-                <p className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 mt-0.5">
-                  Показывать плашку на главном экране
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setPwaInstallPrompt(!pwaInstallPrompt)}
-                style={pwaInstallPrompt ? { backgroundColor: accentColor } : {}}
-                className={`w-12 h-6 flex items-center rounded-full p-1 transition-all cursor-pointer border-none ${
-                  pwaInstallPrompt ? '' : 'bg-black/10 dark:bg-zinc-800'
-                }`}
+                  <div 
+                    onClick={() => setStudioConfig({ ...studioConfig, ofdFiscalization: !studioConfig.ofdFiscalization })}
+                    className="p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 flex items-center justify-between cursor-pointer"
+                  >
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold text-slate-950 dark:text-white">Фискализация в ОФД (ФЗ-54)</span>
+                      <span className="text-[10px] text-slate-500 dark:text-zinc-400">Автоматическая печать чеков при оплате</span>
+                    </div>
+                    <div className={`w-11 h-6 rounded-full p-0.5 transition-colors ${studioConfig.ofdFiscalization ? 'bg-[#A86C78]' : 'bg-zinc-600'}`}>
+                      <div className={`w-5 h-5 rounded-full bg-white transition-transform ${studioConfig.ofdFiscalization ? 'translate-x-5' : 'translate-x-0'}`} />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'security' && (
+              <motion.div
+                key="security-tab"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.15 }}
+                className="flex flex-col gap-2.5"
               >
-                <div 
-                  style={pwaInstallPrompt ? { backgroundColor: activeTextColor } : {}}
-                  className={`w-4 h-4 rounded-full transition-all transform ${
-                    pwaInstallPrompt ? 'translate-x-6' : 'translate-x-0 bg-zinc-400'
-                  }`} 
-                />
-              </button>
-            </div>
-          </div>
+                <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md rounded-[42px] p-5 shadow-md flex flex-col gap-3 text-left">
+                  <span className="text-xs font-bold text-slate-950 dark:text-white uppercase tracking-wider mb-1">
+                    Тема оформления интерфейса
+                  </span>
 
-          {/* Кнопка сохранения */}
-          <button
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => setTheme('light')}
+                      style={theme === 'light' ? { backgroundColor: '#A86C78', color: '#FFFFFF' } : {}}
+                      className={`p-3.5 rounded-2xl border transition-all flex items-center justify-center gap-2 font-bold text-xs cursor-pointer ${
+                        theme === 'light'
+                          ? 'border-transparent shadow-sm'
+                          : 'bg-white/60 dark:bg-black/30 border-black/5 dark:border-white/10 text-slate-700 dark:text-zinc-300'
+                      }`}
+                    >
+                      <Sparkles size={16} /> Светлая тема
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setTheme('dark')}
+                      style={theme === 'dark' ? { backgroundColor: '#A86C78', color: '#FFFFFF' } : {}}
+                      className={`p-3.5 rounded-2xl border transition-all flex items-center justify-center gap-2 font-bold text-xs cursor-pointer ${
+                        theme === 'dark'
+                          ? 'border-transparent shadow-sm'
+                          : 'bg-white/60 dark:bg-black/30 border-black/5 dark:border-white/10 text-slate-700 dark:text-zinc-300'
+                      }`}
+                    >
+                      <Lock size={16} /> Темная тема
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <Button
             type="submit"
-            style={{ backgroundColor: accentColor || '#CCFF00', color: activeTextColor }}
-            className="w-full h-14 font-black text-xs uppercase tracking-wider rounded-full transition-all text-center cursor-pointer shadow-md flex items-center justify-center gap-2 active:scale-[0.98] border-none hover:opacity-90 mt-1"
+            style={{ backgroundColor: '#A86C78', color: '#FFFFFF' }}
+            className="w-full h-14 rounded-full font-black text-xs uppercase tracking-wider shadow-md hover:opacity-90 transition-all border-none cursor-pointer mt-1"
           >
-            <Save size={16} />
-            <span>Сохранить конфигурацию</span>
-          </button>
+            <Save size={16} className="mr-1.5" />
+            Сохранить настройки
+          </Button>
         </form>
+
       </div>
 
       <BottomNav />

@@ -25,8 +25,7 @@ import { useTheme } from '@/context/ThemeContext';
 
 export default function AdminNotifications() {
   const [, setLocation] = useLocation();
-  const { theme, accentColor, accentConfig } = useTheme();
-  const activeTextColor = accentConfig?.textColor === 'text-black' ? '#000000' : '#ffffff';
+  const { theme } = useTheme();
   const { toast } = useToast();
 
   // 0 - Каналы, 1 - Рассылка, 2 - Триггеры (по умолчанию открываем Рассылку 1)
@@ -143,7 +142,7 @@ export default function AdminNotifications() {
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНИЙ БЛОК: Матовый слайдер, уходящий наверх + Пилюля ─── */}
+        {/* ─── ВЕРХНИЙ БЛОК: Сплошной баннер #64384B, уходящий наверх + Пилюля ─── */}
         <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
           
           {/* Левый баннер со свайпом (уходит за верхний край экрана) */}
@@ -163,25 +162,26 @@ export default function AdminNotifications() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
+                  style={{ backgroundColor: '#64384B', color: '#FFFFFF' }}
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-950 dark:text-white leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
                       Каналы связи
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-slate-950 dark:text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-white font-mono tracking-tight leading-none">
                       {(isTgConnected ? 1 : 0) + (isWaConnected ? 1 : 0)}
                     </span>
-                    <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-white/80 uppercase tracking-wide leading-tight">
                       активных<br/>канала
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-300 backdrop-blur-sm">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/20 text-white backdrop-blur-sm">
                       Telegram • WhatsApp
                     </span>
                   </div>
@@ -201,25 +201,26 @@ export default function AdminNotifications() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between select-none border-none"
+                  style={{ backgroundColor: '#64384B', color: '#FFFFFF' }}
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-950 dark:text-white leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
                       Рассылка
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-slate-950 dark:text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-white font-mono tracking-tight leading-none">
                       184
                     </span>
-                    <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-white/80 uppercase tracking-wide leading-tight">
                       получателя<br/>в базе
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-400">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/20 text-white">
                       Мгновенная отправка
                     </span>
                   </div>
@@ -238,25 +239,26 @@ export default function AdminNotifications() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between select-none border-none"
+                  style={{ backgroundColor: '#64384B', color: '#FFFFFF' }}
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-950 dark:text-white leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
                       Авто-триггеры
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-slate-950 dark:text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-white font-mono tracking-tight leading-none">
                       {(t1Enabled ? 1 : 0) + (t2Enabled ? 1 : 0) + (t3Enabled ? 1 : 0)}
                     </span>
-                    <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-white/80 uppercase tracking-wide leading-tight">
                       активных<br/>правила
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-400">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/20 text-white">
                       Сервисные уведомления
                     </span>
                   </div>
@@ -269,10 +271,11 @@ export default function AdminNotifications() {
           <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
             <button 
               onClick={() => setActiveSlide(1)}
+              style={activeSlide === 1 ? { backgroundColor: '#64384B', color: '#FFFFFF' } : {}}
               className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 1 
-                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                  ? 'shadow-md scale-100' 
+                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
               }`}
               title="Рассылка"
             >
@@ -281,10 +284,11 @@ export default function AdminNotifications() {
 
             <button 
               onClick={() => setActiveSlide(2)}
+              style={activeSlide === 2 ? { backgroundColor: '#64384B', color: '#FFFFFF' } : {}}
               className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 2 
-                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                  ? 'shadow-md scale-100' 
+                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
               }`}
               title="Триггеры"
             >
@@ -293,10 +297,11 @@ export default function AdminNotifications() {
 
             <button 
               onClick={() => setActiveSlide(0)}
+              style={activeSlide === 0 ? { backgroundColor: '#64384B', color: '#FFFFFF' } : {}}
               className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 0 
-                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                  ? 'shadow-md scale-100' 
+                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
               }`}
               title="Каналы"
             >
@@ -343,7 +348,7 @@ export default function AdminNotifications() {
                     value={tgToken}
                     onChange={(e) => setTgToken(e.target.value)}
                     placeholder="Введите API Token ботa"
-                    className="w-full h-12 rounded-2xl pl-4 pr-12 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                    className="w-full h-12 rounded-2xl pl-4 pr-12 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-[#64384B] transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                   />
                   <button
                     onClick={() => setShowTgToken(!showTgToken)}
@@ -401,7 +406,7 @@ export default function AdminNotifications() {
                   value={waApiKey}
                   onChange={(e) => setWaApiKey(e.target.value)}
                   placeholder="Ключ шлюза WhatsApp"
-                  className="w-full h-12 rounded-2xl px-4 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                  className="w-full h-12 rounded-2xl px-4 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-[#64384B] transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                 />
 
                 <div className="flex items-center justify-between pt-1">
@@ -409,7 +414,7 @@ export default function AdminNotifications() {
                     onClick={() => setShowQrModal(true)}
                     className="h-10 px-4 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 text-slate-900 dark:text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer"
                   >
-                    <QrCode size={14} className="text-[#CCFF00]" />
+                    <QrCode size={14} style={{ color: '#64384B' }} className="dark:text-rose-300" />
                     QR-связка
                   </button>
 
@@ -441,14 +446,15 @@ export default function AdminNotifications() {
                     key={aud.id}
                     type="button"
                     onClick={() => setAudience(aud.id as any)}
+                    style={audience === aud.id ? { backgroundColor: '#64384B', color: '#FFFFFF', borderColor: '#64384B' } : {}}
                     className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                       audience === aud.id
-                        ? 'bg-[#CCFF00] text-black border-[#CCFF00] shadow-sm font-bold'
+                        ? 'shadow-sm font-bold'
                         : 'bg-black/5 dark:bg-zinc-900 border-transparent text-slate-800 dark:text-zinc-300'
                     }`}
                   >
                     <span className="text-xs font-bold block">{aud.label}</span>
-                    <span className={`text-[10px] block mt-0.5 ${audience === aud.id ? 'text-black/80 font-bold' : 'text-zinc-400'}`}>
+                    <span className={`text-[10px] block mt-0.5 ${audience === aud.id ? 'text-white/80 font-bold' : 'text-zinc-400'}`}>
                       {aud.count}
                     </span>
                   </button>
@@ -460,7 +466,7 @@ export default function AdminNotifications() {
                   <select
                     value={selectedGroup}
                     onChange={(e) => setSelectedGroup(e.target.value)}
-                    className="w-full h-11 rounded-2xl px-3.5 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors cursor-pointer bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                    className="w-full h-11 rounded-2xl px-3.5 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-[#64384B] transition-colors cursor-pointer bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                   >
                     {groupsList.map((g) => (
                       <option key={g} value={g}>{g}</option>
@@ -484,9 +490,10 @@ export default function AdminNotifications() {
                     key={ch.id}
                     type="button"
                     onClick={() => setBroadcastChannel(ch.id as any)}
+                    style={broadcastChannel === ch.id ? { backgroundColor: '#64384B', color: '#FFFFFF' } : {}}
                     className={`text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-full border transition-all cursor-pointer ${
                       broadcastChannel === ch.id
-                        ? 'bg-slate-900 dark:bg-white text-white dark:text-black border-transparent shadow-sm'
+                        ? 'border-transparent shadow-sm'
                         : 'bg-black/5 dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border-transparent'
                     }`}
                   >
@@ -505,14 +512,14 @@ export default function AdminNotifications() {
                 value={broadcastMessage}
                 onChange={(e) => setBroadcastMessage(e.target.value)}
                 placeholder="Введите новость, анонс мастер-класса или важное объявление..."
-                className="w-full rounded-2xl p-4 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white placeholder:text-zinc-400"
+                className="w-full rounded-2xl p-4 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#64384B] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white placeholder:text-zinc-400"
               />
             </div>
 
             <button
               onClick={handleSendBroadcast}
               disabled={isSendingBroadcast}
-              style={{ backgroundColor: accentColor || '#CCFF00', color: '#000000' }}
+              style={{ backgroundColor: '#64384B', color: '#FFFFFF' }}
               className="w-full h-14 font-black text-xs uppercase tracking-wider rounded-full flex items-center justify-center gap-2 shadow-md hover:opacity-90 active:scale-[0.99] transition-all cursor-pointer border-none disabled:opacity-50"
             >
               {isSendingBroadcast ? (
@@ -534,7 +541,7 @@ export default function AdminNotifications() {
               <button
                 onClick={handleSaveTriggers}
                 disabled={isSavingTriggers}
-                style={{ backgroundColor: accentColor || '#CCFF00', color: '#000000' }}
+                style={{ backgroundColor: '#64384B', color: '#FFFFFF' }}
                 className="h-10 px-5 font-black text-xs uppercase tracking-wider rounded-full flex items-center gap-2 shadow-sm cursor-pointer hover:opacity-90 transition-all border-none"
               >
                 {isSavingTriggers ? <RefreshCw size={13} className="animate-spin" /> : <Save size={14} />}
@@ -546,7 +553,10 @@ export default function AdminNotifications() {
             <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-md space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-[#CCFF00]/15 text-slate-950 dark:text-[#CCFF00] flex items-center justify-center shrink-0 shadow-xs">
+                  <div 
+                    style={{ backgroundColor: 'rgba(100, 56, 75, 0.15)', color: '#64384B' }}
+                    className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 shadow-xs dark:text-rose-300"
+                  >
                     <Clock size={18} />
                   </div>
                   <span className="text-sm font-bold text-black dark:text-white">Напоминание о занятии</span>
@@ -559,7 +569,7 @@ export default function AdminNotifications() {
                     onChange={(e) => setT1Enabled(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-9 h-5 bg-zinc-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#CCFF00] relative" />
+                  <div className="w-9 h-5 bg-zinc-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#64384B] relative" />
                 </label>
               </div>
 
@@ -575,9 +585,10 @@ export default function AdminNotifications() {
                         key={t.id}
                         type="button"
                         onClick={() => setT1Timing(t.id as any)}
+                        style={t1Timing === t.id ? { backgroundColor: '#64384B', color: '#FFFFFF', borderColor: '#64384B' } : {}}
                         className={`text-[11px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border transition-all cursor-pointer ${
                           t1Timing === t.id
-                            ? 'bg-[#CCFF00] text-black border-[#CCFF00]'
+                            ? 'shadow-sm'
                             : 'bg-black/5 dark:bg-zinc-900 text-zinc-400 border-transparent'
                         }`}
                       >
@@ -590,7 +601,7 @@ export default function AdminNotifications() {
                     rows={2}
                     value={t1Template}
                     onChange={(e) => setT1Template(e.target.value)}
-                    className="w-full rounded-2xl p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                    className="w-full rounded-2xl p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#64384B] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                   />
                 </div>
               )}
@@ -613,7 +624,7 @@ export default function AdminNotifications() {
                     onChange={(e) => setT2Enabled(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-9 h-5 bg-zinc-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#CCFF00] relative" />
+                  <div className="w-9 h-5 bg-zinc-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#64384B] relative" />
                 </label>
               </div>
 
@@ -628,9 +639,10 @@ export default function AdminNotifications() {
                         key={c.id}
                         type="button"
                         onClick={() => setT2Condition(c.id as any)}
+                        style={t2Condition === c.id ? { backgroundColor: '#64384B', color: '#FFFFFF', borderColor: '#64384B' } : {}}
                         className={`text-[11px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border transition-all cursor-pointer ${
                           t2Condition === c.id
-                            ? 'bg-[#CCFF00] text-black border-[#CCFF00]'
+                            ? 'shadow-sm'
                             : 'bg-black/5 dark:bg-zinc-900 text-zinc-400 border-transparent'
                         }`}
                       >
@@ -643,7 +655,7 @@ export default function AdminNotifications() {
                     rows={2}
                     value={t2Template}
                     onChange={(e) => setT2Template(e.target.value)}
-                    className="w-full rounded-2xl p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                    className="w-full rounded-2xl p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#64384B] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                   />
                 </div>
               )}
@@ -653,7 +665,10 @@ export default function AdminNotifications() {
             <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-md space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-purple-500/15 text-purple-500 flex items-center justify-center shrink-0 shadow-xs">
+                  <div 
+                    style={{ backgroundColor: 'rgba(100, 56, 75, 0.15)', color: '#64384B' }}
+                    className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 shadow-xs dark:text-rose-300"
+                  >
                     <Sparkles size={18} />
                   </div>
                   <span className="text-sm font-bold text-black dark:text-white">Отмена / Перенос урока</span>
@@ -666,7 +681,7 @@ export default function AdminNotifications() {
                     onChange={(e) => setT3Enabled(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-9 h-5 bg-zinc-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#CCFF00] relative" />
+                  <div className="w-9 h-5 bg-zinc-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#64384B] relative" />
                 </label>
               </div>
 
@@ -676,7 +691,7 @@ export default function AdminNotifications() {
                     rows={2}
                     value={t3Template}
                     onChange={(e) => setT3Template(e.target.value)}
-                    className="w-full rounded-2xl p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#CCFF00] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                    className="w-full rounded-2xl p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#64384B] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                   />
                 </div>
               )}
@@ -750,7 +765,7 @@ export default function AdminNotifications() {
                     description: "WhatsApp шлюз успешно привязан."
                   });
                 }}
-                style={{ backgroundColor: accentColor || '#CCFF00', color: '#000000' }}
+                style={{ backgroundColor: '#64384B', color: '#FFFFFF' }}
                 className="w-full h-11 font-black uppercase text-xs rounded-full shadow-md hover:opacity-90 transition-all cursor-pointer border-none"
               >
                 Готово

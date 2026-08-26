@@ -116,7 +116,7 @@ export default function AdminStaff() {
   if (loading) {
     return (
       <div className="min-h-screen page-root flex items-center justify-center transition-colors duration-300 bg-transparent text-slate-900">
-        <Loader2 className="w-8 h-8 animate-spin text-[#4A3728]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#8E2A2B]" />
       </div>
     );
   }
@@ -129,7 +129,7 @@ export default function AdminStaff() {
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНИЙ БЛОК: Сплошной баннер #4A3728, уходящий наверх + Пилюля ─── */}
+        {/* ─── ВЕРХНИЙ БЛОК: Сплошной баннер #8E2A2B, уходящий наверх + Пилюля ─── */}
         <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
           
           {/* Левый баннер со свайпом (уходит за верхний край экрана) */}
@@ -152,7 +152,8 @@ export default function AdminStaff() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-[#4A3728] text-white shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
+                  style={{ backgroundColor: '#8E2A2B', color: '#FFFFFF' }}
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
                     <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
@@ -181,7 +182,7 @@ export default function AdminStaff() {
                         className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {roleFilter !== 'Все сотрудники' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#4A3728] rounded-full bg-white shrink-0" />}
+                        {roleFilter !== 'Все сотрудники' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#8E2A2B] rounded-full bg-white shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
@@ -211,7 +212,8 @@ export default function AdminStaff() {
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              className="flex-1 bg-[#4A3728] text-white text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                              style={{ backgroundColor: '#8E2A2B', color: '#FFFFFF' }}
+                              className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
                             </button>
@@ -259,7 +261,8 @@ export default function AdminStaff() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-[#4A3728] text-white shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
+                  style={{ backgroundColor: '#8E2A2B', color: '#FFFFFF' }}
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
                     <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
@@ -287,7 +290,7 @@ export default function AdminStaff() {
                         className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {roleFilter !== 'Все сотрудники' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#4A3728] rounded-full bg-white shrink-0" />}
+                        {roleFilter !== 'Все сотрудники' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#8E2A2B] rounded-full bg-white shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
@@ -317,7 +320,8 @@ export default function AdminStaff() {
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              className="flex-1 bg-[#4A3728] text-white text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                              style={{ backgroundColor: '#8E2A2B', color: '#FFFFFF' }}
+                              className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
                             </button>
@@ -356,9 +360,10 @@ export default function AdminStaff() {
           <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
             <button 
               onClick={() => { setIsFilterOpen(false); setActiveSlide(0); }}
+              style={activeSlide === 0 ? { backgroundColor: '#8E2A2B', color: '#FFFFFF' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 0 
-                  ? 'bg-[#4A3728] text-white shadow-md scale-100' 
+                  ? 'shadow-md scale-100' 
                   : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
               }`}
               title="Сотрудники"
@@ -368,9 +373,10 @@ export default function AdminStaff() {
             
             <button 
               onClick={() => { setIsFilterOpen(false); setActiveSlide(1); }}
+              style={activeSlide === 1 ? { backgroundColor: '#8E2A2B', color: '#FFFFFF' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 1 
-                  ? 'bg-[#4A3728] text-white shadow-md scale-100' 
+                  ? 'shadow-md scale-100' 
                   : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
               }`}
               title="Зарплаты"
@@ -421,7 +427,7 @@ export default function AdminStaff() {
                   </div>
 
                   <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
-                    <h4 className="font-bold text-base text-slate-950 dark:text-white truncate group-hover:text-[#4A3728] dark:group-hover:text-amber-200">
+                    <h4 className="font-bold text-base text-slate-950 dark:text-white truncate group-hover:text-[#8E2A2B] dark:group-hover:text-rose-200">
                       {staff.name}
                     </h4>
                     <div className="flex items-center gap-2">
@@ -434,7 +440,7 @@ export default function AdminStaff() {
                   <div className="flex items-center gap-2 ml-auto shrink-0">
                     <a 
                       href={`tel:${staff.phone}`} 
-                      className="w-11 h-11 rounded-full bg-[#4A3728]/15 text-[#4A3728] dark:text-amber-200 hover:bg-[#4A3728]/25 flex items-center justify-center transition-all shadow-xs"
+                      className="w-11 h-11 rounded-full bg-[#8E2A2B]/15 text-[#8E2A2B] dark:text-rose-200 hover:bg-[#8E2A2B]/25 flex items-center justify-center transition-all shadow-xs"
                       title="Позвонить сотруднику"
                     >
                       <Phone size={18} className="stroke-[2.5]" />
@@ -477,7 +483,8 @@ export default function AdminStaff() {
                         setSelectedPayroll(payroll);
                         setIsPayModalOpen(true);
                       }}
-                      className="bg-[#4A3728] hover:bg-[#382a1e] text-white rounded-full h-10 px-4 text-[11px] font-black uppercase tracking-wider transition-all shadow-xs border-none cursor-pointer"
+                      style={{ backgroundColor: '#8E2A2B', color: '#FFFFFF' }}
+                      className="rounded-full h-10 px-4 text-[11px] font-black uppercase tracking-wider transition-all shadow-xs border-none cursor-pointer hover:opacity-90"
                     >
                       Выплатить
                     </Button>
@@ -498,8 +505,8 @@ export default function AdminStaff() {
         onClick={() => setIsAddStaffOpen(true)}
         ariaLabel={activeSlide === 0 ? "Добавить сотрудника" : "Начислить бонус/штраф"}
         id="floating-action-btn"
-        style={{ backgroundColor: '#4A3728', color: '#FFFFFF' }}
-        className="!bg-[#4A3728] !text-white shadow-lg shadow-[#4A3728]/30 hover:opacity-95"
+        style={{ backgroundColor: '#8E2A2B', color: '#FFFFFF' }}
+        className="!bg-[#8E2A2B] !text-white shadow-lg shadow-[#8E2A2B]/30 hover:opacity-95"
       />
 
       {/* МОДАЛКА ВЫПЛАТЫ */}
@@ -507,7 +514,7 @@ export default function AdminStaff() {
         <DialogContent className="!rounded-[28px] !border-zinc-800 bg-[#161618] text-white p-7 max-w-sm shadow-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-white flex items-center gap-2">
-              <RussianRuble size={22} className="text-[#4A3728] dark:text-amber-200" />
+              <RussianRuble size={22} className="text-[#8E2A2B] dark:text-rose-200" />
               Выплата ЗП
             </DialogTitle>
           </DialogHeader>
@@ -515,13 +522,14 @@ export default function AdminStaff() {
           <form onSubmit={handlePay} className="space-y-4 pt-3">
             <div className="text-center p-4 bg-white/5 rounded-2xl border border-white/10 mb-4">
               <p className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1">{selectedPayroll?.name}</p>
-              <p className="text-2xl font-black text-amber-200 font-mono">{selectedPayroll?.amount.toLocaleString('ru-RU')} ₽</p>
+              <p className="text-2xl font-black text-rose-200 font-mono">{selectedPayroll?.amount.toLocaleString('ru-RU')} ₽</p>
             </div>
 
             <DialogFooter className="pt-2">
               <Button
                 type="submit"
-                className="w-full rounded-full h-12 font-black text-xs uppercase tracking-wider shadow-md bg-[#4A3728] hover:bg-[#382a1e] text-white border-none cursor-pointer hover:opacity-90"
+                style={{ backgroundColor: '#8E2A2B', color: '#FFFFFF' }}
+                className="w-full rounded-full h-12 font-black text-xs uppercase tracking-wider shadow-md border-none cursor-pointer hover:opacity-90"
               >
                 Подтвердить выплату
               </Button>

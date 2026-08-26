@@ -503,7 +503,7 @@ export function DirectionsAndGroupsManager() {
           id: Date.now(),
           name: formName.trim(),
           category: formCategory,
-          colorTag: '#E03C7A',
+          colorTag: '#D76B78',
           coaches: [formCoach],
           level: formLevel,
           description: formDescription.trim() || `Регулярная программа направления ${formCategory}.`
@@ -645,7 +645,7 @@ export function DirectionsAndGroupsManager() {
   if (loading) {
     return (
       <div className={`min-h-screen page-root flex items-center justify-center transition-colors duration-300 bg-transparent text-slate-900`}>
-        <Loader2 className="w-8 h-8 animate-spin text-[#E03C7A]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#D76B78]" />
       </div>
     );
   }
@@ -658,7 +658,7 @@ export function DirectionsAndGroupsManager() {
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНИЙ БЛОК: Сплошной баннер #E03C7A, уходящий наверх + Пилюля ─── */}
+        {/* ─── ВЕРХНИЙ БЛОК: Сплошной баннер #D76B78, уходящий наверх + Пилюля ─── */}
         <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
           
           {/* Левый баннер со свайпом (уходит за верхний край экрана) */}
@@ -682,7 +682,8 @@ export function DirectionsAndGroupsManager() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-[#E03C7A] text-white shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
+                  style={{ backgroundColor: '#D76B78', color: '#FFFFFF' }}
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
                     <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
@@ -710,7 +711,7 @@ export function DirectionsAndGroupsManager() {
                         className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#E03C7A] rounded-full bg-white shrink-0" />}
+                        {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#D76B78] rounded-full bg-white shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
@@ -784,7 +785,8 @@ export function DirectionsAndGroupsManager() {
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              className="flex-1 bg-[#E03C7A] text-white text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                              style={{ backgroundColor: '#D76B78', color: '#FFFFFF' }}
+                              className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
                             </button>
@@ -825,7 +827,8 @@ export function DirectionsAndGroupsManager() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-[#E03C7A] text-white shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
+                  style={{ backgroundColor: '#D76B78', color: '#FFFFFF' }}
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
                     <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
@@ -872,9 +875,10 @@ export function DirectionsAndGroupsManager() {
           <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
             <button 
               onClick={() => { setMainView('groups'); setActiveTab('groups'); }}
+              style={mainView === 'groups' ? { backgroundColor: '#D76B78', color: '#FFFFFF' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 mainView === 'groups' 
-                  ? 'bg-[#E03C7A] text-white shadow-md scale-100' 
+                  ? 'shadow-md scale-100' 
                   : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
               }`}
               title="Группы"
@@ -884,9 +888,10 @@ export function DirectionsAndGroupsManager() {
             
             <button 
               onClick={() => { setMainView('settings'); setActiveTab('directions'); }}
+              style={mainView === 'settings' ? { backgroundColor: '#D76B78', color: '#FFFFFF' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 mainView === 'settings' 
-                  ? 'bg-[#E03C7A] text-white shadow-md scale-100' 
+                  ? 'shadow-md scale-100' 
                   : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
               }`}
               title="Настройки"
@@ -910,9 +915,10 @@ export function DirectionsAndGroupsManager() {
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id as any)}
+                  style={isActive ? { backgroundColor: '#D76B78', color: '#FFFFFF' } : {}}
                   className={`font-bold text-xs uppercase tracking-wider rounded-full px-3 transition-all border-none outline-none cursor-pointer flex-1 text-center h-full flex items-center justify-center ${
                     isActive
-                      ? 'bg-[#E03C7A] text-white shadow-sm'
+                      ? 'shadow-sm'
                       : 'bg-transparent text-slate-700 dark:text-zinc-400 hover:text-black dark:hover:text-white'
                   }`}
                 >
@@ -947,7 +953,7 @@ export function DirectionsAndGroupsManager() {
                           className="w-2.5 h-2.5 rounded-full shrink-0" 
                           style={{ backgroundColor: dir.colorTag }} 
                         />
-                        <h3 className="text-base font-bold text-slate-950 dark:text-white group-hover:text-[#E03C7A] transition-colors">{dir.name}</h3>
+                        <h3 className="text-base font-bold text-slate-950 dark:text-white group-hover:text-[#D76B78] transition-colors">{dir.name}</h3>
                       </div>
                       <p className="text-xs text-slate-500 dark:text-zinc-400 font-medium">{dir.description}</p>
                     </div>
@@ -988,7 +994,10 @@ export function DirectionsAndGroupsManager() {
                       <span className="font-bold text-slate-900 dark:text-white">{dir.coaches.join(', ')}</span>
                     </div>
 
-                    <span className="text-xs font-bold uppercase text-[#E03C7A] bg-[#E03C7A]/15 px-2.5 py-1 rounded-full tracking-wide">
+                    <span 
+                      style={{ backgroundColor: 'rgba(215, 107, 120, 0.15)', color: '#D76B78' }}
+                      className="text-xs font-bold uppercase px-2.5 py-1 rounded-full tracking-wide"
+                    >
                       {dir.level}
                     </span>
                   </div>
@@ -1018,7 +1027,7 @@ export function DirectionsAndGroupsManager() {
                         <div className="flex flex-wrap items-center gap-2">
                           {(() => {
                             const dirObj = directions.find(d => d.name === group.direction);
-                            const bgCol = dirObj?.colorTag || '#E03C7A';
+                            const bgCol = dirObj?.colorTag || '#D76B78';
                             const isLime = bgCol.toLowerCase() === '#ccff00';
                             return (
                               <span
@@ -1040,7 +1049,7 @@ export function DirectionsAndGroupsManager() {
                         </div>
 
                         <p className="text-xs text-slate-600 dark:text-zinc-400 flex items-center gap-1.5 font-medium">
-                          <Calendar size={13} className="text-[#E03C7A]" />
+                          <Calendar size={13} className="text-[#D76B78]" />
                           <span>{group.schedule}</span>
                         </p>
                       </div>
@@ -1086,7 +1095,7 @@ export function DirectionsAndGroupsManager() {
                     <div className="flex items-center justify-between bg-black/5 dark:bg-white/5 p-3 rounded-2xl mt-1">
                       <span className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Вместимость зала:</span>
                       <span className="text-xs font-bold text-slate-900 dark:text-white">
-                        <span className="text-[#E03C7A]">{group.enrolled}</span> / {group.capacity} мест
+                        <span className="text-[#D76B78]">{group.enrolled}</span> / {group.capacity} мест
                       </span>
                     </div>
                   </div>
@@ -1231,8 +1240,8 @@ export function DirectionsAndGroupsManager() {
           onClick={handleOpenAddModal}
           ariaLabel="Добавить"
           id="floating-add-group-btn"
-          style={{ backgroundColor: '#E03C7A', color: '#FFFFFF' }}
-          className="!bg-[#E03C7A] !text-white shadow-lg shadow-[#E03C7A]/30 hover:opacity-95"
+          style={{ backgroundColor: '#D76B78', color: '#FFFFFF' }}
+          className="!bg-[#D76B78] !text-white shadow-lg shadow-[#D76B78]/30 hover:opacity-95"
         />
       )}
 
@@ -1306,7 +1315,7 @@ export function DirectionsAndGroupsManager() {
                             ? "Например: Дети (4-7 лет)"
                             : "Например: Pro / Продвинутые"
                       }
-                      className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
+                      className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#D76B78] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
                     />
                   </div>
                 )}
@@ -1320,7 +1329,7 @@ export function DirectionsAndGroupsManager() {
                       <select
                         value={formCategory}
                         onChange={(e) => setFormCategory(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#D76B78] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
                       >
                         {CATEGORIES_LIST.map((cat) => (
                           <option key={cat} value={cat} className="bg-zinc-900 text-white">{cat}</option>
@@ -1335,7 +1344,7 @@ export function DirectionsAndGroupsManager() {
                       <select
                         value={formCoach}
                         onChange={(e) => setFormCoach(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#D76B78] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
                       >
                         {COACHES_LIST.map((coach) => (
                           <option key={coach} value={coach} className="bg-zinc-900 text-white">{coach}</option>
@@ -1354,7 +1363,7 @@ export function DirectionsAndGroupsManager() {
                       <select
                         value={formDirection}
                         onChange={(e) => setFormDirection(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#D76B78] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
                       >
                         {directions.map((dir) => (
                           <option key={dir.id} value={dir.name} className="bg-zinc-900 text-white">{dir.name}</option>
@@ -1369,7 +1378,7 @@ export function DirectionsAndGroupsManager() {
                       <select
                         value={formLevel}
                         onChange={(e) => setFormLevel(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#D76B78] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
                       >
                         {levels.map((lvl) => (
                           <option key={lvl.id} value={lvl.tag || lvl.name} className="bg-zinc-900 text-white">
@@ -1386,7 +1395,7 @@ export function DirectionsAndGroupsManager() {
                       <select
                         value={formAge}
                         onChange={(e) => setFormAge(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#D76B78] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
                       >
                         {ages.map((a) => (
                           <option key={a.id} value={a.range || a.name} className="bg-zinc-900 text-white">
@@ -1403,7 +1412,7 @@ export function DirectionsAndGroupsManager() {
                       <select
                         value={formCoach}
                         onChange={(e) => setFormCoach(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#D76B78] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
                       >
                         {COACHES_LIST.map((coach) => (
                           <option key={coach} value={coach} className="bg-zinc-900 text-white">{coach}</option>
@@ -1423,7 +1432,7 @@ export function DirectionsAndGroupsManager() {
                             onChange={(e) => setIsCustomTimes(e.target.checked)}
                             className="sr-only peer"
                           />
-                          <div className="w-8 h-4 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#E03C7A] relative" />
+                          <div className="w-8 h-4 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#D76B78] relative" />
                           <span className="text-[11px]">Разное время по дням</span>
                         </label>
                       </div>
@@ -1436,8 +1445,9 @@ export function DirectionsAndGroupsManager() {
                               key={day}
                               type="button"
                               onClick={() => toggleDaySelect(day)}
+                              style={selected ? { backgroundColor: '#D76B78', color: '#FFFFFF' } : {}}
                               className={`flex-1 min-w-[36px] h-10 rounded-full font-bold text-xs transition-all border-none outline-none cursor-pointer flex items-center justify-center ${
-                                selected ? 'bg-[#E03C7A] text-white shadow-md scale-105' : 'bg-zinc-800 text-zinc-400 hover:text-white'
+                                selected ? 'shadow-md scale-105' : 'bg-zinc-800 text-zinc-400 hover:text-white'
                               }`}
                             >
                               {day}
@@ -1453,7 +1463,7 @@ export function DirectionsAndGroupsManager() {
                             value={formTime}
                             onChange={(e) => setFormTime(e.target.value)}
                             placeholder="Время по умолчанию (например: 19:00)"
-                            className="w-full h-11 rounded-[14px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
+                            className="w-full h-11 rounded-[14px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#D76B78] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
                           />
                           <Clock size={16} className="absolute right-4 top-3.5 text-zinc-400 pointer-events-none" />
                         </div>
@@ -1469,7 +1479,7 @@ export function DirectionsAndGroupsManager() {
                                 value={formDayTimes[day] || formTime || '19:00'}
                                 onChange={(e) => setFormDayTimes({ ...formDayTimes, [day]: e.target.value })}
                                 placeholder="Время (например: 19:00)"
-                                className="flex-1 h-8 rounded-[10px] px-3 font-medium focus:outline-none focus:ring-1 focus:ring-[#E03C7A] text-xs bg-zinc-800/90 border border-white/10 text-white transition-colors"
+                                className="flex-1 h-8 rounded-[10px] px-3 font-medium focus:outline-none focus:ring-1 focus:ring-[#D76B78] text-xs bg-zinc-800/90 border border-white/10 text-white transition-colors"
                               />
                             </div>
                           ))}
@@ -1484,7 +1494,7 @@ export function DirectionsAndGroupsManager() {
                       <select
                         value={formHall}
                         onChange={(e) => setFormHall(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#D76B78] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
                       >
                         {HALLS_LIST.map((h) => (
                           <option key={h} value={h} className="bg-zinc-900 text-white">{h}</option>
@@ -1502,7 +1512,7 @@ export function DirectionsAndGroupsManager() {
                         max={50}
                         value={formCapacity}
                         onChange={(e) => setFormCapacity(Number(e.target.value))}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors"
+                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#D76B78] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors"
                       />
                     </div>
                   </>
@@ -1518,7 +1528,7 @@ export function DirectionsAndGroupsManager() {
                       value={formRange}
                       onChange={(e) => setFormRange(e.target.value)}
                       placeholder="Например: 12-16 лет"
-                      className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
+                      className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#D76B78] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
                     />
                   </div>
                 )}
@@ -1533,7 +1543,7 @@ export function DirectionsAndGroupsManager() {
                       value={formLevel}
                       onChange={(e) => setFormLevel(e.target.value)}
                       placeholder="Например: Продвинутые / PRO"
-                      className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
+                      className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#D76B78] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
                     />
                   </div>
                 )}
@@ -1548,7 +1558,7 @@ export function DirectionsAndGroupsManager() {
                       value={formDescription}
                       onChange={(e) => setFormDescription(e.target.value)}
                       placeholder="Короткое описание для базы и мобильного приложения..."
-                      className="w-full rounded-[16px] p-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors resize-none"
+                      className="w-full rounded-[16px] p-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#D76B78] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors resize-none"
                     />
                   </div>
                 )}
@@ -1556,7 +1566,8 @@ export function DirectionsAndGroupsManager() {
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full h-14 font-black text-sm uppercase rounded-full flex items-center justify-center gap-2 shadow-lg bg-[#E03C7A] hover:bg-[#c9326b] text-white active:scale-[0.98] transition-all cursor-pointer border-none outline-none"
+                    style={{ backgroundColor: '#D76B78', color: '#FFFFFF' }}
+                    className="w-full h-14 font-black text-sm uppercase rounded-full flex items-center justify-center gap-2 shadow-lg hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer border-none outline-none"
                   >
                     <Check size={18} strokeWidth={3} />
                     {editingId !== null

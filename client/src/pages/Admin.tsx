@@ -34,7 +34,6 @@ import {
   UserPlus
 } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
-import { apiRequest } from '@/lib/queryClient';
 import BottomNav from "../components/BottomNav";
 import { motion, AnimatePresence } from 'framer-motion';
 import { getReviews } from '../lib/reviews';
@@ -59,8 +58,7 @@ const TEACHERS = [
   "Евгения Морозова"
 ];
 
-// 6 акцентных цветов Pantone для карточек
-const PANTONE_COLORS = ['#CCFF00', '#FF4500', '#6B52E1', '#4A3728', '#00A86B', '#E03C7A'];
+const PANTONE_COLORS = ['#D9C560', '#B75344', '#E58B58', '#005C5E', '#8E2A2B', '#D76B78', '#4F84C4', '#64384B', '#A86C78'];
 const TIME_SLOTS = [
   '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', 
   '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'
@@ -68,9 +66,8 @@ const TIME_SLOTS = [
 
 export default function Admin() {
   const [location, setLocation] = useLocation();
-  const { theme, accentColor, accentConfig } = useTheme();
+  const { theme } = useTheme();
   const { currentRole } = useRole();
-  const activeTextColor = accentConfig?.textColor === 'text-black' ? '#000000' : '#ffffff';
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [currentUserProfile, setCurrentUserProfile] = useState<any>(null);
@@ -227,7 +224,6 @@ export default function Admin() {
         avatar_url: profile?.avatar_url || ''
       });
 
-      // Логика фильтра по умолчанию
       if (userRole === 'owner') {
         setHomeSelectedBranch('Все филиалы');
       } else if (profile?.branch) {
@@ -512,7 +508,6 @@ export default function Admin() {
            d.getFullYear() === today.getFullYear();
   };
 
-  // Фильтрация записей на сегодня для главной страницы
   const filteredTodayBookings = bookings
     .filter(b => isToday(b.classes?.start_time))
     .filter(b => {
@@ -567,7 +562,7 @@ export default function Admin() {
     const avgRating = classReviews.length > 0 ? (sum / classReviews.length).toFixed(1) : "0.0";
     const reviewCount = classReviews.length;
 
-    const cardAccent = cls.color || cls.badge_color || accentColor || '#CCFF00';
+    const cardAccent = cls.color || cls.badge_color || '#B75344';
 
     return (
       <motion.div
@@ -579,7 +574,7 @@ export default function Admin() {
           setIsClassSheetOpen(true);
         }}
         style={cls.color ? { borderLeftColor: cls.color, borderLeftWidth: '5px' } : {}}
-        className={`bg-[#161618] ${
+        className={`bg-white/40 dark:bg-black/35 backdrop-blur-md ${
           isCancelled ? 'opacity-75' : ''
         } rounded-[42px] p-6 shadow-md cursor-pointer relative overflow-hidden transition-all group`}
       >
@@ -590,12 +585,12 @@ export default function Admin() {
         <div className="flex justify-between items-start mb-3">
           <div className="flex items-center gap-2">
             <span 
-              style={{ color: cardAccent, backgroundColor: `${cardAccent}1F` }}
-              className="text-xs font-bold px-3 py-1 rounded-full font-mono"
+              style={{ color: '#FFFFFF', backgroundColor: '#B75344' }}
+              className="text-xs font-bold px-3 py-1 rounded-full font-mono shadow-xs"
             >
               {startTime}
             </span>
-            <span className="text-xs font-bold text-zinc-400 bg-white/5 px-3 py-1 rounded-full uppercase tracking-wider">
+            <span className="text-xs font-bold text-slate-700 dark:text-zinc-300 bg-black/5 dark:bg-white/10 px-3 py-1 rounded-full uppercase tracking-wider">
               {roomName}
             </span>
           </div>
@@ -605,22 +600,22 @@ export default function Admin() {
               ОТМЕНЕНО
             </span>
           ) : (
-            <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5 mr-6 font-mono">
-              <Users className="w-3.5 h-3.5 text-zinc-500" />
+            <span className="text-xs font-bold text-slate-700 dark:text-zinc-300 uppercase tracking-widest flex items-center gap-1.5 mr-6 font-mono">
+              <Users className="w-3.5 h-3.5 text-zinc-400" />
               {bookedCount}/{cls.max_students || 15}
             </span>
           )}
         </div>
 
         <div className="space-y-1 my-3">
-          <h3 className={`text-base font-medium text-white${isCancelled ? 'line-through text-zinc-500' : ''}`}>
+          <h3 className={`text-base font-bold text-slate-950 dark:text-white ${isCancelled ? 'line-through opacity-50' : ''}`}>
             {cls.title}
           </h3>
-          <p className="text-xs font-medium text-zinc-400 flex items-center gap-2 flex-wrap">
-            <span>Хореограф: <span className="text-white font-medium">{cls.teacher_name}</span></span>
+          <p className="text-xs font-medium text-slate-600 dark:text-zinc-400 flex items-center gap-2 flex-wrap">
+            <span>Хореограф: <span className="text-slate-950 dark:text-white font-bold">{cls.teacher_name}</span></span>
             {reviewCount > 0 && (
               <span 
-                style={{ color: cardAccent, backgroundColor: `${cardAccent}1F` }}
+                style={{ color: '#B75344', backgroundColor: 'rgba(183, 83, 68, 0.12)' }}
                 className="text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-0.5 tracking-wide"
               >
                 ⭐ {avgRating} ({reviewCount})
@@ -631,14 +626,14 @@ export default function Admin() {
 
         {!isCancelled && (
           <div className="space-y-1.5 pt-2">
-            <div className="flex justify-between items-center text-xs font-bold tracking-wider uppercase text-zinc-500">
+            <div className="flex justify-between items-center text-xs font-bold tracking-wider uppercase text-slate-500 dark:text-zinc-400">
               <span>Заполненность группы</span>
-              <span style={{ color: cardAccent }} className="font-mono">{bookedCount} из {cls.max_students || 15} мест</span>
+              <span style={{ color: '#B75344' }} className="font-mono font-black">{bookedCount} из {cls.max_students || 15} мест</span>
             </div>
-            <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+            <div className="w-full h-1.5 bg-black/5 dark:bg-white/10 rounded-full overflow-hidden">
               <div 
                 className="h-full rounded-full transition-all duration-300"
-                style={{ width: `${fillPercentage}%`, backgroundColor: cardAccent }}
+                style={{ width: `${fillPercentage}%`, backgroundColor: '#B75344' }}
               />
             </div>
           </div>
@@ -660,7 +655,7 @@ export default function Admin() {
       <div className={`min-h-screen page-root flex items-center justify-center transition-colors duration-300 ${
         theme === 'light' ? 'bg-transparent text-slate-900' : 'bg-transparent text-zinc-100'
       }`}>
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: accentColor }} />
+        <Loader2 className="w-8 h-8 animate-spin text-[#D9C560]" />
       </div>
     );
   }
@@ -690,7 +685,7 @@ export default function Admin() {
               transition={{ duration: 0.15 }}
               className="flex flex-col gap-2.5"
             >
-              {/* 1. Верхний баннер-шапка (Увеличенные шрифты) */}
+              {/* 1. Верхний баннер-шапка */}
               <div 
                 className="w-full min-h-[calc(200px+env(safe-area-inset-top))] pt-[calc(1.25rem+env(safe-area-inset-top))] pb-6 px-6 rounded-b-[42px] relative transition-colors duration-300 flex flex-col justify-end bg-white/20 dark:bg-black/20 backdrop-blur-sm border-none shadow-none text-slate-900 dark:text-white select-none"
               >
@@ -719,7 +714,7 @@ export default function Admin() {
                 </div>
               </div>
 
-              {/* 2. Баннер Финансовой сводки / Задач (Смена только по свайпу) */}
+              {/* 2. Баннер Финансовой сводки (#005C5E) / Операционных задач (#8E2A2B) */}
               <div className="relative h-[184px] w-full overflow-hidden rounded-[42px] select-none shadow-lg">
                 <AnimatePresence initial={false} mode="wait">
                   {activeSlide === 0 ? (
@@ -736,35 +731,36 @@ export default function Admin() {
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.25 }}
                       onClick={() => setLocation('/admin/finance')}
-                      className="absolute inset-0 p-6 flex flex-col justify-between bg-[#CCFF00] cursor-grab active:cursor-grabbing"
+                      style={{ backgroundColor: '#005C5E', color: '#FFFFFF' }}
+                      className="absolute inset-0 p-6 flex flex-col justify-between cursor-grab active:cursor-grabbing"
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-black/60">ФИНАНСОВАЯ СВОДКА</span>
-                          <h3 className="text-sm font-bold text-black mt-0.5">Показатели за сегодня</h3>
+                          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">ФИНАНСОВАЯ СВОДКА</span>
+                          <h3 className="text-sm font-bold text-white mt-0.5">Показатели за сегодня</h3>
                         </div>
-                        <div className="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center">
-                          <Award size={20} className="text-black" />
+                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white">
+                          <Award size={20} />
                         </div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="flex flex-col gap-0.5">
-                          <span className="text-[10px] font-black uppercase tracking-wider text-black/50">ВЫРУЧКА</span>
-                          <span className="text-3xl font-black text-black">₽14 500</span>
+                          <span className="text-[10px] font-black uppercase tracking-wider text-white/70">ВЫРУЧКА</span>
+                          <span className="text-3xl font-black text-white font-mono">₽14 500</span>
                         </div>
                         <div className="flex flex-col gap-0.5">
-                          <span className="text-[10px] font-black uppercase tracking-wider text-black/50">ПРОДАЖИ</span>
+                          <span className="text-[10px] font-black uppercase tracking-wider text-white/70">ПРОДАЖИ</span>
                           <div className="flex items-baseline gap-1">
-                            <span className="text-3xl font-black text-black">3</span>
-                            <span className="text-sm font-bold text-black/60">абон.</span>
+                            <span className="text-3xl font-black text-white font-mono">3</span>
+                            <span className="text-sm font-bold text-white/70">абон.</span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex justify-between items-center pt-2 border-t border-black/5 text-[11px] font-bold text-black/70 uppercase tracking-wide">
-                        <span>Средний чек: <span className="text-black">₽4 833</span></span>
-                        <span className="text-black/80">+12% к прошлой пятнице</span>
+                      <div className="flex justify-between items-center pt-2 border-t border-white/15 text-[11px] font-bold text-white/80 uppercase tracking-wide">
+                        <span>Средний чек: <span className="text-white font-mono">₽4 833</span></span>
+                        <span>+12% к прошлой пятнице</span>
                       </div>
                     </motion.div>
                   ) : (
@@ -781,42 +777,43 @@ export default function Admin() {
                       exit={{ opacity: 0, x: 20 }}
                       transition={{ duration: 0.25 }}
                       onClick={() => setLocation('/admin/notifications')}
-                      className="absolute inset-0 p-6 flex flex-col justify-between bg-[#DDE2E5] dark:bg-[#202024] cursor-grab active:cursor-grabbing"
+                      style={{ backgroundColor: '#8E2A2B', color: '#FFFFFF' }}
+                      className="absolute inset-0 p-6 flex flex-col justify-between cursor-grab active:cursor-grabbing"
                     >
                       <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-600 dark:text-zinc-400">ОПЕРАЦИОННЫЕ ЗАДАЧИ</span>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Сегодня</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">ОПЕРАЦИОННЫЕ ЗАДАЧИ</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-white/70">Сегодня</span>
                       </div>
                       
                       <div className="flex flex-col gap-2">
-                        <div className="bg-white/80 dark:bg-black/40 rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between shadow-xs">
+                        <div className="bg-white/15 rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between backdrop-blur-sm shadow-xs">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-[#FF4500]/10 flex items-center justify-center text-[#FF4500]">
+                            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white">
                               <AlertTriangle size={16} />
                             </div>
                             <div className="flex flex-col">
-                              <span className="text-[11px] font-bold text-slate-800 dark:text-zinc-200 leading-tight">Заканчиваются абонементы</span>
-                              <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400">Осталось 1 или меньше занятий</span>
+                              <span className="text-[11px] font-bold text-white leading-tight">Заканчиваются абонементы</span>
+                              <span className="text-[10px] font-medium text-white/80">Осталось 1 или меньше занятий</span>
                             </div>
                           </div>
-                          <span className="bg-[#FF4500]/10 text-[#FF4500] text-[11px] font-black px-3 py-1 rounded-full">{expiringSubsCount}</span>
+                          <span className="bg-white text-[#8E2A2B] text-[11px] font-black px-3 py-1 rounded-full">{expiringSubsCount}</span>
                         </div>
 
-                        <div className="bg-white/80 dark:bg-black/40 rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between shadow-xs">
+                        <div className="bg-white/15 rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between backdrop-blur-sm shadow-xs">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-[#FF4500]/10 flex items-center justify-center text-[#FF4500]">
+                            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white">
                               <User size={16} />
                             </div>
                             <div className="flex flex-col">
-                              <span className="text-[11px] font-bold text-slate-800 dark:text-zinc-200 leading-tight">Должники</span>
-                              <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400">Нужно продлить абонемент</span>
+                              <span className="text-[11px] font-bold text-white leading-tight">Должники</span>
+                              <span className="text-[10px] font-medium text-white/80">Нужно продлить абонемент</span>
                             </div>
                           </div>
-                          <span className="bg-[#FF4500]/10 text-[#FF4500] text-[11px] font-black px-3 py-1 rounded-full">{debtorsCount}</span>
+                          <span className="bg-white text-[#8E2A2B] text-[11px] font-black px-3 py-1 rounded-full">{debtorsCount}</span>
                         </div>
                       </div>
 
-                      <div className="pt-1 text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider text-right">
+                      <div className="pt-1 text-[10px] font-bold text-white/70 uppercase tracking-wider text-right">
                         Смахните для просмотра финансов →
                       </div>
                     </motion.div>
@@ -829,23 +826,23 @@ export default function Admin() {
                     type="button"
                     onClick={(e) => { e.stopPropagation(); setActiveSlide(0); }}
                     className={`h-1.5 rounded-full transition-all duration-300 border-none p-0 cursor-pointer ${
-                      activeSlide === 0 ? 'w-5 bg-black/60 dark:bg-white/80' : 'w-1.5 bg-black/20 dark:bg-white/20'
+                      activeSlide === 0 ? 'w-5 bg-white' : 'w-1.5 bg-white/40'
                     }`}
                   />
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); setActiveSlide(1); }}
                     className={`h-1.5 rounded-full transition-all duration-300 border-none p-0 cursor-pointer ${
-                      activeSlide === 1 ? 'w-5 bg-black/60 dark:bg-white/80' : 'w-1.5 bg-black/20 dark:bg-white/20'
+                      activeSlide === 1 ? 'w-5 bg-white' : 'w-1.5 bg-white/40'
                     }`}
                   />
                 </div>
               </div>
 
-              {/* 3. Баннер быстрых действий (Кнопки под цвет фона) */}
+              {/* 3. Баннер быстрых действий (#CCFF00 Lime) */}
               <div 
+                style={{ backgroundColor: '#CCFF00', color: '#000000' }}
                 className="rounded-[42px] p-5 shadow-md flex flex-col"
-                style={{ backgroundColor: accentColor || '#CCFF00' }}
               >
                 <div className="flex items-center justify-between mb-4 px-1">
                   <span className="text-[10px] font-black uppercase tracking-[0.15em] text-black/70">
@@ -904,14 +901,15 @@ export default function Admin() {
                 </div>
               </div>           
       
-              {/* 4. Баннер: Активные записи с встроенным фильтром филиалов/залов */}
+              {/* 4. Баннер: Активные записи (#B75344 Burnt Sienna) */}
               <div
-                className="bg-white/40 dark:bg-black/35 backdrop-blur-md p-5 md:p-6 shadow-none overflow-visible rounded-[42px] relative"
+                style={{ backgroundColor: '#B75344', color: '#FFFFFF' }}
+                className="p-5 md:p-6 shadow-md overflow-visible rounded-[42px] relative"
               >
                 <div className="flex justify-between items-center mb-4 relative z-20">
                   <div>
-                    <span className="text-slate-600 dark:text-zinc-400 text-[10px] font-black uppercase tracking-wider">Активные записи</span>
-                    <h3 className="text-slate-950 dark:text-white text-base font-black uppercase tracking-wider mt-0.5">
+                    <span className="text-white/70 text-[10px] font-black uppercase tracking-wider">Активные записи</span>
+                    <h3 className="text-white text-base font-black uppercase tracking-wider mt-0.5">
                       {homeSelectedBranch === 'Все филиалы' ? 'Все филиалы' : homeSelectedBranch.replace('Филиал: ', '')}
                     </h3>
                   </div>
@@ -925,11 +923,11 @@ export default function Admin() {
                           e.stopPropagation();
                           setIsHomeBookingsFilterOpen(!isHomeBookingsFilterOpen);
                         }}
-                        className="w-9 h-9 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white flex items-center justify-center transition-all cursor-pointer border-none shadow-none relative"
+                        className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={16} className="stroke-[2.5]" />
                         {(homeSelectedBranch !== 'Все филиалы' || homeSelectedHall !== 'Все залы') && (
-                          <span className="absolute top-0 right-0 w-2.5 h-2.5 border-2 border-[#CCFF00] rounded-full bg-slate-900 shrink-0" />
+                          <span className="absolute top-0 right-0 w-2.5 h-2.5 border-2 border-[#B75344] rounded-full bg-white shrink-0" />
                         )}
                       </button>
 
@@ -938,7 +936,7 @@ export default function Admin() {
                           onPointerDown={(e) => e.stopPropagation()}
                           onClick={(e) => e.stopPropagation()}
                           style={filterPopupStyle}
-                          className="absolute top-[calc(100%+8px)] right-0 z-[100] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-right pointer-events-auto select-none"
+                          className="absolute top-[calc(100%+8px)] right-0 z-[100] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-right pointer-events-auto select-none text-slate-900 dark:text-white"
                         >
                           <div>
                             <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Филиал</label>
@@ -965,7 +963,8 @@ export default function Admin() {
                             <button
                               type="button"
                               onClick={() => setIsHomeBookingsFilterOpen(false)}
-                              className="flex-1 bg-[#CCFF00] text-black text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                              style={{ backgroundColor: '#B75344', color: '#FFFFFF' }}
+                              className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
                             </button>
@@ -984,7 +983,7 @@ export default function Admin() {
                       )}
                     </div>
 
-                    <span className="text-xs font-black px-3 py-1.5 rounded-full uppercase tracking-wider font-mono bg-slate-900 text-white dark:bg-white/10 dark:text-white">
+                    <span className="text-xs font-black px-3 py-1.5 rounded-full uppercase tracking-wider font-mono bg-white text-[#B75344] shadow-xs">
                       {todayMainBookings.length} ЗАПИСЕЙ
                     </span>
                   </div>
@@ -998,21 +997,21 @@ export default function Admin() {
                       return (
                         <div 
                           key={booking.id}
-                          className="w-full bg-white/70 dark:bg-zinc-850/70 rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between gap-2 shadow-xs"
+                          className="w-full bg-white/15 backdrop-blur-sm rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between gap-2 shadow-xs"
                         >
                           <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${
-                            booking.status === 'completed' ? 'bg-emerald-500' :
-                            booking.status === 'missed' ? 'bg-red-500' : 'bg-amber-500'
+                            booking.status === 'completed' ? 'bg-emerald-300' :
+                            booking.status === 'missed' ? 'bg-red-300' : 'bg-amber-300'
                           }`} />
 
-                          <div className="space-y-0.5 min-w-0 flex-1">
+                          <div className="space-y-0.5 min-w-0 flex-1 text-white">
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-xs font-black text-slate-700 dark:text-zinc-400 font-mono tracking-wide">{classTime}</span>
-                              <span className="text-slate-400 font-medium">•</span>
-                              <span className="text-xs font-bold text-slate-900 dark:text-zinc-200 truncate max-w-[130px] tracking-wide">{booking.classes.title}</span>
+                              <span className="text-xs font-black text-white font-mono tracking-wide">{classTime}</span>
+                              <span className="text-white/60 font-medium">•</span>
+                              <span className="text-xs font-bold text-white/90 truncate max-w-[130px] tracking-wide">{booking.classes.title}</span>
                             </div>
                             
-                            <h4 className="text-xs font-medium text-slate-950 dark:text-white truncate">
+                            <h4 className="text-xs font-bold text-white truncate">
                               {booking.profiles.full_name || 'Танцор AkademikA'}
                             </h4>
                           </div>
@@ -1023,16 +1022,16 @@ export default function Admin() {
                                 <Button
                                   size="icon"
                                   onClick={() => handleCheckIn(booking.id, booking.user_id)}
-                                  className="w-8 h-8 rounded-full bg-emerald-600 text-white hover:bg-emerald-700 transition-all flex items-center justify-center focus:outline-none"
+                                  className="w-8 h-8 rounded-full bg-white text-emerald-700 hover:bg-white/90 transition-all flex items-center justify-center focus:outline-none border-none"
                                   title="Отметить визит"
                                 >
-                                  <CheckCircle2 className="w-4.5 h-4.5" />
+                                  <CheckCircle2 className="w-4.5 h-4.5 stroke-[2.5]" />
                                 </Button>
 
                                 <Button
                                   size="icon"
                                   onClick={() => handleMissed(booking.id)}
-                                  className="w-8 h-8 rounded-full bg-red-600 text-white hover:bg-red-700 transition-all flex items-center justify-center focus:outline-none"
+                                  className="w-8 h-8 rounded-full bg-black/30 text-white hover:bg-black/50 transition-all flex items-center justify-center focus:outline-none border-none"
                                   title="Отметить пропуск"
                                 >
                                   <XCircle className="w-4.5 h-4.5" />
@@ -1042,15 +1041,15 @@ export default function Admin() {
                               <div className="flex items-center gap-1.5">
                                 <span className={`text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${
                                   booking.status === 'completed' 
-                                    ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-400' 
-                                    : 'bg-red-100 dark:bg-red-950/60 text-red-800 dark:text-red-400'
+                                    ? 'bg-white/25 text-white' 
+                                    : 'bg-black/30 text-white'
                                 }`}>
                                   {booking.status === 'completed' ? '✓' : '✖'}
                                 </span>
 
                                 <button
                                   onClick={() => handleUndoStatus(booking.id, booking.status, booking.user_id)}
-                                  className="text-xs font-bold text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white px-2 py-1 rounded-full transition-colors uppercase tracking-wider bg-white/50 dark:bg-white/10 hover:bg-white/80 dark:hover:bg-white/20"
+                                  className="text-xs font-bold text-white/80 hover:text-white px-2 py-1 rounded-full transition-colors uppercase tracking-wider bg-white/10 hover:bg-white/20"
                                 >
                                   Сбросить
                                 </button>
@@ -1061,33 +1060,33 @@ export default function Admin() {
                       );
                     })
                   ) : (
-                    <div className="w-full bg-white/60 dark:bg-zinc-800/60 py-4 px-6 rounded-full text-center flex items-center justify-center">
-                      <span className="text-slate-600 dark:text-zinc-400 font-bold text-xs uppercase tracking-wider">Нет активных записей на сегодня</span>
+                    <div className="w-full bg-white/15 py-4 px-6 rounded-full text-center flex items-center justify-center">
+                      <span className="text-white/80 font-bold text-xs uppercase tracking-wider">Нет активных записей на сегодня</span>
                     </div>
                   )}
 
                   {todayWaitingBookings.length > 0 && (
-                    <div className="mt-4 pt-4 space-y-2 border-t border-black/5 dark:border-white/10">
-                      <h4 className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest px-1">Очередь ({todayWaitingBookings.length})</h4>
+                    <div className="mt-4 pt-4 space-y-2 border-t border-white/15">
+                      <h4 className="text-xs font-bold text-amber-200 uppercase tracking-widest px-1">Очередь ({todayWaitingBookings.length})</h4>
                       {todayWaitingBookings.map((booking) => {
                         const classTime = new Date(booking.classes.start_time).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
                         return (
                           <div 
                             key={booking.id}
-                            className="w-full bg-white/70 dark:bg-zinc-850/70 p-2 pl-4 pr-3 rounded-full flex items-center justify-between gap-2 shadow-xs"
+                            className="w-full bg-white/15 p-2 pl-4 pr-3 rounded-full flex items-center justify-between gap-2 shadow-xs"
                           >
-                            <div className="space-y-0.5 min-w-0 flex-1">
+                            <div className="space-y-0.5 min-w-0 flex-1 text-white">
                               <div className="flex items-center gap-1 flex-wrap">
-                                <span className="text-xs font-black text-slate-700 dark:text-zinc-400 font-mono tracking-wide">{classTime}</span>
-                                <span className="text-slate-400 font-medium">•</span>
-                                <span className="text-xs font-bold text-slate-900 dark:text-zinc-200 truncate max-w-[130px] tracking-wide">{booking.classes.title}</span>
+                                <span className="text-xs font-black text-white font-mono tracking-wide">{classTime}</span>
+                                <span className="text-white/60 font-medium">•</span>
+                                <span className="text-xs font-bold text-white/90 truncate max-w-[130px] tracking-wide">{booking.classes.title}</span>
                               </div>
-                              <h4 className="text-xs font-medium text-slate-950 dark:text-white truncate">{booking.profiles.full_name}</h4>
+                              <h4 className="text-xs font-bold text-white truncate">{booking.profiles.full_name}</h4>
                             </div>
                             <Button
                               size="sm"
                               onClick={() => handlePromoteFromWaiting(booking.id, booking.class_id)}
-                              className="bg-amber-500 hover:bg-amber-600 text-black text-xs font-bold uppercase tracking-wider px-3 py-1.5 h-auto rounded-full transition-colors shrink-0"
+                              className="bg-white hover:bg-white/90 text-[#B75344] text-xs font-bold uppercase tracking-wider px-3 py-1.5 h-auto rounded-full transition-colors shrink-0 border-none"
                             >
                               В основу
                             </Button>
@@ -1111,20 +1110,23 @@ export default function Admin() {
               transition={{ duration: 0.15 }}
               className="flex flex-col gap-2.5 pt-3 w-full max-w-full overflow-x-hidden"
             >
-              {/* ─── ВЕРХНИЙ БЛОК: Слайдер + Вертикальная навигация ─── */}
+              {/* ВЕРХНИЙ БЛОК: Слайдер + Вертикальная навигация */}
               <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
                 
-               {/* 1. Левая карточка: Главный баннер Расписание */}
+               {/* Левая карточка: Главный баннер Расписание */}
                <div className="flex-1 relative h-[calc(100%+12px)] -mt-3">
-                  <div className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-[#CCFF00] text-black shadow-md flex flex-col justify-between select-none !overflow-visible border-none transition-all">
+                  <div 
+                    style={{ backgroundColor: '#B75344', color: '#FFFFFF' }}
+                    className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between select-none !overflow-visible border-none transition-all"
+                  >
                     
                     {/* ВЕРХНЯЯ СТРОКА: Расписание + Месяц */}
                     <div className="flex items-center justify-between px-1">
-                      <h2 className="text-xl font-black uppercase tracking-wider text-black leading-tight">
+                      <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
                         Расписание
                       </h2>
 
-                      <h2 className="text-xl font-black uppercase tracking-wider text-black leading-tight">
+                      <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
                         {selectedDate.toLocaleDateString('ru-RU', { month: 'long' }).toUpperCase()}
                       </h2>
                     </div>
@@ -1141,7 +1143,6 @@ export default function Admin() {
 
                     {/* НИЖНЯЯ СТРОКА: Фильтр слева, Пилюля с датой справа */}
                     <div className="relative flex items-center justify-between z-[100]">
-                      {/* Кнопка фильтров */}
                       <div className="relative">
                         <button 
                           onPointerDown={(e) => e.stopPropagation()}
@@ -1150,11 +1151,11 @@ export default function Admin() {
                             setIsFilterOpen(!isFilterOpen);
                           }}
                           type="button"
-                          className="w-11 h-11 rounded-full bg-black/10 hover:bg-black/20 text-black flex items-center justify-center transition-all cursor-pointer border-none shadow-none relative"
+                          className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                         >
                           <SlidersHorizontal size={20} className="stroke-[2.5]" />
                           {(selectedBranch !== 'Все филиалы' || selectedHall !== 'Все залы' || selectedDirection !== 'Все направления' || selectedAge !== 'Все возраста' || selectedType !== 'Все типы') && (
-                            <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-black shrink-0" />
+                            <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#B75344] rounded-full bg-white shrink-0" />
                           )}
                         </button>
 
@@ -1217,7 +1218,8 @@ export default function Admin() {
                               <button 
                                 type="button" 
                                 onClick={() => setIsFilterOpen(false)} 
-                                className="flex-1 bg-black text-[#CCFF00] text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                                style={{ backgroundColor: '#B75344', color: '#FFFFFF' }}
+                                className="flex-1 text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                               >
                                 Применить
                               </button>
@@ -1239,31 +1241,31 @@ export default function Admin() {
                         )}
                       </div>
 
-                      {/* Пилюля выбора даты */}
                       <button
                         type="button"
                         onClick={() => {
                           setPickerCurrentDate(new Date(selectedDate));
                           setIsDatePickerOpen(true);
                         }}
-                        className="flex items-center gap-1.5 bg-black/10 hover:bg-black/20 text-black text-xs font-bold px-4 py-2.5 rounded-full transition-all cursor-pointer border-none shadow-none max-w-[200px]"
+                        className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white text-xs font-bold px-4 py-2.5 rounded-full transition-all cursor-pointer backdrop-blur-sm border-none shadow-none max-w-[200px]"
                       >
-                        <span className="text-[11px] uppercase tracking-wider truncate font-mono text-black font-bold">
+                        <span className="text-[11px] uppercase tracking-wider truncate font-mono text-white font-bold">
                           {selectedDate.toLocaleDateString('ru-RU', { weekday: 'short' })}, {selectedDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
                         </span>
-                        <ChevronDown size={14} className="text-black shrink-0 stroke-[2.5]" />
+                        <ChevronDown size={14} className="text-white shrink-0 stroke-[2.5]" />
                       </button>
                     </div>
                   </div>
                 </div>
 
-                {/* 2. Правая вертикальная пилюля (День / Неделя) */}
+                {/* Правая вертикальная пилюля */}
                 <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
                   <button 
                     onClick={() => setViewMode('day')}
+                    style={viewMode === 'day' ? { backgroundColor: '#B75344', color: '#FFFFFF' } : {}}
                     className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                       viewMode === 'day' 
-                        ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
+                        ? 'shadow-md scale-100' 
                         : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
                     }`}
                     title="Расписание на день"
@@ -1273,9 +1275,10 @@ export default function Admin() {
                   
                   <button 
                     onClick={() => setViewMode('week')}
+                    style={viewMode === 'week' ? { backgroundColor: '#B75344', color: '#FFFFFF' } : {}}
                     className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                       viewMode === 'week' 
-                        ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
+                        ? 'shadow-md scale-100' 
                         : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
                     }`}
                     title="Расписание на неделю"
@@ -1285,7 +1288,7 @@ export default function Admin() {
                 </div>
               </div>
 
-              {/* 2. Список карточек на день ИЛИ Недельный таймлайн */}
+              {/* Список карточек на день ИЛИ Недельный таймлайн */}
               <AnimatePresence mode="wait">
                 {viewMode === 'day' ? (
                   <motion.div
@@ -1316,8 +1319,6 @@ export default function Admin() {
                     className="flex flex-col gap-3 pb-32 w-full"
                   >
                     <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md rounded-[42px] p-5 shadow-none flex flex-col gap-4 border-none select-none overflow-hidden">
-                      
-                      {/* Шапка дней недели (ПН - ВС) */}
                       <div className="grid grid-cols-[54px_repeat(7,1fr)] gap-1.5 items-center text-center">
                         <div className="text-[10px] font-black uppercase text-slate-400 dark:text-zinc-500 font-mono">
                           ВРЕМЯ
@@ -1330,9 +1331,10 @@ export default function Admin() {
                               key={day.toISOString()}
                               type="button"
                               onClick={() => setSelectedDate(day)}
+                              style={isSel ? { backgroundColor: '#B75344', color: '#FFFFFF' } : {}}
                               className={`flex flex-col items-center justify-center py-1.5 rounded-2xl transition-all cursor-pointer border-none outline-none ${
                                 isSel
-                                  ? 'bg-[#CCFF00] text-black font-bold shadow-sm'
+                                  ? 'font-bold shadow-sm'
                                   : isTod
                                     ? 'bg-white/20 dark:bg-white/10 text-slate-950 dark:text-white font-medium'
                                     : 'bg-transparent text-slate-600 dark:text-zinc-400 hover:bg-white/10'
@@ -1349,7 +1351,6 @@ export default function Admin() {
                         })}
                       </div>
 
-                      {/* Вертикальная сетка таймлайна */}
                       <div className="flex flex-col gap-2 max-h-[520px] overflow-y-auto scrollbar-none pr-0.5">
                         {TIME_SLOTS.map((timeStr) => {
                           const hour = parseInt(timeStr.split(':')[0], 10);
@@ -1377,7 +1378,7 @@ export default function Admin() {
                                   >
                                     {daySlotClasses.map((cls, cIdx) => {
                                       const cardColor = cls.color || PANTONE_COLORS[(cls.id || cIdx) % PANTONE_COLORS.length];
-                                      const isLimeOrYellow = cardColor === '#CCFF00';
+                                      const isYellow = cardColor === '#D9C560';
 
                                       return (
                                         <button
@@ -1390,7 +1391,7 @@ export default function Admin() {
                                           }}
                                           style={{ backgroundColor: cardColor }}
                                           className={`w-full p-1.5 rounded-[12px] flex flex-col justify-between text-left cursor-pointer border-none shadow-xs transition-transform active:scale-95 ${
-                                            isLimeOrYellow ? 'text-black' : 'text-white'
+                                            isYellow ? 'text-black' : 'text-white'
                                           }`}
                                           title={`${cls.title} • ${cls.teacher_name}`}
                                         >
@@ -1432,6 +1433,8 @@ export default function Admin() {
           onClick={() => setLocation('/add-class')}
           ariaLabel="Создать урок"
           id="floating-create-class-btn"
+          style={{ backgroundColor: '#B75344', color: '#FFFFFF' }}
+          className="!bg-[#B75344] !text-white shadow-lg shadow-[#B75344]/30 hover:opacity-95"
         />
       )}
 
@@ -1462,14 +1465,14 @@ export default function Admin() {
               <div className="px-6 pb-3 pt-1 border-b border-zinc-800/40 flex justify-between items-center shrink-0">
                 <div>
                   <h3 className="text-base font-medium text-white">{selectedClassForSheet.title}</h3>
-                  <p className="text-xs font-bold text-[#CCFF00] tracking-wide uppercase mt-0.5">
+                  <p className="text-xs font-bold text-[#B75344] tracking-wide uppercase mt-0.5">
                     Управление уроком • Зал {selectedClassForSheet.id % 2 === 0 ? "2" : "1"}
                   </p>
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-full bg-zinc-900/80 hover:bg-zinc-800/60 text-stone-400 hover:text-[#CCFF00] w-9 h-9 border border-zinc-800/40 transition-colors"
+                  className="rounded-full bg-zinc-900/80 hover:bg-zinc-800/60 text-stone-400 hover:text-white w-9 h-9 border border-zinc-800/40 transition-colors"
                   onClick={() => {
                     setIsClassSheetOpen(false);
                     setIsCancelConfirmOpen(false);
@@ -1482,7 +1485,7 @@ export default function Admin() {
               <div className="px-6 py-6 overflow-y-auto scrollbar-none pb-28 space-y-6 flex-1">
                 <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px] space-y-3 shadow-md">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold text-[#CCFF00] uppercase tracking-wider">
+                    <span className="text-xs font-bold text-rose-300 uppercase tracking-wider">
                       ⚡ Быстрая продажа / Запись
                     </span>
                     <span className="text-[10px] font-mono text-zinc-400">
@@ -1524,7 +1527,7 @@ export default function Admin() {
                         const newTeacher = e.target.value;
                         await handleUpdateTeacher(selectedClassForSheet.id, newTeacher);
                       }}
-                      className="w-full bg-[#1C1C1E] border border-zinc-800 rounded-2xl px-4 py-3.5 text-sm font-medium text-white appearance-none focus:outline-none focus:border-[#CCFF00] transition-colors cursor-pointer"
+                      className="w-full bg-[#1C1C1E] border border-zinc-800 rounded-2xl px-4 py-3.5 text-sm font-medium text-white appearance-none focus:outline-none focus:border-[#B75344] transition-colors cursor-pointer"
                     >
                       {TEACHERS.map(t => (
                         <option key={t} value={t}>{t}</option>
@@ -1544,7 +1547,7 @@ export default function Admin() {
                       type="button"
                       disabled={selectedClassForSheet.status === 'cancelled'}
                       onClick={() => setIsCancelConfirmOpen(true)}
-                      className="w-full bg-red-500/10 hover:bg-red-500 hover:text-black border border-red-500/20 text-red-400 font-bold h-12 rounded-2xl text-xs uppercase tracking-wider transition-all disabled:opacity-40"
+                      className="w-full bg-red-500/10 hover:bg-red-500 hover:text-white border border-red-500/20 text-red-400 font-bold h-12 rounded-2xl text-xs uppercase tracking-wider transition-all disabled:opacity-40"
                     >
                       {selectedClassForSheet.status === 'cancelled' ? 'Урок уже отменен' : 'Отменить занятие на сегодня'}
                     </Button>
@@ -1609,7 +1612,7 @@ export default function Admin() {
                               <div className="flex justify-between items-center">
                                 <span className="text-xs font-medium text-white">{rev.studentName}</span>
                                 <div className="flex items-center gap-1">
-                                  <span className="text-xs font-bold text-[#CCFF00] font-mono tracking-wide">★ {rev.rating.toFixed(1)}</span>
+                                  <span className="text-xs font-bold text-[#B75344] font-mono tracking-wide">★ {rev.rating.toFixed(1)}</span>
                                   <span className="text-xs text-zinc-500 font-bold tracking-wide">{rev.date}</span>
                                 </div>
                               </div>
