@@ -327,20 +327,20 @@ export default function AdminStudents() {
                   animate={{ opacity: 1, x: 0 }} 
                   exit={{ opacity: 0, x: -20 }} 
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-[#FF4500] text-white shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
                 >
                   <div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 dark:text-zinc-400">
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">
                       ДЕЙСТВУЮЩИЕ УЧЕНИКИ
                     </span>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-950 dark:text-white mt-0.5">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-white mt-0.5">
                       База клиентов
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-slate-950 dark:text-white font-mono tracking-tight">{displayedList.length}</span>
-                    <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
+                    <span className="text-4xl font-black text-white font-mono tracking-tight">{displayedList.length}</span>
+                    <span className="text-[10px] font-bold text-white/80 uppercase tracking-wide leading-tight">
                       активных<br/>ученика
                     </span>
                   </div>
@@ -350,10 +350,10 @@ export default function AdminStudents() {
                       <button 
                         onPointerDown={(e) => e.stopPropagation()} 
                         onClick={(e) => { e.stopPropagation(); setIsFilterOpen(!isFilterOpen); }} 
-                        className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                        className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {isBaseFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-slate-900 shrink-0" />}
+                        {isBaseFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#FF4500] rounded-full bg-white shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
@@ -361,7 +361,7 @@ export default function AdminStudents() {
                           onPointerDown={(e) => e.stopPropagation()} 
                           onClick={(e) => e.stopPropagation()} 
                           style={filterPopupStyle}
-                          className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-left pointer-events-auto select-none"
+                          className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
                         >
                           <div>
                             <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Филиал</label>
@@ -383,7 +383,7 @@ export default function AdminStudents() {
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              className="flex-1 bg-[#CCFF00] text-black text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                              className="flex-1 bg-[#FF4500] text-white text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
                             </button>
@@ -407,7 +407,7 @@ export default function AdminStudents() {
                     <button 
                       onPointerDown={(e) => e.stopPropagation()} 
                       onClick={(e) => { e.stopPropagation(); setIsSearchVisible(!isSearchVisible); }} 
-                      className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
+                      className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
@@ -425,21 +425,21 @@ export default function AdminStudents() {
                   animate={{ opacity: 1, x: 0 }} 
                   exit={{ opacity: 0, x: 20 }} 
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-[#FF4500] text-white shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
                 >
                   <div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 dark:text-zinc-400">ВОРОНКА ЛИДОВ</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">ВОРОНКА ЛИДОВ</span>
                     <div className="mt-1 flex items-center gap-2">
-                      <span className="text-2xl font-black text-slate-950 dark:text-white font-mono leading-none">{leadsList.length}</span>
-                      <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Всего лидов</span>
+                      <span className="text-2xl font-black text-white font-mono leading-none">{leadsList.length}</span>
+                      <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">Всего лидов</span>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-4 gap-2 px-1 py-1">
-                    <div className="flex flex-col"><span className="text-2xl font-black text-slate-950 dark:text-white font-mono leading-none">{stageCounts.new}</span><span className="text-[9px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mt-1">Заявка</span></div>
-                    <div className="flex flex-col"><span className="text-2xl font-black text-amber-600 dark:text-amber-400 font-mono leading-none">{stageCounts.trial_scheduled}</span><span className="text-[9px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mt-1">Записан</span></div>
-                    <div className="flex flex-col"><span className="text-2xl font-black text-violet-600 dark:text-violet-400 font-mono leading-none">{stageCounts.trial_attended}</span><span className="text-[9px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mt-1">Пришел</span></div>
-                    <div className="flex flex-col"><span className="text-2xl font-black text-rose-600 dark:text-rose-400 font-mono leading-none">{stageCounts.lost}</span><span className="text-[9px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mt-1">Отказ</span></div>
+                    <div className="flex flex-col"><span className="text-2xl font-black text-white font-mono leading-none">{stageCounts.new}</span><span className="text-[9px] font-bold text-white/80 uppercase tracking-wider mt-1">Заявка</span></div>
+                    <div className="flex flex-col"><span className="text-2xl font-black text-white font-mono leading-none">{stageCounts.trial_scheduled}</span><span className="text-[9px] font-bold text-white/80 uppercase tracking-wider mt-1">Записан</span></div>
+                    <div className="flex flex-col"><span className="text-2xl font-black text-white font-mono leading-none">{stageCounts.trial_attended}</span><span className="text-[9px] font-bold text-white/80 uppercase tracking-wider mt-1">Пришел</span></div>
+                    <div className="flex flex-col"><span className="text-2xl font-black text-white/80 font-mono leading-none">{stageCounts.lost}</span><span className="text-[9px] font-bold text-white/80 uppercase tracking-wider mt-1">Отказ</span></div>
                   </div>
 
                   <div className="relative flex items-center justify-between z-[100]">
@@ -447,10 +447,10 @@ export default function AdminStudents() {
                       <button 
                         onPointerDown={(e) => e.stopPropagation()} 
                         onClick={(e) => { e.stopPropagation(); setIsFilterOpen(!isFilterOpen); }} 
-                        className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 text-slate-950 dark:text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                        className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {isFunnelFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-slate-900 shrink-0" />}
+                        {isFunnelFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#FF4500] rounded-full bg-white shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
@@ -458,7 +458,7 @@ export default function AdminStudents() {
                           onPointerDown={(e) => e.stopPropagation()} 
                           onClick={(e) => e.stopPropagation()} 
                           style={filterPopupStyle}
-                          className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-left pointer-events-auto select-none"
+                          className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
                         >
                           <div>
                             <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Этап воронки</label>
@@ -476,7 +476,7 @@ export default function AdminStudents() {
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              className="flex-1 bg-[#CCFF00] text-black text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                              className="flex-1 bg-[#FF4500] text-white text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
                             </button>
@@ -499,7 +499,7 @@ export default function AdminStudents() {
                     <button 
                       onPointerDown={(e) => e.stopPropagation()} 
                       onClick={(e) => { e.stopPropagation(); setIsSearchVisible(!isSearchVisible); }} 
-                      className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 text-slate-950 dark:text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
+                      className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
@@ -513,14 +513,24 @@ export default function AdminStudents() {
           <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
             <button 
               onClick={() => { setIsFilterOpen(false); setActiveSlide(0); }}
-              className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${activeSlide === 0 ? 'bg-[#CCFF00] text-black shadow-md scale-100' : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'}`}
+              className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+                activeSlide === 0 
+                  ? 'bg-[#FF4500] text-white shadow-md scale-100' 
+                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
+              }`}
+              title="База учеников"
             >
               <Users size={20} className="stroke-[2.5]" />
             </button>
             
             <button 
               onClick={() => { setIsFilterOpen(false); setActiveSlide(1); }}
-              className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${activeSlide === 1 ? 'bg-[#CCFF00] text-black shadow-md scale-100' : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'}`}
+              className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+                activeSlide === 1 
+                  ? 'bg-[#FF4500] text-white shadow-md scale-100' 
+                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
+              }`}
+              title="Воронка продаж"
             >
               <Filter size={20} className="stroke-[2.5]" />
             </button>
@@ -585,7 +595,7 @@ export default function AdminStudents() {
                 <button
                   key={student.id}
                   type="button"
-                  className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-2 pl-2.5 pr-5 flex items-center gap-3.5 shadow-none focus:outline-none transition group active:scale-[.99] cursor-pointer text-left"
+                  className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-2 pl-2.5 pr-5 flex items-center gap-3.5 shadow-md focus:outline-none transition group active:scale-[.99] cursor-pointer text-left"
                   onClick={() => setSelectedStudentForDrawer(student)}
                 >
                   {avatar}
@@ -680,32 +690,32 @@ export default function AdminStudents() {
           <form onSubmit={handleAddStudent} className="space-y-4 pt-3">
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Имя Фамилия</label>
-              <Input required value={newStudent.full_name} onChange={(e) => setNewStudent({...newStudent, full_name: e.target.value})} placeholder="Иван Иванов" className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#CCFF00]/30 bg-black/40 text-white placeholder:text-stone-600 text-sm font-medium px-5 focus-visible:border-[#CCFF00]" />
+              <Input required value={newStudent.full_name} onChange={(e) => setNewStudent({...newStudent, full_name: e.target.value})} placeholder="Иван Иванов" className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#FF4500]/30 bg-black/40 text-white placeholder:text-stone-600 text-sm font-medium px-5 focus-visible:border-[#FF4500]" />
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Телефон</label>
-              <Input required value={newStudent.phone} onChange={(e) => setNewStudent({...newStudent, phone: e.target.value.replace(/\D/g, '')})} placeholder="79001234567" className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#CCFF00]/30 bg-black/40 text-white placeholder:text-stone-600 text-sm font-medium px-5 focus-visible:border-[#CCFF00]" />
+              <Input required value={newStudent.phone} onChange={(e) => setNewStudent({...newStudent, phone: e.target.value.replace(/\D/g, '')})} placeholder="79001234567" className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#FF4500]/30 bg-black/40 text-white placeholder:text-stone-600 text-sm font-medium px-5 focus-visible:border-[#FF4500]" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Источник</label>
-                <select value={newStudent.source} onChange={(e) => setNewStudent({ ...newStudent, source: e.target.value as LeadSource })} className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3.5 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#CCFF00]">
+                <select value={newStudent.source} onChange={(e) => setNewStudent({ ...newStudent, source: e.target.value as LeadSource })} className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3.5 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#FF4500]">
                   <option value="instagram">📸 Instagram</option><option value="site">🌐 Сайт</option><option value="referral">👥 Сарафан</option><option value="ads">⚡ Реклама</option>
                 </select>
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Этап сделки</label>
-                <select value={newStudent.stage} onChange={(e) => setNewStudent({ ...newStudent, stage: e.target.value as LeadStage })} className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3.5 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#CCFF00]">
+                <select value={newStudent.stage} onChange={(e) => setNewStudent({ ...newStudent, stage: e.target.value as LeadStage })} className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3.5 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#FF4500]">
                   <option value="bought">Купил (Действующий)</option><option value="new">Новая заявка</option><option value="trial_scheduled">Назначен пробный</option><option value="trial_attended">Пришел на пробный</option><option value="lost">Отказ</option>
                 </select>
               </div>
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Начальный баланс (занятий)</label>
-              <Input required type="number" value={newStudent.initial_visits} onChange={(e) => setNewStudent({...newStudent, initial_visits: parseInt(e.target.value)})} className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#CCFF00]/30 bg-black/40 text-white text-sm font-medium px-5 focus-visible:border-[#CCFF00]" />
+              <Input required type="number" value={newStudent.initial_visits} onChange={(e) => setNewStudent({...newStudent, initial_visits: parseInt(e.target.value)})} className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#FF4500]/30 bg-black/40 text-white text-sm font-medium px-5 focus-visible:border-[#FF4500]" />
             </div>
             <DialogFooter className="pt-3">
-              <Button type="submit" disabled={isCreating} className="w-full bg-[#CCFF00] hover:bg-[#B5E600] text-black rounded-full h-12 font-bold text-sm tracking-wide shadow-md shadow-[#CCFF00]/10 border-none cursor-pointer">
+              <Button type="submit" disabled={isCreating} className="w-full bg-[#FF4500] hover:bg-[#E03D00] text-white rounded-full h-12 font-bold text-sm tracking-wide shadow-md shadow-[#FF4500]/20 border-none cursor-pointer">
                 {isCreating ? "Создание..." : "Сохранить"}
               </Button>
             </DialogFooter>
@@ -713,7 +723,13 @@ export default function AdminStudents() {
         </DialogContent>
       </Dialog>
 
-      <FloatingActionButton onClick={() => setIsAddModalOpen(true)} ariaLabel="Добавить ученика" id="floating-add-student-btn" />
+      <FloatingActionButton 
+        onClick={() => setIsAddModalOpen(true)} 
+        ariaLabel={activeSlide === 0 ? "Добавить ученика" : "Добавить лид"} 
+        id="floating-add-student-btn"
+        style={{ backgroundColor: '#FF4500', color: '#FFFFFF' }}
+        className="!bg-[#FF4500] !text-white shadow-lg shadow-[#FF4500]/30 hover:opacity-95"
+      />
       <ModalDatePicker isOpen={selectedSubForDatePicker !== null} onClose={() => setSelectedSubForDatePicker(null)} expiresAt={selectedSubForDatePicker?.expiresAt || null} onUpdate={(dateStr) => { if (selectedSubForDatePicker) handleUpdateExpiry(selectedSubForDatePicker.id, dateStr); }} />
     </div>
   );

@@ -15,13 +15,13 @@ import {
   Building2, 
   Tag, 
   Pencil, 
-  Trash2,
-  ChevronRight,
-  ShieldAlert,
-  GraduationCap,
-  Baby,
-  SlidersHorizontal,
-  Settings
+  Trash2, 
+  ChevronRight, 
+  ShieldAlert, 
+  GraduationCap, 
+  Baby, 
+  SlidersHorizontal, 
+  Settings 
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import FloatingActionButton from "../components/FloatingActionButton";
@@ -269,9 +269,8 @@ const HALLS_LIST = [
 
 export function DirectionsAndGroupsManager() {
   const [, setLocation] = useLocation();
-  const { theme, accentColor, accentConfig } = useTheme();
+  const { theme } = useTheme();
   const { currentRole } = useRole();
-  const activeTextColor = accentConfig.textColor === 'text-black' ? '#000000' : '#ffffff';
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
 
@@ -504,7 +503,7 @@ export function DirectionsAndGroupsManager() {
           id: Date.now(),
           name: formName.trim(),
           category: formCategory,
-          colorTag: accentColor,
+          colorTag: '#E03C7A',
           coaches: [formCoach],
           level: formLevel,
           description: formDescription.trim() || `Регулярная программа направления ${formCategory}.`
@@ -635,10 +634,18 @@ export function DirectionsAndGroupsManager() {
 
   const isFilterActive = selectedBranch !== 'Все филиалы' || selectedHall !== 'Все залы' || selectedDirection !== 'Все направления' || selectedAge !== 'Все возраста' || selectedCoach !== 'Все педагоги';
 
+  const filterPopupStyle: React.CSSProperties = {
+    backdropFilter: 'blur(40px)',
+    WebkitBackdropFilter: 'blur(40px)',
+    backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(18, 18, 20, 0.88)',
+    boxShadow: '0 20px 50px rgba(0, 0, 0, 0.35)',
+    borderRadius: '36px'
+  };
+
   if (loading) {
     return (
       <div className={`min-h-screen page-root flex items-center justify-center transition-colors duration-300 bg-transparent text-slate-900`}>
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: accentColor }} />
+        <Loader2 className="w-8 h-8 animate-spin text-[#E03C7A]" />
       </div>
     );
   }
@@ -651,7 +658,7 @@ export function DirectionsAndGroupsManager() {
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНИЙ БЛОК: Матовый слайдер, уходящий наверх + Пилюля ─── */}
+        {/* ─── ВЕРХНИЙ БЛОК: Сплошной баннер #E03C7A, уходящий наверх + Пилюля ─── */}
         <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
           
           {/* Левый баннер со свайпом (уходит за верхний край экрана) */}
@@ -675,19 +682,19 @@ export function DirectionsAndGroupsManager() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-[#E03C7A] text-white shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-950 dark:text-white leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
                       Группы
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-slate-950 dark:text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-white font-mono tracking-tight leading-none">
                       {filteredGroups.length}
                     </span>
-                    <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-white/80 uppercase tracking-wide leading-tight">
                       активных<br/>групп
                     </span>
                   </div>
@@ -700,24 +707,25 @@ export function DirectionsAndGroupsManager() {
                           e.stopPropagation();
                           setIsFilterOpen(!isFilterOpen);
                         }} 
-                        className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                        className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-slate-900 shrink-0" />}
+                        {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#E03C7A] rounded-full bg-white shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
                         <div 
                           onPointerDown={(e) => e.stopPropagation()} 
                           onClick={(e) => e.stopPropagation()} 
-                          className="absolute top-[110%] left-0 z-[200] bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-700 rounded-[24px] p-4 flex flex-col gap-3 shadow-2xl w-72 origin-top-left"
+                          style={filterPopupStyle}
+                          className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
                         >
                           <div>
-                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Филиал</label>
+                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Филиал</label>
                             <select
                               value={selectedBranch}
                               onChange={(e) => setSelectedBranch(e.target.value)}
-                              className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
+                              className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
                             >
                               <option value="Все филиалы">Все филиалы</option>
                               {branchesList.map(b => <option key={b} value={b}>{b}</option>)}
@@ -725,11 +733,11 @@ export function DirectionsAndGroupsManager() {
                           </div>
 
                           <div>
-                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Зал</label>
+                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Зал</label>
                             <select
                               value={selectedHall}
                               onChange={(e) => setSelectedHall(e.target.value)}
-                              className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
+                              className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
                             >
                               <option value="Все залы">Все залы</option>
                               {HALLS_LIST.map(h => <option key={h} value={h}>{h}</option>)}
@@ -737,11 +745,11 @@ export function DirectionsAndGroupsManager() {
                           </div>
 
                           <div>
-                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Направление</label>
+                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Направление</label>
                             <select
                               value={selectedDirection}
                               onChange={(e) => setSelectedDirection(e.target.value)}
-                              className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
+                              className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
                             >
                               <option value="Все направления">Все направления</option>
                               {directions.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
@@ -749,11 +757,11 @@ export function DirectionsAndGroupsManager() {
                           </div>
 
                           <div>
-                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Возраст</label>
+                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Возраст</label>
                             <select
                               value={selectedAge}
                               onChange={(e) => setSelectedAge(e.target.value)}
-                              className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
+                              className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
                             >
                               <option value="Все возраста">Все возраста</option>
                               {ages.map(a => <option key={a.id} value={a.name}>{a.name} ({a.range})</option>)}
@@ -761,22 +769,22 @@ export function DirectionsAndGroupsManager() {
                           </div>
 
                           <div>
-                            <label className="text-[10px] text-slate-500 dark:text-zinc-400 mb-1 block">Педагог</label>
+                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Педагог</label>
                             <select
                               value={selectedCoach}
                               onChange={(e) => setSelectedCoach(e.target.value)}
-                              className="w-full bg-slate-100 dark:bg-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white border-none outline-none"
+                              className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
                             >
                               <option value="Все педагоги">Все педагоги</option>
                               {COACHES_LIST.map(c => <option key={c} value={c}>{c}</option>)}
                             </select>
                           </div>
 
-                          <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
+                          <div className="flex gap-2 pt-2 border-t border-black/5 dark:border-white/10">
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              className="flex-1 bg-[#CCFF00] text-black text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-all cursor-pointer"
+                              className="flex-1 bg-[#E03C7A] text-white text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
                             </button>
@@ -789,7 +797,7 @@ export function DirectionsAndGroupsManager() {
                                 setSelectedAge('Все возраста'); 
                                 setSelectedCoach('Все педагоги'); 
                               }} 
-                              className="px-3 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 hover:text-black dark:hover:text-white transition-all cursor-pointer"
+                              className="px-4 bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 text-xs font-bold rounded-full border-none hover:bg-black/10 dark:hover:bg-white/20 transition-all cursor-pointer outline-none"
                             >
                               Сброс
                             </button>
@@ -817,38 +825,38 @@ export function DirectionsAndGroupsManager() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-[#E03C7A] text-white shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-950 dark:text-white leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
                       Настройки
                     </h2>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 bg-black/5 dark:bg-white/5 rounded-2xl p-3 backdrop-blur-sm">
+                  <div className="grid grid-cols-3 gap-2 bg-white/15 rounded-2xl p-3 backdrop-blur-sm">
                     <div className="flex flex-col">
-                      <span className="text-2xl font-black text-slate-950 dark:text-white font-mono leading-none">
+                      <span className="text-2xl font-black text-white font-mono leading-none">
                         {directions.length}
                       </span>
-                      <span className="text-[9px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider mt-1 leading-tight">
+                      <span className="text-[9px] font-bold text-white/80 uppercase tracking-wider mt-1 leading-tight">
                         Направлений
                       </span>
                     </div>
 
                     <div className="flex flex-col">
-                      <span className="text-2xl font-black text-slate-950 dark:text-white font-mono leading-none">
+                      <span className="text-2xl font-black text-white font-mono leading-none">
                         {ages.length}
                       </span>
-                      <span className="text-[9px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider mt-1 leading-tight">
+                      <span className="text-[9px] font-bold text-white/80 uppercase tracking-wider mt-1 leading-tight">
                         Возрастов
                       </span>
                     </div>
 
                     <div className="flex flex-col">
-                      <span className="text-2xl font-black text-slate-950 dark:text-white font-mono leading-none">
+                      <span className="text-2xl font-black text-white font-mono leading-none">
                         {levels.length}
                       </span>
-                      <span className="text-[9px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider mt-1 leading-tight">
+                      <span className="text-[9px] font-bold text-white/80 uppercase tracking-wider mt-1 leading-tight">
                         Уровней
                       </span>
                     </div>
@@ -866,8 +874,8 @@ export function DirectionsAndGroupsManager() {
               onClick={() => { setMainView('groups'); setActiveTab('groups'); }}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 mainView === 'groups' 
-                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                  ? 'bg-[#E03C7A] text-white shadow-md scale-100' 
+                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
               }`}
               title="Группы"
             >
@@ -878,8 +886,8 @@ export function DirectionsAndGroupsManager() {
               onClick={() => { setMainView('settings'); setActiveTab('directions'); }}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 mainView === 'settings' 
-                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                  ? 'bg-[#E03C7A] text-white shadow-md scale-100' 
+                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
               }`}
               title="Настройки"
             >
@@ -890,7 +898,7 @@ export function DirectionsAndGroupsManager() {
 
         {/* ─── ВНУТРЕННИЕ ТАБЫ НАСТРОЕК ─── */}
         {mainView === 'settings' && (
-          <div className="bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-full h-12 p-1 flex items-center justify-between w-full shadow-none shrink-0 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-full h-12 p-1 flex items-center justify-between w-full shadow-md shrink-0 animate-in fade-in slide-in-from-top-2 duration-200">
             {[
               { id: 'directions', label: 'НАПРАВЛЕНИЯ' },
               { id: 'ages', label: 'ВОЗРАСТ' },
@@ -904,7 +912,7 @@ export function DirectionsAndGroupsManager() {
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`font-bold text-xs uppercase tracking-wider rounded-full px-3 transition-all border-none outline-none cursor-pointer flex-1 text-center h-full flex items-center justify-center ${
                     isActive
-                      ? 'bg-[#CCFF00] text-black shadow-sm'
+                      ? 'bg-[#E03C7A] text-white shadow-sm'
                       : 'bg-transparent text-slate-700 dark:text-zinc-400 hover:text-black dark:hover:text-white'
                   }`}
                 >
@@ -915,7 +923,7 @@ export function DirectionsAndGroupsManager() {
           </div>
         )}
 
-        {/* ─── СПИСКИ КАРТОЧЕК С ЕДИНЫМ GAP-2.5 ─── */}
+        {/* ─── СПИСКИ КАРТОЧЕК С GAP-2.5 ─── */}
         <AnimatePresence mode="wait">
           {activeTab === 'directions' && (
             <motion.div
@@ -930,7 +938,7 @@ export function DirectionsAndGroupsManager() {
                 <div
                   key={dir.id}
                   onClick={() => setSelectedDetail({ type: 'direction', item: dir })}
-                  className="w-full text-left bg-white/40 dark:bg-black/35 backdrop-blur-md border-none p-5 flex flex-col gap-3 rounded-[42px] shadow-none transition-all duration-200 cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 overflow-hidden group"
+                  className="w-full text-left bg-white/40 dark:bg-black/35 backdrop-blur-md border-none p-5 flex flex-col gap-3 rounded-[42px] shadow-md transition-all duration-200 cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 overflow-hidden group"
                 >
                   <div className="flex justify-between items-start gap-2">
                     <div>
@@ -939,7 +947,7 @@ export function DirectionsAndGroupsManager() {
                           className="w-2.5 h-2.5 rounded-full shrink-0" 
                           style={{ backgroundColor: dir.colorTag }} 
                         />
-                        <h3 className="text-base font-bold text-slate-950 dark:text-white group-hover:text-lime-600 dark:group-hover:text-[#CCFF00] transition-colors">{dir.name}</h3>
+                        <h3 className="text-base font-bold text-slate-950 dark:text-white group-hover:text-[#E03C7A] transition-colors">{dir.name}</h3>
                       </div>
                       <p className="text-xs text-slate-500 dark:text-zinc-400 font-medium">{dir.description}</p>
                     </div>
@@ -980,7 +988,7 @@ export function DirectionsAndGroupsManager() {
                       <span className="font-bold text-slate-900 dark:text-white">{dir.coaches.join(', ')}</span>
                     </div>
 
-                    <span className="text-xs font-bold uppercase text-slate-900 dark:text-[#CCFF00] bg-[#CCFF00]/15 px-2.5 py-1 rounded-full tracking-wide">
+                    <span className="text-xs font-bold uppercase text-[#E03C7A] bg-[#E03C7A]/15 px-2.5 py-1 rounded-full tracking-wide">
                       {dir.level}
                     </span>
                   </div>
@@ -1003,14 +1011,14 @@ export function DirectionsAndGroupsManager() {
                   <div
                     key={group.id}
                     onClick={() => setSelectedDetail({ type: 'group', item: group })}
-                    className="w-full text-left bg-white/40 dark:bg-black/35 backdrop-blur-md border-none p-5 flex flex-col gap-3 rounded-[42px] shadow-none transition-all duration-200 cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 overflow-hidden group"
+                    className="w-full text-left bg-white/40 dark:bg-black/35 backdrop-blur-md border-none p-5 flex flex-col gap-3 rounded-[42px] shadow-md transition-all duration-200 cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 overflow-hidden group"
                   >
                     <div className="flex justify-between items-start gap-2">
                       <div className="space-y-1.5">
                         <div className="flex flex-wrap items-center gap-2">
                           {(() => {
                             const dirObj = directions.find(d => d.name === group.direction);
-                            const bgCol = dirObj?.colorTag || accentColor || '#CCFF00';
+                            const bgCol = dirObj?.colorTag || '#E03C7A';
                             const isLime = bgCol.toLowerCase() === '#ccff00';
                             return (
                               <span
@@ -1032,7 +1040,7 @@ export function DirectionsAndGroupsManager() {
                         </div>
 
                         <p className="text-xs text-slate-600 dark:text-zinc-400 flex items-center gap-1.5 font-medium">
-                          <Calendar size={13} style={{ color: accentColor }} />
+                          <Calendar size={13} className="text-[#E03C7A]" />
                           <span>{group.schedule}</span>
                         </p>
                       </div>
@@ -1078,7 +1086,7 @@ export function DirectionsAndGroupsManager() {
                     <div className="flex items-center justify-between bg-black/5 dark:bg-white/5 p-3 rounded-2xl mt-1">
                       <span className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Вместимость зала:</span>
                       <span className="text-xs font-bold text-slate-900 dark:text-white">
-                        <span style={{ color: accentColor }}>{group.enrolled}</span> / {group.capacity} мест
+                        <span className="text-[#E03C7A]">{group.enrolled}</span> / {group.capacity} мест
                       </span>
                     </div>
                   </div>
@@ -1104,7 +1112,7 @@ export function DirectionsAndGroupsManager() {
                 <div
                   key={age.id}
                   onClick={() => setSelectedDetail({ type: 'age', item: age })}
-                  className="w-full text-left bg-white/40 dark:bg-black/35 backdrop-blur-md border-none p-5 flex flex-col gap-3 rounded-[42px] shadow-none transition-all duration-200 cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 overflow-hidden group"
+                  className="w-full text-left bg-white/40 dark:bg-black/35 backdrop-blur-md border-none p-5 flex flex-col gap-3 rounded-[42px] shadow-md transition-all duration-200 cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 overflow-hidden group"
                 >
                   <div className="flex justify-between items-start gap-2">
                     <div className="flex items-center gap-3">
@@ -1166,7 +1174,7 @@ export function DirectionsAndGroupsManager() {
                 <div
                   key={lvl.id}
                   onClick={() => setSelectedDetail({ type: 'level', item: lvl })}
-                  className="w-full text-left bg-white/40 dark:bg-black/35 backdrop-blur-md border-none p-5 flex flex-col gap-3 rounded-[42px] shadow-none transition-all duration-200 cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 overflow-hidden group"
+                  className="w-full text-left bg-white/40 dark:bg-black/35 backdrop-blur-md border-none p-5 flex flex-col gap-3 rounded-[42px] shadow-md transition-all duration-200 cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 overflow-hidden group"
                 >
                   <div className="flex justify-between items-start gap-2">
                     <div className="flex items-center gap-3">
@@ -1222,6 +1230,9 @@ export function DirectionsAndGroupsManager() {
         <FloatingActionButton
           onClick={handleOpenAddModal}
           ariaLabel="Добавить"
+          id="floating-add-group-btn"
+          style={{ backgroundColor: '#E03C7A', color: '#FFFFFF' }}
+          className="!bg-[#E03C7A] !text-white shadow-lg shadow-[#E03C7A]/30 hover:opacity-95"
         />
       )}
 
@@ -1295,7 +1306,7 @@ export function DirectionsAndGroupsManager() {
                             ? "Например: Дети (4-7 лет)"
                             : "Например: Pro / Продвинутые"
                       }
-                      className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#CCFF00] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
+                      className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
                     />
                   </div>
                 )}
@@ -1309,7 +1320,7 @@ export function DirectionsAndGroupsManager() {
                       <select
                         value={formCategory}
                         onChange={(e) => setFormCategory(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#CCFF00] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
                       >
                         {CATEGORIES_LIST.map((cat) => (
                           <option key={cat} value={cat} className="bg-zinc-900 text-white">{cat}</option>
@@ -1324,7 +1335,7 @@ export function DirectionsAndGroupsManager() {
                       <select
                         value={formCoach}
                         onChange={(e) => setFormCoach(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#CCFF00] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
                       >
                         {COACHES_LIST.map((coach) => (
                           <option key={coach} value={coach} className="bg-zinc-900 text-white">{coach}</option>
@@ -1343,7 +1354,7 @@ export function DirectionsAndGroupsManager() {
                       <select
                         value={formDirection}
                         onChange={(e) => setFormDirection(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#CCFF00] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
                       >
                         {directions.map((dir) => (
                           <option key={dir.id} value={dir.name} className="bg-zinc-900 text-white">{dir.name}</option>
@@ -1358,7 +1369,7 @@ export function DirectionsAndGroupsManager() {
                       <select
                         value={formLevel}
                         onChange={(e) => setFormLevel(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#CCFF00] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
                       >
                         {levels.map((lvl) => (
                           <option key={lvl.id} value={lvl.tag || lvl.name} className="bg-zinc-900 text-white">
@@ -1375,7 +1386,7 @@ export function DirectionsAndGroupsManager() {
                       <select
                         value={formAge}
                         onChange={(e) => setFormAge(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#CCFF00] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
                       >
                         {ages.map((a) => (
                           <option key={a.id} value={a.range || a.name} className="bg-zinc-900 text-white">
@@ -1392,7 +1403,7 @@ export function DirectionsAndGroupsManager() {
                       <select
                         value={formCoach}
                         onChange={(e) => setFormCoach(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#CCFF00] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
                       >
                         {COACHES_LIST.map((coach) => (
                           <option key={coach} value={coach} className="bg-zinc-900 text-white">{coach}</option>
@@ -1412,7 +1423,7 @@ export function DirectionsAndGroupsManager() {
                             onChange={(e) => setIsCustomTimes(e.target.checked)}
                             className="sr-only peer"
                           />
-                          <div className="w-8 h-4 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#CCFF00] relative" />
+                          <div className="w-8 h-4 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#E03C7A] relative" />
                           <span className="text-[11px]">Разное время по дням</span>
                         </label>
                       </div>
@@ -1425,9 +1436,8 @@ export function DirectionsAndGroupsManager() {
                               key={day}
                               type="button"
                               onClick={() => toggleDaySelect(day)}
-                              style={selected ? { backgroundColor: accentColor, color: activeTextColor } : {}}
                               className={`flex-1 min-w-[36px] h-10 rounded-full font-bold text-xs transition-all border-none outline-none cursor-pointer flex items-center justify-center ${
-                                selected ? 'shadow-md scale-105' : 'bg-zinc-800 text-zinc-400 hover:text-white'
+                                selected ? 'bg-[#E03C7A] text-white shadow-md scale-105' : 'bg-zinc-800 text-zinc-400 hover:text-white'
                               }`}
                             >
                               {day}
@@ -1443,7 +1453,7 @@ export function DirectionsAndGroupsManager() {
                             value={formTime}
                             onChange={(e) => setFormTime(e.target.value)}
                             placeholder="Время по умолчанию (например: 19:00)"
-                            className="w-full h-11 rounded-[14px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#CCFF00] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
+                            className="w-full h-11 rounded-[14px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
                           />
                           <Clock size={16} className="absolute right-4 top-3.5 text-zinc-400 pointer-events-none" />
                         </div>
@@ -1459,7 +1469,7 @@ export function DirectionsAndGroupsManager() {
                                 value={formDayTimes[day] || formTime || '19:00'}
                                 onChange={(e) => setFormDayTimes({ ...formDayTimes, [day]: e.target.value })}
                                 placeholder="Время (например: 19:00)"
-                                className="flex-1 h-8 rounded-[10px] px-3 font-medium focus:outline-none focus:ring-1 focus:ring-[#CCFF00] text-xs bg-zinc-800/90 border border-white/10 text-white transition-colors"
+                                className="flex-1 h-8 rounded-[10px] px-3 font-medium focus:outline-none focus:ring-1 focus:ring-[#E03C7A] text-xs bg-zinc-800/90 border border-white/10 text-white transition-colors"
                               />
                             </div>
                           ))}
@@ -1474,7 +1484,7 @@ export function DirectionsAndGroupsManager() {
                       <select
                         value={formHall}
                         onChange={(e) => setFormHall(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#CCFF00] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
                       >
                         {HALLS_LIST.map((h) => (
                           <option key={h} value={h} className="bg-zinc-900 text-white">{h}</option>
@@ -1492,7 +1502,7 @@ export function DirectionsAndGroupsManager() {
                         max={50}
                         value={formCapacity}
                         onChange={(e) => setFormCapacity(Number(e.target.value))}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#CCFF00] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors"
+                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors"
                       />
                     </div>
                   </>
@@ -1508,7 +1518,7 @@ export function DirectionsAndGroupsManager() {
                       value={formRange}
                       onChange={(e) => setFormRange(e.target.value)}
                       placeholder="Например: 12-16 лет"
-                      className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#CCFF00] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
+                      className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
                     />
                   </div>
                 )}
@@ -1523,7 +1533,7 @@ export function DirectionsAndGroupsManager() {
                       value={formLevel}
                       onChange={(e) => setFormLevel(e.target.value)}
                       placeholder="Например: Продвинутые / PRO"
-                      className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#CCFF00] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
+                      className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
                     />
                   </div>
                 )}
@@ -1538,7 +1548,7 @@ export function DirectionsAndGroupsManager() {
                       value={formDescription}
                       onChange={(e) => setFormDescription(e.target.value)}
                       placeholder="Короткое описание для базы и мобильного приложения..."
-                      className="w-full rounded-[16px] p-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#CCFF00] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors resize-none"
+                      className="w-full rounded-[16px] p-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#E03C7A] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors resize-none"
                     />
                   </div>
                 )}
@@ -1546,8 +1556,7 @@ export function DirectionsAndGroupsManager() {
                 <div className="pt-2">
                   <button
                     type="submit"
-                    style={{ backgroundColor: accentColor, color: activeTextColor }}
-                    className="w-full h-14 font-black text-sm uppercase rounded-full flex items-center justify-center gap-2 shadow-lg hover:brightness-105 active:scale-[0.98] transition-all cursor-pointer border-none outline-none"
+                    className="w-full h-14 font-black text-sm uppercase rounded-full flex items-center justify-center gap-2 shadow-lg bg-[#E03C7A] hover:bg-[#c9326b] text-white active:scale-[0.98] transition-all cursor-pointer border-none outline-none"
                   >
                     <Check size={18} strokeWidth={3} />
                     {editingId !== null

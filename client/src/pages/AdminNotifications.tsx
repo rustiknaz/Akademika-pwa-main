@@ -265,7 +265,7 @@ export default function AdminNotifications() {
             </AnimatePresence>
           </div>
 
-          {/* Правая вертикальная пилюля (Сверху вниз: Рассылка -> Триггеры -> Бот) */}
+          {/* Правая вертикальная пилюля */}
           <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
             <button 
               onClick={() => setActiveSlide(1)}
@@ -305,17 +305,14 @@ export default function AdminNotifications() {
           </div>
         </div>
 
-        {/* ─── ТЕЛО СТРАНИЦЫ С ЕДИНЫМ GAP-2.5 ─── */}
+        {/* ─── ТЕЛО СТРАНИЦЫ С ФИРМЕННЫМ SHADOW-MD И GAP-2.5 ─── */}
         {activeSlide === 0 ? (
-          /* ════════════════════════════════════════════════════
-              СЕКЦИЯ 1: ПОДКЛЮЧЕНИЕ КАНАЛОВ
-             ════════════════════════════════════════════════════ */
           <div className="flex flex-col gap-2.5">
             {/* TELEGRAM BOT */}
-            <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-none space-y-4">
+            <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-md space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3.5">
-                  <div className="w-13 h-13 rounded-full bg-sky-500/10 text-sky-500 flex items-center justify-center font-bold text-sm shrink-0">
+                  <div className="w-13 h-13 rounded-full bg-sky-500/10 text-sky-500 flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
                     TG
                   </div>
                   <div>
@@ -371,10 +368,10 @@ export default function AdminNotifications() {
             </div>
 
             {/* WHATSAPP BUSINESS */}
-            <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-none space-y-4">
+            <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-md space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3.5">
-                  <div className="w-13 h-13 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold text-sm shrink-0">
+                  <div className="w-13 h-13 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
                     WA
                   </div>
                   <div>
@@ -429,11 +426,7 @@ export default function AdminNotifications() {
             </div>
           </div>
         ) : activeSlide === 1 ? (
-          /* ════════════════════════════════════════════════════
-              СЕКЦИЯ 2: РУЧНАЯ РАССЫЛКА
-             ════════════════════════════════════════════════════ */
-          <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-none space-y-4">
-            {/* АУДИТОРИЯ */}
+          <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-md space-y-4">
             <div>
               <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-2">
                 1. Адресаты рассылки
@@ -477,7 +470,6 @@ export default function AdminNotifications() {
               )}
             </div>
 
-            {/* КАНАЛ ОТПРАВКИ */}
             <div>
               <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-2">
                 2. Канал отправки
@@ -504,7 +496,6 @@ export default function AdminNotifications() {
               </div>
             </div>
 
-            {/* ТЕКСТ СООБЩЕНИЯ */}
             <div>
               <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
                 3. Текст рассылки
@@ -518,7 +509,6 @@ export default function AdminNotifications() {
               />
             </div>
 
-            {/* КНОПКА ОТПРАВКИ */}
             <button
               onClick={handleSendBroadcast}
               disabled={isSendingBroadcast}
@@ -539,11 +529,7 @@ export default function AdminNotifications() {
             </button>
           </div>
         ) : (
-          /* ════════════════════════════════════════════════════
-              СЕКЦИЯ 3: АВТО-ТРИГГЕРЫ
-             ════════════════════════════════════════════════════ */
           <div className="flex flex-col gap-2.5">
-            {/* Кнопка быстрого сохранения */}
             <div className="flex justify-end pb-1">
               <button
                 onClick={handleSaveTriggers}
@@ -557,10 +543,10 @@ export default function AdminNotifications() {
             </div>
 
             {/* TRIGGER 1 */}
-            <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-none space-y-3">
+            <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-md space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-[#CCFF00]/15 text-slate-950 dark:text-[#CCFF00] flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-full bg-[#CCFF00]/15 text-slate-950 dark:text-[#CCFF00] flex items-center justify-center shrink-0 shadow-xs">
                     <Clock size={18} />
                   </div>
                   <span className="text-sm font-bold text-black dark:text-white">Напоминание о занятии</span>
@@ -611,10 +597,10 @@ export default function AdminNotifications() {
             </div>
 
             {/* TRIGGER 2 */}
-            <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-none space-y-3">
+            <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-md space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-amber-500/15 text-amber-500 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-full bg-amber-500/15 text-amber-500 flex items-center justify-center shrink-0 shadow-xs">
                     <AlertTriangle size={18} />
                   </div>
                   <span className="text-sm font-bold text-black dark:text-white">Окончание абонемента</span>
@@ -664,10 +650,10 @@ export default function AdminNotifications() {
             </div>
 
             {/* TRIGGER 3 */}
-            <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-none space-y-3">
+            <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-md space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-purple-500/15 text-purple-500 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-full bg-purple-500/15 text-purple-500 flex items-center justify-center shrink-0 shadow-xs">
                     <Sparkles size={18} />
                   </div>
                   <span className="text-sm font-bold text-black dark:text-white">Отмена / Перенос урока</span>

@@ -7,16 +7,15 @@ import {
   Save, 
   Building, 
   MapPin, 
-  Sliders,
-  Palette,
-  Sun,
-  Moon,
-  Check,
-  Plus
+  Sliders, 
+  Palette, 
+  Sun, 
+  Moon, 
+  Check, 
+  Plus 
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import BottomNav from "../components/BottomNav";
-import DevRoleSwitcher from "../components/DevRoleSwitcher";
 import { useTheme, PRESET_BG_IMAGES } from '@/context/ThemeContext';
 
 export default function AdminSettings() {
@@ -84,22 +83,32 @@ export default function AdminSettings() {
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНЯЯ ШАПКА ─── */}
-        <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-none flex items-center gap-4 select-none">
-          <button
-            type="button"
-            onClick={() => setLocation('/Admin')}
-            className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-slate-900 dark:text-white transition-all cursor-pointer border-none flex items-center justify-center shrink-0"
-          >
-            <ArrowLeft size={20} className="stroke-[2.5]" />
-          </button>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-black uppercase tracking-tight leading-tight text-slate-950 dark:text-white">
-              Настройки
-            </h1>
-            <p className="text-xs font-bold text-slate-500 dark:text-zinc-400 mt-0.5">
-              Управление параметрами студии AkademikA
-            </p>
+        {/* ─── ВЕРХНИЙ БЛОК: Матовая шапка ─── */}
+        <div className="relative h-[184px] w-full select-none z-30">
+          <div className="relative h-[calc(100%+12px)] -mt-3 w-full">
+            <div className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between select-none border-none">
+              <div className="flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => setLocation('/Admin')}
+                  className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white transition-all cursor-pointer border-none flex items-center justify-center shrink-0"
+                >
+                  <ArrowLeft size={20} className="stroke-[2.5]" />
+                </button>
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400">
+                  КОНФИГУРАЦИЯ
+                </span>
+              </div>
+
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight leading-tight text-slate-950 dark:text-white">
+                  Настройки
+                </h1>
+                <p className="text-xs font-bold text-slate-500 dark:text-zinc-400 mt-0.5">
+                  Управление параметрами студии AkademikA
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -107,7 +116,7 @@ export default function AdminSettings() {
         <form onSubmit={handleSaveSettings} className="flex flex-col gap-2.5">
           
           {/* БЛОК 1: ОФОРМЛЕНИЕ И ТЕМА */}
-          <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-none space-y-4">
+          <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-md space-y-4">
             <div className="flex items-center gap-2 mb-2">
               <Palette className="w-5 h-5" style={{ color: accentColor }} />
               <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">
@@ -303,7 +312,7 @@ export default function AdminSettings() {
           </div>
 
           {/* БЛОК 2: ОСНОВНЫЕ ДАННЫЕ */}
-          <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-none space-y-4">
+          <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-md space-y-4">
             <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
               <Building size={16} style={{ color: accentColor }} /> Основные данные
             </h3>
@@ -316,7 +325,7 @@ export default function AdminSettings() {
                 type="text"
                 value={studioName}
                 onChange={(e) => setStudioName(e.target.value)}
-                className="w-full h-13 px-5 text-sm font-bold rounded-2xl focus:outline-none transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-950 dark:text-white"
+                className="w-full h-13 px-5 text-sm font-bold rounded-[20px] focus:outline-none transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-950 dark:text-white"
               />
             </div>
 
@@ -328,7 +337,7 @@ export default function AdminSettings() {
                 type="tel"
                 value={studioPhone}
                 onChange={(e) => setStudioPhone(e.target.value)}
-                className="w-full h-13 px-5 text-sm font-bold font-mono rounded-2xl focus:outline-none transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-950 dark:text-white"
+                className="w-full h-13 px-5 text-sm font-bold font-mono rounded-[20px] focus:outline-none transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-950 dark:text-white"
               />
             </div>
 
@@ -341,7 +350,7 @@ export default function AdminSettings() {
                   type="text"
                   value={studioAddress}
                   onChange={(e) => setStudioAddress(e.target.value)}
-                  className="w-full h-13 pl-5 pr-12 text-sm font-bold rounded-2xl focus:outline-none transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-950 dark:text-white"
+                  className="w-full h-13 pl-5 pr-12 text-sm font-bold rounded-[20px] focus:outline-none transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-950 dark:text-white"
                 />
                 <MapPin size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
               </div>
@@ -349,7 +358,7 @@ export default function AdminSettings() {
           </div>
 
           {/* БЛОК 3: СИСТЕМНЫЕ ПАРАМЕТРЫ */}
-          <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-none space-y-4">
+          <div className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-6 shadow-md space-y-4">
             <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
               <Sliders size={16} style={{ color: accentColor }} /> Системные параметры
             </h3>

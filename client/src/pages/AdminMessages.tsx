@@ -9,9 +9,9 @@ import {
   Sparkles, 
   CheckCheck, 
   Clock, 
-  Phone,
-  Filter,
-  Bot
+  Phone, 
+  Filter, 
+  Bot 
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import BottomNav from "../components/BottomNav";
@@ -73,8 +73,7 @@ const MOCK_MESSAGES = [
 
 export default function AdminMessages() {
   const [, setLocation] = useLocation();
-  const { theme, accentColor, accentConfig } = useTheme();
-  const activeTextColor = accentConfig.textColor === 'text-black' ? '#000000' : '#ffffff';
+  const { theme } = useTheme();
   const { toast } = useToast();
 
   // 0 - Все, 1 - Лиды, 2 - Действующие ученики
@@ -129,6 +128,13 @@ export default function AdminMessages() {
     }, 450);
   };
 
+  const searchInputStyle: React.CSSProperties = {
+    backdropFilter: 'blur(30px)',
+    WebkitBackdropFilter: 'blur(30px)',
+    backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.65)' : 'rgba(18, 18, 20, 0.75)',
+    borderRadius: '9999px'
+  };
+
   return (
     <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col font-sans relative transition-colors duration-300 bg-transparent ${
       theme === 'light' ? 'text-black' : 'text-white'
@@ -137,7 +143,7 @@ export default function AdminMessages() {
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНИЙ БЛОК: Матовый слайдер, уходящий наверх + Пилюля ─── */}
+        {/* ─── ВЕРХНИЙ БЛОК: Сплошной баннер #6B52E1, уходящий наверх + Пилюля ─── */}
         <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
           
           {/* Баннер-слайдер (уходит за верхний край экрана) */}
@@ -156,30 +162,30 @@ export default function AdminMessages() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing select-none border-none"
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-[#6B52E1] text-white shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-950 dark:text-white leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
                       Уведомления
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-slate-950 dark:text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-white font-mono tracking-tight leading-none">
                       {unreadCount}
                     </span>
-                    <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-white/80 uppercase tracking-wide leading-tight">
                       новых<br/>входящих
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-300 backdrop-blur-sm">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/20 text-white backdrop-blur-sm">
                       Все каналы связи
                     </span>
                     <button 
                       onClick={() => setIsSearchVisible(!isSearchVisible)}
-                      className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white flex items-center justify-center transition-all cursor-pointer border-none shadow-none"
+                      className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
@@ -199,30 +205,30 @@ export default function AdminMessages() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between select-none border-none"
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-[#6B52E1] text-white shadow-md flex flex-col justify-between select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-950 dark:text-white leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
                       Лиды и заявки
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-slate-950 dark:text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-white font-mono tracking-tight leading-none">
                       {MOCK_MESSAGES.filter(m => m.type === 'lead').length}
                     </span>
-                    <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-white/80 uppercase tracking-wide leading-tight">
                       диалога<br/>с новыми
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-300">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/20 text-white">
                       Потенциальные клиенты
                     </span>
                     <button 
                       onClick={() => setIsSearchVisible(!isSearchVisible)}
-                      className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white flex items-center justify-center transition-all cursor-pointer border-none shadow-none"
+                      className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
@@ -241,30 +247,30 @@ export default function AdminMessages() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between select-none border-none"
+                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-[#6B52E1] text-white shadow-md flex flex-col justify-between select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-950 dark:text-white leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
                       Ученики
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-slate-950 dark:text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-white font-mono tracking-tight leading-none">
                       {MOCK_MESSAGES.filter(m => m.type === 'client').length}
                     </span>
-                    <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-white/80 uppercase tracking-wide leading-tight">
                       диалога<br/>по абонементам
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-300">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/20 text-white">
                       Действующая база
                     </span>
                     <button 
                       onClick={() => setIsSearchVisible(!isSearchVisible)}
-                      className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white flex items-center justify-center transition-all cursor-pointer border-none shadow-none"
+                      className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
@@ -280,8 +286,8 @@ export default function AdminMessages() {
               onClick={() => setActiveSlide(0)}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 0 
-                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                  ? 'bg-[#6B52E1] text-white shadow-md scale-100' 
+                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
               }`}
               title="Все сообщения"
             >
@@ -292,8 +298,8 @@ export default function AdminMessages() {
               onClick={() => setActiveSlide(1)}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 1 
-                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                  ? 'bg-[#6B52E1] text-white shadow-md scale-100' 
+                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
               }`}
               title="Заявки"
             >
@@ -304,8 +310,8 @@ export default function AdminMessages() {
               onClick={() => setActiveSlide(2)}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 2 
-                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                  ? 'bg-[#6B52E1] text-white shadow-md scale-100' 
+                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
               }`}
               title="Ученики"
             >
@@ -314,44 +320,45 @@ export default function AdminMessages() {
           </div>
         </div>
 
-        {/* ─── ВЫЕЗЖАЮЩАЯ СТРОКА ПОИСКА ─── */}
+        {/* ─── ВЫЕЗЖАЮЩАЯ СТРОКА ПОИСКА (КАПСУЛА-ПИЛЮЛЯ) ─── */}
         <AnimatePresence>
           {isSearchVisible && (
             <motion.div
-              initial={{ opacity: 0, height: 0, y: -10 }}
+              initial={{ opacity: 0, height: 0, y: -6 }}
               animate={{ opacity: 1, height: 'auto', y: 0 }}
-              exit={{ opacity: 0, height: 0, y: -10 }}
+              exit={{ opacity: 0, height: 0, y: -6 }}
               transition={{ duration: 0.2 }}
-              className="z-10 relative"
+              className="z-10 relative overflow-visible"
             >
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Search size={18} className="text-slate-400 dark:text-zinc-500" />
+              <div style={searchInputStyle} className="relative w-full h-14 flex items-center shadow-none border-none overflow-hidden">
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                  <Search size={20} className="text-slate-500 dark:text-zinc-400 stroke-[2.5]" />
                 </div>
-                <Input
+                <input
                   autoFocus
+                  type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Поиск по имени или тексту сообщения..."
-                  className="w-full pl-11 h-14 !rounded-full bg-white dark:bg-[#1C1C1E] !border-none shadow-sm text-sm font-medium focus:!outline-none focus:!ring-0 focus-visible:!ring-0 transition-all"
+                  className="w-full h-full pl-13 pr-6 bg-transparent text-sm font-bold text-slate-950 dark:text-white placeholder:text-slate-500 dark:placeholder:text-zinc-400 focus:outline-none border-none"
                 />
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* ─── СПИСОК ДИАЛОГОВ (GAP-2.5) ─── */}
+        {/* ─── СПИСОК ДИАЛОГОВ (SHADOW-MD, GAP-2.5) ─── */}
         <div className="flex flex-col gap-2.5">
           {displayedChats.length > 0 ? (
             displayedChats.map((chat) => (
               <div
                 key={chat.id}
                 onClick={() => setSelectedChat(chat)}
-                className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-2 pl-2.5 pr-5 flex items-center gap-3.5 shadow-none transition cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 group"
+                className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-2 pl-2.5 pr-5 flex items-center gap-3.5 shadow-md transition cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 group text-left"
               >
                 {/* Аватар с каналом связи (размер 70px) */}
                 <div className="relative shrink-0">
-                  <div className="w-[70px] h-[70px] rounded-full bg-white/40 dark:bg-white/10 backdrop-blur-md flex items-center justify-center text-2xl font-black text-slate-900 dark:text-white select-none">
+                  <div className="w-[70px] h-[70px] rounded-full bg-white/40 dark:bg-white/10 backdrop-blur-md flex items-center justify-center text-2xl font-black text-slate-900 dark:text-white select-none shadow-xs">
                     {chat.avatar}
                   </div>
                   <span className={`absolute bottom-0.5 right-0.5 w-6 h-6 rounded-full text-[10px] font-black flex items-center justify-center text-white border-2 border-white dark:border-[#161618] ${
@@ -365,14 +372,14 @@ export default function AdminMessages() {
                 <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
-                      <h4 className="font-bold text-base text-slate-950 dark:text-white truncate group-hover:text-lime-600 dark:group-hover:text-[#CCFF00]">
+                      <h4 className="font-bold text-base text-slate-950 dark:text-white truncate group-hover:text-[#6B52E1] dark:group-hover:text-[#6B52E1]">
                         {chat.name}
                       </h4>
-                      <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-300 uppercase tracking-wider shrink-0">
+                      <span className="text-[9px] font-bold px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-300 uppercase tracking-wider shrink-0">
                         {chat.stage}
                       </span>
                     </div>
-                    <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 ml-1 shrink-0">
+                    <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 ml-1 shrink-0 font-mono">
                       {chat.time}
                     </span>
                   </div>
@@ -383,7 +390,7 @@ export default function AdminMessages() {
                 </div>
 
                 {chat.unread && (
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#CCFF00] shrink-0" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#6B52E1] shrink-0 shadow-xs" />
                 )}
               </div>
             ))
@@ -423,7 +430,7 @@ export default function AdminMessages() {
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="font-bold text-base">{selectedChat.name}</h3>
-                      <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#CCFF00]/20 text-[#CCFF00] uppercase">
+                      <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#6B52E1]/20 text-[#6B52E1] uppercase">
                         {selectedChat.stage}
                       </span>
                     </div>
@@ -433,13 +440,12 @@ export default function AdminMessages() {
 
                 <a
                   href={`tel:${selectedChat.phone}`}
-                  className="w-10 h-10 rounded-full bg-[#CCFF00]/10 text-[#CCFF00] flex items-center justify-center hover:bg-[#CCFF00]/20 transition-colors"
+                  className="w-10 h-10 rounded-full bg-[#6B52E1]/20 text-[#6B52E1] flex items-center justify-center hover:bg-[#6B52E1]/30 transition-colors"
                 >
                   <Phone size={18} />
                 </a>
               </div>
 
-              {/* Сообщение клиента */}
               <div className="p-4 rounded-2xl bg-white/5 border border-white/5 text-xs text-zinc-200 leading-relaxed">
                 <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block mb-1">
                   Сообщение ({selectedChat.channel.toUpperCase()}):
@@ -447,25 +453,23 @@ export default function AdminMessages() {
                 {selectedChat.lastMessage}
               </div>
 
-              {/* Кнопка AI-ответа */}
               <button
                 type="button"
                 onClick={handleGenerateAiResponse}
                 disabled={isAiGenerating}
-                className="w-full h-10 rounded-full bg-white/10 hover:bg-white/15 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer border border-white/10 text-[#CCFF00] disabled:opacity-50"
+                className="w-full h-10 rounded-full bg-white/10 hover:bg-white/15 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer border border-white/10 text-white disabled:opacity-50"
               >
-                <Sparkles size={15} className={isAiGenerating ? 'animate-spin' : ''} />
+                <Sparkles size={15} className={isAiGenerating ? 'animate-spin text-[#6B52E1]' : 'text-[#6B52E1]'} />
                 {isAiGenerating ? 'AI думает...' : 'Сгенерировать AI-ответ'}
               </button>
 
-              {/* Поле ввода и отправка */}
               <form onSubmit={handleSendReply} className="space-y-3">
                 <textarea
                   rows={3}
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                   placeholder="Напишите ответ или используйте подсказку AI выше..."
-                  className="w-full rounded-[18px] p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#CCFF00] bg-black/40 border border-zinc-800 text-white resize-none"
+                  className="w-full rounded-[18px] p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#6B52E1] bg-black/40 border border-zinc-800 text-white resize-none"
                 />
 
                 <div className="flex gap-2">
@@ -479,8 +483,7 @@ export default function AdminMessages() {
 
                   <button
                     type="submit"
-                    style={{ backgroundColor: accentColor || '#CCFF00', color: '#000000' }}
-                    className="flex-1 h-12 rounded-full font-black text-xs uppercase flex items-center justify-center gap-2 shadow-md hover:opacity-90 transition-all cursor-pointer border-none"
+                    className="flex-1 h-12 rounded-full font-black text-xs uppercase flex items-center justify-center gap-2 shadow-md bg-[#6B52E1] hover:bg-[#593fd0] text-white transition-all cursor-pointer border-none"
                   >
                     <Send size={15} />
                     Отправить

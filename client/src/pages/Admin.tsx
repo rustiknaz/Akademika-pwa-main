@@ -1114,17 +1114,17 @@ export default function Admin() {
               {/* ─── ВЕРХНИЙ БЛОК: Слайдер + Вертикальная навигация ─── */}
               <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
                 
-                {/* 1. Левая карточка */}
-                <div className="flex-1 relative h-[calc(100%+12px)] -mt-3">
-                  <div className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-white/40 dark:bg-black/35 backdrop-blur-md shadow-md flex flex-col justify-between select-none !overflow-visible border-none transition-all">
+               {/* 1. Левая карточка: Главный баннер Расписание */}
+               <div className="flex-1 relative h-[calc(100%+12px)] -mt-3">
+                  <div className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none bg-[#CCFF00] text-black shadow-md flex flex-col justify-between select-none !overflow-visible border-none transition-all">
                     
                     {/* ВЕРХНЯЯ СТРОКА: Расписание + Месяц */}
                     <div className="flex items-center justify-between px-1">
-                      <h2 className="text-xl font-black uppercase tracking-wider text-slate-950 dark:text-white leading-tight">
+                      <h2 className="text-xl font-black uppercase tracking-wider text-black leading-tight">
                         Расписание
                       </h2>
 
-                      <h2 className="text-xl font-black uppercase tracking-wider text-slate-950 dark:text-white leading-tight">
+                      <h2 className="text-xl font-black uppercase tracking-wider text-black leading-tight">
                         {selectedDate.toLocaleDateString('ru-RU', { month: 'long' }).toUpperCase()}
                       </h2>
                     </div>
@@ -1141,6 +1141,7 @@ export default function Admin() {
 
                     {/* НИЖНЯЯ СТРОКА: Фильтр слева, Пилюля с датой справа */}
                     <div className="relative flex items-center justify-between z-[100]">
+                      {/* Кнопка фильтров */}
                       <div className="relative">
                         <button 
                           onPointerDown={(e) => e.stopPropagation()}
@@ -1149,11 +1150,11 @@ export default function Admin() {
                             setIsFilterOpen(!isFilterOpen);
                           }}
                           type="button"
-                          className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                          className="w-11 h-11 rounded-full bg-black/10 hover:bg-black/20 text-black flex items-center justify-center transition-all cursor-pointer border-none shadow-none relative"
                         >
                           <SlidersHorizontal size={20} className="stroke-[2.5]" />
                           {(selectedBranch !== 'Все филиалы' || selectedHall !== 'Все залы' || selectedDirection !== 'Все направления' || selectedAge !== 'Все возраста' || selectedType !== 'Все типы') && (
-                            <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-slate-900 shrink-0" />
+                            <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#CCFF00] rounded-full bg-black shrink-0" />
                           )}
                         </button>
 
@@ -1162,7 +1163,7 @@ export default function Admin() {
                             onPointerDown={(e) => e.stopPropagation()} 
                             onClick={(e) => e.stopPropagation()} 
                             style={filterPopupStyle}
-                            className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-left pointer-events-auto select-none"
+                            className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
                           >
                             <div>
                               <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Филиал</label>
@@ -1216,7 +1217,7 @@ export default function Admin() {
                               <button 
                                 type="button" 
                                 onClick={() => setIsFilterOpen(false)} 
-                                className="flex-1 bg-[#CCFF00] text-black text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                                className="flex-1 bg-black text-[#CCFF00] text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                               >
                                 Применить
                               </button>
@@ -1245,12 +1246,12 @@ export default function Admin() {
                           setPickerCurrentDate(new Date(selectedDate));
                           setIsDatePickerOpen(true);
                         }}
-                        className="flex items-center gap-1.5 bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/15 text-slate-950 dark:text-white text-xs font-bold px-4 py-2.5 rounded-full backdrop-blur-sm transition-all cursor-pointer border-none shadow-none max-w-[200px]"
+                        className="flex items-center gap-1.5 bg-black/10 hover:bg-black/20 text-black text-xs font-bold px-4 py-2.5 rounded-full transition-all cursor-pointer border-none shadow-none max-w-[200px]"
                       >
-                        <span className="text-[11px] uppercase tracking-wider truncate font-mono">
+                        <span className="text-[11px] uppercase tracking-wider truncate font-mono text-black font-bold">
                           {selectedDate.toLocaleDateString('ru-RU', { weekday: 'short' })}, {selectedDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
                         </span>
-                        <ChevronDown size={14} className="text-slate-950 dark:text-white shrink-0 stroke-[2.5]" />
+                        <ChevronDown size={14} className="text-black shrink-0 stroke-[2.5]" />
                       </button>
                     </div>
                   </div>
@@ -1263,7 +1264,7 @@ export default function Admin() {
                     className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                       viewMode === 'day' 
                         ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                        : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                        : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
                     }`}
                     title="Расписание на день"
                   >
@@ -1275,7 +1276,7 @@ export default function Admin() {
                     className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                       viewMode === 'week' 
                         ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                        : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                        : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
                     }`}
                     title="Расписание на неделю"
                   >
