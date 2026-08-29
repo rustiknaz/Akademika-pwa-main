@@ -146,10 +146,11 @@ export default function AdminMessages() {
         {/* ─── ВЕРХНИЙ БЛОК: С баннером и боковой пилюлей ─── */}
         <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
           
-          {/* Баннер-слайдер с симметричным скруглением [42px] */}
+          {/* Баннер-слайдер */}
           <div className="flex-1 relative h-full">
             <AnimatePresence initial={false} mode="wait">
               {activeSlide === 0 ? (
+                /* СЛАЙД 0: ВСЕ СООБЩЕНИЯ (#C7373A фон, #FFF100 текст) */
                 <motion.div
                   key="all-chats-slide"
                   drag="x"
@@ -162,37 +163,38 @@ export default function AdminMessages() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#64384B', color: '#FFFFFF' }}
+                  style={{ backgroundColor: '#C7373A', color: '#FFF100' }}
                   className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
-                      Уведомления
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#FFF100] leading-tight">
+                      Диалоги
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-[#FFF100] font-mono tracking-tight leading-none">
                       {unreadCount}
                     </span>
-                    <span className="text-[10px] font-bold text-white/80 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-[#FFF100]/80 uppercase tracking-wide leading-tight">
                       новых<br/>входящих
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/20 text-white backdrop-blur-sm">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-[#FFF100]/20 text-[#FFF100] backdrop-blur-sm">
                       Все каналы связи
                     </span>
                     <button 
                       onClick={() => setIsSearchVisible(!isSearchVisible)}
-                      className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer border-none shadow-none"
+                      className="w-11 h-11 rounded-full bg-[#FFF100]/20 hover:bg-[#FFF100]/30 text-[#FFF100] flex items-center justify-center transition-all cursor-pointer border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
                   </div>
                 </motion.div>
               ) : activeSlide === 1 ? (
+                /* СЛАЙД 1: ЛИДЫ И ЗАЯВКИ (#FFF100 фон, #C7373A текст) */
                 <motion.div
                   key="leads-slide"
                   drag="x"
@@ -206,37 +208,38 @@ export default function AdminMessages() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#64384B', color: '#FFFFFF' }}
+                  style={{ backgroundColor: '#FFF100', color: '#C7373A' }}
                   className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#C7373A] leading-tight">
                       Лиды и заявки
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-[#C7373A] font-mono tracking-tight leading-none">
                       {MOCK_MESSAGES.filter(m => m.type === 'lead').length}
                     </span>
-                    <span className="text-[10px] font-bold text-white/80 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-[#C7373A]/80 uppercase tracking-wide leading-tight">
                       диалога<br/>с новыми
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/20 text-white">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-[#C7373A]/20 text-[#C7373A]">
                       Потенциальные клиенты
                     </span>
                     <button 
                       onClick={() => setIsSearchVisible(!isSearchVisible)}
-                      className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer border-none shadow-none"
+                      className="w-11 h-11 rounded-full bg-[#C7373A]/20 hover:bg-[#C7373A]/30 text-[#C7373A] flex items-center justify-center transition-all cursor-pointer border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
                   </div>
                 </motion.div>
               ) : (
+                /* СЛАЙД 2: УЧЕНИКИ (#C7373A фон, #FFF100 текст) */
                 <motion.div
                   key="clients-slide"
                   drag="x"
@@ -249,31 +252,31 @@ export default function AdminMessages() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#64384B', color: '#FFFFFF' }}
+                  style={{ backgroundColor: '#C7373A', color: '#FFF100' }}
                   className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#FFF100] leading-tight">
                       Ученики
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-[#FFF100] font-mono tracking-tight leading-none">
                       {MOCK_MESSAGES.filter(m => m.type === 'client').length}
                     </span>
-                    <span className="text-[10px] font-bold text-white/80 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-[#FFF100]/80 uppercase tracking-wide leading-tight">
                       диалога<br/>по абонементам
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/20 text-white">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-[#FFF100]/20 text-[#FFF100]">
                       Действующая база
                     </span>
                     <button 
                       onClick={() => setIsSearchVisible(!isSearchVisible)}
-                      className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer border-none shadow-none"
+                      className="w-11 h-11 rounded-full bg-[#FFF100]/20 hover:bg-[#FFF100]/30 text-[#FFF100] flex items-center justify-center transition-all cursor-pointer border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
@@ -287,7 +290,7 @@ export default function AdminMessages() {
           <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
             <button 
               onClick={() => setActiveSlide(0)}
-              style={activeSlide === 0 ? { backgroundColor: '#64384B', color: '#FFFFFF' } : {}}
+              style={activeSlide === 0 ? { backgroundColor: '#FFF100', color: '#C7373A' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 0 
                   ? 'shadow-md scale-100' 
@@ -300,7 +303,7 @@ export default function AdminMessages() {
             
             <button 
               onClick={() => setActiveSlide(1)}
-              style={activeSlide === 1 ? { backgroundColor: '#64384B', color: '#FFFFFF' } : {}}
+              style={activeSlide === 1 ? { backgroundColor: '#C7373A', color: '#FFF100' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 1 
                   ? 'shadow-md scale-100' 
@@ -313,7 +316,7 @@ export default function AdminMessages() {
 
             <button 
               onClick={() => setActiveSlide(2)}
-              style={activeSlide === 2 ? { backgroundColor: '#64384B', color: '#FFFFFF' } : {}}
+              style={activeSlide === 2 ? { backgroundColor: '#FFF100', color: '#C7373A' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 2 
                   ? 'shadow-md scale-100' 
@@ -326,7 +329,7 @@ export default function AdminMessages() {
           </div>
         </div>
 
-        {/* ─── ВЫЕЗЖАЮЩАЯ СТРОКА ПОИСКА (КАПСУЛА-ПИЛЮЛЯ) ─── */}
+        {/* ─── ВЫЕЗЖАЮЩАЯ СТРОКА ПОИСКА ─── */}
         <AnimatePresence>
           {isSearchVisible && (
             <motion.div
@@ -353,7 +356,7 @@ export default function AdminMessages() {
           )}
         </AnimatePresence>
 
-        {/* ─── СПИСОК ДИАЛОГОВ (SHADOW-MD, GAP-2.5) ─── */}
+        {/* ─── СПИСОК ДИАЛОГОВ ─── */}
         <div className="flex flex-col gap-2.5">
           {displayedChats.length > 0 ? (
             displayedChats.map((chat) => (
@@ -362,7 +365,7 @@ export default function AdminMessages() {
                 onClick={() => setSelectedChat(chat)}
                 className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-2 pl-2.5 pr-5 flex items-center gap-3.5 shadow-md transition cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 group text-left"
               >
-                {/* Аватар с каналом связи (размер 70px) */}
+                {/* Аватар */}
                 <div className="relative shrink-0">
                   <div className="w-[70px] h-[70px] rounded-full bg-white/40 dark:bg-white/10 backdrop-blur-md flex items-center justify-center text-2xl font-black text-slate-900 dark:text-white select-none shadow-xs">
                     {chat.avatar}
@@ -374,11 +377,11 @@ export default function AdminMessages() {
                   </span>
                 </div>
 
-                {/* Имя + Бейдж стадии + Текст */}
+                {/* Имя + Бейдж + Текст */}
                 <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
-                      <h4 className="font-bold text-base text-slate-950 dark:text-white truncate group-hover:text-[#64384B] dark:group-hover:text-rose-300">
+                      <h4 className="font-bold text-base text-slate-950 dark:text-white truncate group-hover:text-[#C7373A]">
                         {chat.name}
                       </h4>
                       <span className="text-[9px] font-bold px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-300 uppercase tracking-wider shrink-0">
@@ -397,7 +400,7 @@ export default function AdminMessages() {
 
                 {chat.unread && (
                   <div 
-                    style={{ backgroundColor: '#64384B' }}
+                    style={{ backgroundColor: '#C7373A' }}
                     className="w-2.5 h-2.5 rounded-full shrink-0 shadow-xs" 
                   />
                 )}
@@ -440,7 +443,7 @@ export default function AdminMessages() {
                     <div className="flex items-center gap-2">
                       <h3 className="font-bold text-base">{selectedChat.name}</h3>
                       <span 
-                        style={{ backgroundColor: 'rgba(100, 56, 75, 0.25)', color: '#D89EBA' }}
+                        style={{ backgroundColor: 'rgba(199, 55, 58, 0.25)', color: '#FFF100' }}
                         className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase"
                       >
                         {selectedChat.stage}
@@ -452,7 +455,7 @@ export default function AdminMessages() {
 
                 <a
                   href={`tel:${selectedChat.phone}`}
-                  style={{ backgroundColor: 'rgba(100, 56, 75, 0.25)', color: '#D89EBA' }}
+                  style={{ backgroundColor: 'rgba(199, 55, 58, 0.25)', color: '#FFF100' }}
                   className="w-10 h-10 rounded-full flex items-center justify-center hover:opacity-80 transition-colors"
                 >
                   <Phone size={18} />
@@ -472,7 +475,7 @@ export default function AdminMessages() {
                 disabled={isAiGenerating}
                 className="w-full h-10 rounded-full bg-white/10 hover:bg-white/15 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer border border-white/10 text-white disabled:opacity-50"
               >
-                <Sparkles size={15} className={isAiGenerating ? 'animate-spin text-[#D89EBA]' : 'text-[#D89EBA]'} />
+                <Sparkles size={15} className={isAiGenerating ? 'animate-spin text-[#FFF100]' : 'text-[#FFF100]'} />
                 {isAiGenerating ? 'AI думает...' : 'Сгенерировать AI-ответ'}
               </button>
 
@@ -482,7 +485,7 @@ export default function AdminMessages() {
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                   placeholder="Напишите ответ или используйте подсказку AI выше..."
-                  className="w-full rounded-[18px] p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#64384B] bg-black/40 border border-zinc-800 text-white resize-none"
+                  className="w-full rounded-[18px] p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#C7373A] bg-black/40 border border-zinc-800 text-white resize-none"
                 />
 
                 <div className="flex gap-2">
@@ -496,7 +499,7 @@ export default function AdminMessages() {
 
                   <button
                     type="submit"
-                    style={{ backgroundColor: '#64384B', color: '#FFFFFF' }}
+                    style={{ backgroundColor: '#C7373A', color: '#FFF100' }}
                     className="flex-1 h-12 rounded-full font-black text-xs uppercase flex items-center justify-center gap-2 shadow-md hover:opacity-90 transition-all cursor-pointer border-none"
                   >
                     <Send size={15} />

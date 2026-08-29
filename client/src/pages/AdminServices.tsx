@@ -71,7 +71,7 @@ const INITIAL_SERVICES: ServiceItem[] = [
     freezeDays: 7,
     description: 'Действует на все регулярные классы',
     popular: true,
-    color: '#4F84C4'
+    color: '#F93380'
   },
   {
     id: '2',
@@ -83,7 +83,7 @@ const INITIAL_SERVICES: ServiceItem[] = [
     durationDays: 30,
     freezeDays: 14,
     description: 'Полный доступ ко всем групповым занятиям студии',
-    color: '#F43F5E'
+    color: '#8C0070'
   },
   {
     id: '3',
@@ -94,7 +94,7 @@ const INITIAL_SERVICES: ServiceItem[] = [
     visitsCount: 1,
     durationDays: 7,
     description: 'Первое знакомство с хореографом и студией',
-    color: '#38BDF8'
+    color: '#F93380'
   },
   {
     id: '4',
@@ -105,7 +105,7 @@ const INITIAL_SERVICES: ServiceItem[] = [
     durationDays: 1,
     linkedTrainers: 'Любой свободный',
     description: '1 час работы тет-а-тет с хореографом',
-    color: '#A855F7'
+    color: '#8C0070'
   },
   {
     id: '5',
@@ -115,7 +115,7 @@ const INITIAL_SERVICES: ServiceItem[] = [
     price: 1200,
     durationDays: 1,
     description: 'Большой зал с панорамными зеркалами (1 час)',
-    color: '#FBBF24'
+    color: '#F93380'
   },
   {
     id: '6',
@@ -128,7 +128,7 @@ const INITIAL_SERVICES: ServiceItem[] = [
     linkedDirections: 'Свадебный танец',
     description: '5 индивидуальных репетиций + подбор музыки',
     popular: true,
-    color: '#4F84C4'
+    color: '#8C0070'
   }
 ];
 
@@ -230,7 +230,7 @@ export default function AdminServices() {
     } else {
       const newItem: ServiceItem = {
         id: Date.now().toString(),
-        color: '#4F84C4',
+        color: '#F93380',
         ...payload
       };
       setServices(prev => [newItem, ...prev]);
@@ -276,7 +276,7 @@ export default function AdminServices() {
           <div className="flex-1 relative h-full">
             <AnimatePresence initial={false} mode="wait">
               {mainCategory === 'memberships' ? (
-                /* СЛАЙД 1: АБОНЕМЕНТЫ */
+                /* СЛАЙД 1: АБОНЕМЕНТЫ (#8C0070 фон, #F93380 текст) */
                 <motion.div
                   key="memberships-slide"
                   drag="x"
@@ -292,19 +292,20 @@ export default function AdminServices() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 rounded-[42px] bg-[#4F84C4] text-white shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
+                  style={{ backgroundColor: '#8C0070', color: '#F93380' }}
+                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#F93380] leading-tight">
                       Абонементы
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-[#F93380] font-mono tracking-tight leading-none">
                       {filteredServices.length}
                     </span>
-                    <span className="text-[10px] font-bold text-white/80 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-[#F93380]/80 uppercase tracking-wide leading-tight">
                       активных<br/>тарифов
                     </span>
                   </div>
@@ -318,15 +319,15 @@ export default function AdminServices() {
                           e.stopPropagation();
                           setIsFilterOpen(!isFilterOpen);
                         }} 
-                        className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                        className="w-11 h-11 rounded-full bg-[#F93380]/20 hover:bg-[#F93380]/30 text-[#F93380] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#4F84C4] rounded-full bg-white shrink-0" />}
+                        {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#8C0070] rounded-full bg-[#F93380] shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
                         <div 
-                          onPointerDown={(e) => e.stopPropagation()}
+                          onPointerDown={(e) => e.stopPropagation()} 
                           onClick={(e) => e.stopPropagation()} 
                           style={filterPopupStyle}
                           className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-64 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
@@ -350,7 +351,8 @@ export default function AdminServices() {
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              className="flex-1 bg-[#4F84C4] text-white text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                              style={{ backgroundColor: '#F93380', color: '#8C0070' }}
+                              className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
                             </button>
@@ -371,7 +373,7 @@ export default function AdminServices() {
                   </div>
                 </motion.div>
               ) : (
-                /* СЛАЙД 2: УСЛУГИ */
+                /* СЛАЙД 2: УСЛУГИ (#F93380 фон, #8C0070 текст) */
                 <motion.div
                   key="services-slide"
                   drag="x"
@@ -387,19 +389,20 @@ export default function AdminServices() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 rounded-[42px] bg-[#4F84C4] text-white shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
+                  style={{ backgroundColor: '#F93380', color: '#8C0070' }}
+                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#8C0070] leading-tight">
                       Каталог услуг
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-[#8C0070] font-mono tracking-tight leading-none">
                       {filteredServices.length}
                     </span>
-                    <span className="text-[10px] font-bold text-white/80 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-[#8C0070]/80 uppercase tracking-wide leading-tight">
                       активных<br/>услуг
                     </span>
                   </div>
@@ -412,10 +415,10 @@ export default function AdminServices() {
                           e.stopPropagation();
                           setIsFilterOpen(!isFilterOpen);
                         }} 
-                        className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                        className="w-11 h-11 rounded-full bg-[#8C0070]/20 hover:bg-[#8C0070]/30 text-[#8C0070] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#4F84C4] rounded-full bg-white shrink-0" />}
+                        {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#F93380] rounded-full bg-[#8C0070] shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
@@ -444,7 +447,8 @@ export default function AdminServices() {
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              className="flex-1 bg-[#4F84C4] text-white text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                              style={{ backgroundColor: '#8C0070', color: '#F93380' }}
+                              className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
                             </button>
@@ -472,9 +476,10 @@ export default function AdminServices() {
           <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
             <button 
               onClick={() => { setIsFilterOpen(false); setMainCategory('memberships'); }}
+              style={mainCategory === 'memberships' ? { backgroundColor: '#F93380', color: '#8C0070' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 mainCategory === 'memberships' 
-                  ? 'bg-[#4F84C4] text-white shadow-md scale-100' 
+                  ? 'shadow-md scale-100' 
                   : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
               }`}
               title="Абонементы"
@@ -484,9 +489,10 @@ export default function AdminServices() {
             
             <button 
               onClick={() => { setIsFilterOpen(false); setMainCategory('services'); }}
+              style={mainCategory === 'services' ? { backgroundColor: '#8C0070', color: '#F93380' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 mainCategory === 'services' 
-                  ? 'bg-[#4F84C4] text-white shadow-md scale-100' 
+                  ? 'shadow-md scale-100' 
                   : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
               }`}
               title="Услуги"
@@ -511,7 +517,8 @@ export default function AdminServices() {
                 >
                   {service.popular && (
                     <div 
-                      className="absolute top-0 right-0 px-4 py-1.5 rounded-bl-[20px] text-[9px] font-black uppercase tracking-widest bg-[#4F84C4] text-white flex items-center gap-1 shadow-xs"
+                      style={{ backgroundColor: '#F93380', color: '#8C0070' }}
+                      className="absolute top-0 right-0 px-4 py-1.5 rounded-bl-[20px] text-[9px] font-black uppercase tracking-widest flex items-center gap-1 shadow-xs"
                     >
                       <Sparkles size={11} className="stroke-[2.5]" />
                       <span>Хит продаж</span>
@@ -531,13 +538,13 @@ export default function AdminServices() {
 
                   <div className="flex flex-wrap items-center gap-2 mt-3 text-[10px] font-bold tracking-wide">
                     {service.freezeDays ? (
-                      <span className="flex items-center gap-1 bg-sky-500/10 text-sky-600 dark:text-sky-400 px-2.5 py-1 rounded-full uppercase">
+                      <span className="flex items-center gap-1 bg-[#F93380]/15 text-[#F93380] px-2.5 py-1 rounded-full uppercase">
                         <Snowflake size={11} /> Заморозка: {service.freezeDays} дн.
                       </span>
                     ) : null}
                     
                     {service.linkedDirections && (
-                      <span className="flex items-center gap-1 bg-[#4F84C4]/15 text-[#4F84C4] dark:text-sky-300 px-2.5 py-1 rounded-full uppercase truncate max-w-[160px]">
+                      <span className="flex items-center gap-1 bg-[#8C0070]/15 text-[#8C0070] dark:text-pink-300 px-2.5 py-1 rounded-full uppercase truncate max-w-[160px]">
                         <MapPin size={11} /> {service.linkedDirections}
                       </span>
                     )}
@@ -604,8 +611,8 @@ export default function AdminServices() {
         onClick={handleOpenAddModal}
         ariaLabel="Добавить услугу"
         id="floating-add-service-btn"
-        style={{ backgroundColor: '#4F84C4', color: '#FFFFFF' }}
-        className="!bg-[#4F84C4] !text-white shadow-lg shadow-[#4F84C4]/30 hover:opacity-95"
+        style={{ backgroundColor: '#8C0070', color: '#F93380' }}
+        className="!bg-[#8C0070] !text-[#F93380] shadow-lg shadow-[#8C0070]/30 hover:opacity-95"
       />
 
       {/* Модальное окно добавления / редактирования */}
@@ -632,7 +639,7 @@ export default function AdminServices() {
                       subCategory: cat === 'memberships' ? 'limited' : 'private' 
                     });
                   }}
-                  className="w-full bg-[#1C1C1E] border border-zinc-800 rounded-2xl px-3 h-11 text-xs font-bold text-white focus:outline-none focus:border-[#4F84C4]"
+                  className="w-full bg-[#1C1C1E] border border-zinc-800 rounded-2xl px-3 h-11 text-xs font-bold text-white focus:outline-none focus:border-[#F93380]"
                 >
                   <option value="memberships">Абонементы</option>
                   <option value="services">Услуги</option>
@@ -644,7 +651,7 @@ export default function AdminServices() {
                 <select
                   value={formData.subCategory}
                   onChange={e => setFormData({ ...formData, subCategory: e.target.value as SubCategory })}
-                  className="w-full bg-[#1C1C1E] border border-zinc-800 rounded-2xl px-3 h-11 text-xs font-bold text-white focus:outline-none focus:border-[#4F84C4]"
+                  className="w-full bg-[#1C1C1E] border border-zinc-800 rounded-2xl px-3 h-11 text-xs font-bold text-white focus:outline-none focus:border-[#F93380]"
                 >
                   {formData.mainCategory === 'memberships' ? (
                     <>
@@ -672,7 +679,7 @@ export default function AdminServices() {
                 value={formData.title}
                 onChange={e => setFormData({ ...formData, title: e.target.value })}
                 placeholder="Например: Стандарт 8 занятий"
-                className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#4F84C4]"
+                className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
               />
             </div>
 
@@ -685,7 +692,7 @@ export default function AdminServices() {
                   value={formData.price}
                   onChange={e => setFormData({ ...formData, price: e.target.value })}
                   placeholder="4800"
-                  className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#4F84C4]"
+                  className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
                 />
               </div>
 
@@ -696,7 +703,7 @@ export default function AdminServices() {
                   value={formData.visitsCount}
                   onChange={e => setFormData({ ...formData, visitsCount: e.target.value })}
                   placeholder="Оставьте пустым если ∞"
-                  className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#4F84C4]"
+                  className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
                 />
               </div>
             </div>
@@ -709,7 +716,7 @@ export default function AdminServices() {
                   value={formData.durationDays}
                   onChange={e => setFormData({ ...formData, durationDays: e.target.value })}
                   placeholder="30"
-                  className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#4F84C4]"
+                  className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
                 />
               </div>
               
@@ -720,7 +727,7 @@ export default function AdminServices() {
                   value={formData.freezeDays}
                   onChange={e => setFormData({ ...formData, freezeDays: e.target.value })}
                   placeholder="Например: 7"
-                  className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#4F84C4]"
+                  className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
                 />
               </div>
             </div>
@@ -731,7 +738,7 @@ export default function AdminServices() {
                 value={formData.linkedDirections}
                 onChange={e => setFormData({ ...formData, linkedDirections: e.target.value })}
                 placeholder="Например: Только K-Pop, High Heels"
-                className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#4F84C4]"
+                className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
               />
             </div>
 
@@ -741,7 +748,7 @@ export default function AdminServices() {
                 value={formData.linkedTrainers}
                 onChange={e => setFormData({ ...formData, linkedTrainers: e.target.value })}
                 placeholder="Например: Топ-хореографы"
-                className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#4F84C4]"
+                className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
               />
             </div>
 
@@ -751,7 +758,7 @@ export default function AdminServices() {
                 value={formData.description}
                 onChange={e => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Особенности тарифа..."
-                className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#4F84C4]"
+                className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
               />
             </div>
 
@@ -760,7 +767,7 @@ export default function AdminServices() {
                 type="checkbox"
                 checked={formData.popular}
                 onChange={e => setFormData({ ...formData, popular: e.target.checked })}
-                className="w-4 h-4 rounded text-[#4F84C4] focus:ring-0"
+                className="w-4 h-4 rounded text-[#F93380] focus:ring-0"
               />
               <span className="text-xs font-bold text-stone-300">Пометить как «Хит продаж»</span>
             </div>
@@ -768,7 +775,8 @@ export default function AdminServices() {
             <DialogFooter className="pt-3 pb-2">
               <Button
                 type="submit"
-                className="w-full rounded-full h-12 font-black text-xs uppercase tracking-wider shadow-md bg-[#4F84C4] hover:bg-[#3d6ca7] text-white border-none cursor-pointer"
+                style={{ backgroundColor: '#8C0070', color: '#F93380' }}
+                className="w-full rounded-full h-12 font-black text-xs uppercase tracking-wider shadow-md hover:opacity-90 transition-all border-none cursor-pointer"
               >
                 Сохранить в каталог
               </Button>

@@ -116,7 +116,7 @@ export default function AdminStaff() {
   if (loading) {
     return (
       <div className="min-h-screen page-root flex items-center justify-center transition-colors duration-300 bg-transparent text-slate-900">
-        <Loader2 className="w-8 h-8 animate-spin text-[#8E2A2B]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#6EB52F]" />
       </div>
     );
   }
@@ -136,7 +136,7 @@ export default function AdminStaff() {
           <div className="flex-1 relative h-full">
             <AnimatePresence initial={false} mode="wait">
               {activeSlide === 0 ? (
-                /* СЛАЙД 1: КОМАНДА */
+                /* СЛАЙД 1: КОМАНДА (#364F41 фон, #6EB52F текст) */
                 <motion.div
                   key="team-slide"
                   drag="x"
@@ -152,20 +152,20 @@ export default function AdminStaff() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#8E2A2B', color: '#FFFFFF' }}
+                  style={{ backgroundColor: '#364F41', color: '#6EB52F' }}
                   className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#6EB52F] leading-tight">
                       Сотрудники
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-[#6EB52F] font-mono tracking-tight leading-none">
                       {displayedStaff.length}
                     </span>
-                    <span className="text-[10px] font-bold text-white/80 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-[#6EB52F]/80 uppercase tracking-wide leading-tight">
                       активных<br/>в штате
                     </span>
                   </div>
@@ -179,118 +179,10 @@ export default function AdminStaff() {
                           e.stopPropagation();
                           setIsFilterOpen(!isFilterOpen);
                         }} 
-                        className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                        className="w-11 h-11 rounded-full bg-[#6EB52F]/20 hover:bg-[#6EB52F]/30 text-[#6EB52F] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {roleFilter !== 'Все сотрудники' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#8E2A2B] rounded-full bg-white shrink-0" />}
-                      </button>
-
-                      {isFilterOpen && (
-                        <div 
-                          onPointerDown={(e) => e.stopPropagation()}
-                          onClick={(e) => e.stopPropagation()} 
-                          style={filterPopupStyle}
-                          className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-64 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
-                        >
-                          <div>
-                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Роль</label>
-                            <select
-                              value={roleFilter}
-                              onChange={(e) => {
-                                setRoleFilter(e.target.value);
-                                setIsFilterOpen(false);
-                              }}
-                              className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
-                            >
-                              <option value="Все сотрудники">Все сотрудники</option>
-                              <option value="Тренеры">Тренеры</option>
-                              <option value="Администраторы">Администраторы</option>
-                            </select>
-                          </div>
-
-                          <div className="flex gap-2 pt-2 border-t border-black/5 dark:border-white/10">
-                            <button 
-                              type="button" 
-                              onClick={() => setIsFilterOpen(false)} 
-                              style={{ backgroundColor: '#8E2A2B', color: '#FFFFFF' }}
-                              className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
-                            >
-                              Применить
-                            </button>
-                            <button 
-                              type="button" 
-                              onClick={() => { 
-                                setRoleFilter('Все сотрудники');
-                                setIsFilterOpen(false);
-                              }} 
-                              className="px-4 bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 text-xs font-bold rounded-full border-none hover:bg-black/10 dark:hover:bg-white/20 transition-all cursor-pointer outline-none"
-                            >
-                              Сброс
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <button 
-                      onPointerDown={(e) => e.stopPropagation()} 
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        setIsSearchVisible(!isSearchVisible); 
-                      }} 
-                      className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
-                    >
-                      <Search size={20} className="stroke-[2.5]" />
-                    </button>
-                  </div>
-                </motion.div>
-              ) : (
-                /* СЛАЙД 2: ЗАРПЛАТЫ */
-                <motion.div
-                  key="payroll-slide"
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => {
-                    if (info.offset.x > 40) {
-                      setIsFilterOpen(false);
-                      setActiveSlide(0);
-                    }
-                  }}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#8E2A2B', color: '#FFFFFF' }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
-                >
-                  <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
-                      Зарплаты
-                    </h2>
-                  </div>
-
-                  <div className="flex flex-col gap-0 px-0.5">
-                    <span className="text-4xl font-black text-white font-mono tracking-tight leading-none">
-                      {totalPayroll.toLocaleString('ru-RU')} ₽
-                    </span>
-                    <span className="text-[10px] font-bold text-white/80 uppercase tracking-wide mt-1.5">
-                      Ожидает выплаты
-                    </span>
-                  </div>
-
-                  <div className="relative flex items-center justify-between z-[100]">
-                    <div className="relative">
-                      <button 
-                        onPointerDown={(e) => e.stopPropagation()}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsFilterOpen(!isFilterOpen);
-                        }} 
-                        className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
-                      >
-                        <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {roleFilter !== 'Все сотрудники' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#8E2A2B] rounded-full bg-white shrink-0" />}
+                        {roleFilter !== 'Все сотрудники' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#364F41] rounded-full bg-[#6EB52F] shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
@@ -320,7 +212,7 @@ export default function AdminStaff() {
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              style={{ backgroundColor: '#8E2A2B', color: '#FFFFFF' }}
+                              style={{ backgroundColor: '#6EB52F', color: '#364F41' }}
                               className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
@@ -346,7 +238,115 @@ export default function AdminStaff() {
                         e.stopPropagation(); 
                         setIsSearchVisible(!isSearchVisible); 
                       }} 
-                      className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
+                      className="w-11 h-11 rounded-full bg-[#6EB52F]/20 hover:bg-[#6EB52F]/30 text-[#6EB52F] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
+                    >
+                      <Search size={20} className="stroke-[2.5]" />
+                    </button>
+                  </div>
+                </motion.div>
+              ) : (
+                /* СЛАЙД 2: ЗАРПЛАТЫ (#6EB52F фон, #364F41 текст) */
+                <motion.div
+                  key="payroll-slide"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x > 40) {
+                      setIsFilterOpen(false);
+                      setActiveSlide(0);
+                    }
+                  }}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.25 }}
+                  style={{ backgroundColor: '#6EB52F', color: '#364F41' }}
+                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
+                >
+                  <div>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#364F41] leading-tight">
+                      Зарплаты
+                    </h2>
+                  </div>
+
+                  <div className="flex flex-col gap-0 px-0.5">
+                    <span className="text-4xl font-black text-[#364F41] font-mono tracking-tight leading-none">
+                      {totalPayroll.toLocaleString('ru-RU')} ₽
+                    </span>
+                    <span className="text-[10px] font-bold text-[#364F41]/80 uppercase tracking-wide mt-1.5">
+                      Ожидает выплаты
+                    </span>
+                  </div>
+
+                  <div className="relative flex items-center justify-between z-[100]">
+                    <div className="relative">
+                      <button 
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsFilterOpen(!isFilterOpen);
+                        }} 
+                        className="w-11 h-11 rounded-full bg-[#364F41]/20 hover:bg-[#364F41]/30 text-[#364F41] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                      >
+                        <SlidersHorizontal size={20} className="stroke-[2.5]" />
+                        {roleFilter !== 'Все сотрудники' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#6EB52F] rounded-full bg-[#364F41] shrink-0" />}
+                      </button>
+
+                      {isFilterOpen && (
+                        <div 
+                          onPointerDown={(e) => e.stopPropagation()} 
+                          onClick={(e) => e.stopPropagation()} 
+                          style={filterPopupStyle}
+                          className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-64 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
+                        >
+                          <div>
+                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Роль</label>
+                            <select
+                              value={roleFilter}
+                              onChange={(e) => {
+                                setRoleFilter(e.target.value);
+                                setIsFilterOpen(false);
+                              }}
+                              className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
+                            >
+                              <option value="Все сотрудники">Все сотрудники</option>
+                              <option value="Тренеры">Тренеры</option>
+                              <option value="Администраторы">Администраторы</option>
+                            </select>
+                          </div>
+
+                          <div className="flex gap-2 pt-2 border-t border-black/5 dark:border-white/10">
+                            <button 
+                              type="button" 
+                              onClick={() => setIsFilterOpen(false)} 
+                              style={{ backgroundColor: '#364F41', color: '#6EB52F' }}
+                              className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                            >
+                              Применить
+                            </button>
+                            <button 
+                              type="button" 
+                              onClick={() => { 
+                                setRoleFilter('Все сотрудники');
+                                setIsFilterOpen(false);
+                              }} 
+                              className="px-4 bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 text-xs font-bold rounded-full border-none hover:bg-black/10 dark:hover:bg-white/20 transition-all cursor-pointer outline-none"
+                            >
+                              Сброс
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <button 
+                      onPointerDown={(e) => e.stopPropagation()} 
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        setIsSearchVisible(!isSearchVisible); 
+                      }} 
+                      className="w-11 h-11 rounded-full bg-[#364F41]/20 hover:bg-[#364F41]/30 text-[#364F41] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
@@ -360,7 +360,7 @@ export default function AdminStaff() {
           <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
             <button 
               onClick={() => { setIsFilterOpen(false); setActiveSlide(0); }}
-              style={activeSlide === 0 ? { backgroundColor: '#8E2A2B', color: '#FFFFFF' } : {}}
+              style={activeSlide === 0 ? { backgroundColor: '#6EB52F', color: '#364F41' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 0 
                   ? 'shadow-md scale-100' 
@@ -373,7 +373,7 @@ export default function AdminStaff() {
             
             <button 
               onClick={() => { setIsFilterOpen(false); setActiveSlide(1); }}
-              style={activeSlide === 1 ? { backgroundColor: '#8E2A2B', color: '#FFFFFF' } : {}}
+              style={activeSlide === 1 ? { backgroundColor: '#364F41', color: '#6EB52F' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 1 
                   ? 'shadow-md scale-100' 
@@ -427,7 +427,7 @@ export default function AdminStaff() {
                   </div>
 
                   <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
-                    <h4 className="font-bold text-base text-slate-950 dark:text-white truncate group-hover:text-[#8E2A2B] dark:group-hover:text-rose-200">
+                    <h4 className="font-bold text-base text-slate-950 dark:text-white truncate group-hover:text-[#6EB52F]">
                       {staff.name}
                     </h4>
                     <div className="flex items-center gap-2">
@@ -440,7 +440,7 @@ export default function AdminStaff() {
                   <div className="flex items-center gap-2 ml-auto shrink-0">
                     <a 
                       href={`tel:${staff.phone}`} 
-                      className="w-11 h-11 rounded-full bg-[#8E2A2B]/15 text-[#8E2A2B] dark:text-rose-200 hover:bg-[#8E2A2B]/25 flex items-center justify-center transition-all shadow-xs"
+                      className="w-11 h-11 rounded-full bg-[#6EB52F]/15 text-[#364F41] dark:text-[#6EB52F] hover:bg-[#6EB52F]/25 flex items-center justify-center transition-all shadow-xs"
                       title="Позвонить сотруднику"
                     >
                       <Phone size={18} className="stroke-[2.5]" />
@@ -483,7 +483,7 @@ export default function AdminStaff() {
                         setSelectedPayroll(payroll);
                         setIsPayModalOpen(true);
                       }}
-                      style={{ backgroundColor: '#8E2A2B', color: '#FFFFFF' }}
+                      style={{ backgroundColor: '#6EB52F', color: '#364F41' }}
                       className="rounded-full h-10 px-4 text-[11px] font-black uppercase tracking-wider transition-all shadow-xs border-none cursor-pointer hover:opacity-90"
                     >
                       Выплатить
@@ -505,8 +505,8 @@ export default function AdminStaff() {
         onClick={() => setIsAddStaffOpen(true)}
         ariaLabel={activeSlide === 0 ? "Добавить сотрудника" : "Начислить бонус/штраф"}
         id="floating-action-btn"
-        style={{ backgroundColor: '#8E2A2B', color: '#FFFFFF' }}
-        className="!bg-[#8E2A2B] !text-white shadow-lg shadow-[#8E2A2B]/30 hover:opacity-95"
+        style={{ backgroundColor: '#364F41', color: '#6EB52F' }}
+        className="!bg-[#364F41] !text-[#6EB52F] shadow-lg shadow-[#364F41]/30 hover:opacity-95"
       />
 
       {/* МОДАЛКА ВЫПЛАТЫ */}
@@ -514,7 +514,7 @@ export default function AdminStaff() {
         <DialogContent className="!rounded-[28px] !border-zinc-800 bg-[#161618] text-white p-7 max-w-sm shadow-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-white flex items-center gap-2">
-              <RussianRuble size={22} className="text-[#8E2A2B] dark:text-rose-200" />
+              <RussianRuble size={22} className="text-[#6EB52F]" />
               Выплата ЗП
             </DialogTitle>
           </DialogHeader>
@@ -522,13 +522,13 @@ export default function AdminStaff() {
           <form onSubmit={handlePay} className="space-y-4 pt-3">
             <div className="text-center p-4 bg-white/5 rounded-2xl border border-white/10 mb-4">
               <p className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1">{selectedPayroll?.name}</p>
-              <p className="text-2xl font-black text-rose-200 font-mono">{selectedPayroll?.amount.toLocaleString('ru-RU')} ₽</p>
+              <p className="text-2xl font-black text-[#6EB52F] font-mono">{selectedPayroll?.amount.toLocaleString('ru-RU')} ₽</p>
             </div>
 
             <DialogFooter className="pt-2">
               <Button
                 type="submit"
-                style={{ backgroundColor: '#8E2A2B', color: '#FFFFFF' }}
+                style={{ backgroundColor: '#6EB52F', color: '#364F41' }}
                 className="w-full rounded-full h-12 font-black text-xs uppercase tracking-wider shadow-md border-none cursor-pointer hover:opacity-90"
               >
                 Подтвердить выплату
