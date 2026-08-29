@@ -671,8 +671,8 @@ export default function Admin() {
       theme === 'light' ? 'bg-transparent text-slate-900' : 'bg-transparent text-white'
     }`}>
       
-      {/* ─── ЕДИНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ВКЛАДОК ─── */}
-      <div className="flex-1 px-3 pb-32 flex flex-col gap-2.5">
+      {/* ─── ЕДИНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ВКЛАДОК: PT-3, PX-3, GAP-2.5 ─── */}
+      <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         <AnimatePresence mode="wait">
           
           {/* TAB: Главная (Dashboard) */}
@@ -687,7 +687,7 @@ export default function Admin() {
             >
               {/* 1. Верхний баннер-шапка */}
               <div 
-                className="w-full min-h-[calc(200px+env(safe-area-inset-top))] pt-[calc(1.25rem+env(safe-area-inset-top))] pb-6 px-6 rounded-b-[42px] relative transition-colors duration-300 flex flex-col justify-end bg-white/20 dark:bg-black/20 backdrop-blur-sm border-none shadow-none text-slate-900 dark:text-white select-none"
+                className="w-full min-h-[calc(200px+env(safe-area-inset-top))] pt-[calc(1.25rem+env(safe-area-inset-top))] pb-6 px-6 rounded-[42px] relative transition-colors duration-300 flex flex-col justify-end bg-white/20 dark:bg-black/20 backdrop-blur-sm border-none shadow-none text-slate-900 dark:text-white select-none"
               >
                 <div className="flex items-center justify-between gap-4 w-full">
                   <div className="flex flex-col">
@@ -1108,16 +1108,16 @@ export default function Admin() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.15 }}
-              className="flex flex-col gap-2.5 pt-3 w-full max-w-full overflow-x-hidden"
+              className="flex flex-col gap-2.5 w-full max-w-full overflow-x-hidden"
             >
               {/* ВЕРХНИЙ БЛОК: Слайдер + Вертикальная навигация */}
               <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
                 
-               {/* Левая карточка: Главный баннер Расписание */}
-               <div className="flex-1 relative h-[calc(100%+12px)] -mt-3">
+               {/* Левая карточка: Главный баннер Расписание с симметричным скруглением [42px] */}
+               <div className="flex-1 relative h-full">
                   <div 
                     style={{ backgroundColor: '#B75344', color: '#FFFFFF' }}
-                    className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between select-none !overflow-visible border-none transition-all"
+                    className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between select-none !overflow-visible border-none transition-all"
                   >
                     
                     {/* ВЕРХНЯЯ СТРОКА: Расписание + Месяц */}

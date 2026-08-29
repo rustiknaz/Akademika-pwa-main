@@ -14,7 +14,8 @@ import {
   ChevronRight,
   SlidersHorizontal,
   Users,
-  Filter
+  Filter,
+  X
 } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from "framer-motion";
@@ -29,7 +30,6 @@ import {
   DialogTitle,
   DialogFooter
 } from "@/components/ui/dialog";
-import { X } from "lucide-react";
 
 export type LeadStage = 'new' | 'trial_scheduled' | 'trial_attended' | 'bought' | 'lost';
 export type LeadSource = 'instagram' | 'site' | 'referral' | 'ads';
@@ -309,11 +309,11 @@ export default function AdminStudents() {
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНИЙ БЛОК: Сплошной баннер #E58B58, уходящий наверх + Пилюля ─── */}
+        {/* ─── ВЕРХНИЙ БЛОК: С баннером и боковой пилюлей ─── */}
         <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
           
-          {/* Левая карточка со свайпом (уходит за верхний край экрана) */}
-          <div className="flex-1 relative h-[calc(100%+12px)] -mt-3">
+          {/* Левая карточка со свайпом с симметричным скруглением [42px] */}
+          <div className="flex-1 relative h-full">
             <AnimatePresence initial={false} mode="wait">
               {activeSlide === 0 ? (
                 /* 1. БАЗА УЧЕНИКОВ */
@@ -328,7 +328,7 @@ export default function AdminStudents() {
                   exit={{ opacity: 0, x: -20 }} 
                   transition={{ duration: 0.25 }}
                   style={{ backgroundColor: '#E58B58', color: '#FFFFFF' }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
+                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
                 >
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">
@@ -428,7 +428,7 @@ export default function AdminStudents() {
                   exit={{ opacity: 0, x: 20 }} 
                   transition={{ duration: 0.25 }}
                   style={{ backgroundColor: '#E58B58', color: '#FFFFFF' }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
+                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
                 >
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">ВОРОНКА ЛИДОВ</span>

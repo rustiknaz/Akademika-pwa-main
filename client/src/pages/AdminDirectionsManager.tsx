@@ -658,11 +658,11 @@ export function DirectionsAndGroupsManager() {
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНИЙ БЛОК: Сплошной баннер #D76B78, уходящий наверх + Пилюля ─── */}
+        {/* ─── ВЕРХНИЙ БЛОК: С баннером и боковой пилюлей ─── */}
         <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
           
-          {/* Левый баннер со свайпом (уходит за верхний край экрана) */}
-          <div className="flex-1 relative h-[calc(100%+12px)] -mt-3">
+          {/* Левый баннер со свайпом с симметричным скруглением [42px] */}
+          <div className="flex-1 relative h-full">
             <AnimatePresence initial={false} mode="wait">
               {mainView === 'groups' ? (
                 /* СЛАЙД 1: ГРУППЫ */
@@ -683,7 +683,7 @@ export function DirectionsAndGroupsManager() {
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
                   style={{ backgroundColor: '#D76B78', color: '#FFFFFF' }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
+                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
                     <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">
@@ -828,7 +828,7 @@ export function DirectionsAndGroupsManager() {
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
                   style={{ backgroundColor: '#D76B78', color: '#FFFFFF' }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
+                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
                     <h2 className="text-xl font-black uppercase tracking-wider text-white leading-tight">

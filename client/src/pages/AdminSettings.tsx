@@ -59,11 +59,11 @@ export default function AdminSettings() {
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНИЙ БЛОК: Сплошной баннер #A86C78, уходящий наверх + Пилюля ─── */}
+        {/* ─── ВЕРХНИЙ БЛОК: С баннером и боковой пилюлей ─── */}
         <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
           
-          {/* Левый баннер-слайдер */}
-          <div className="flex-1 relative h-[calc(100%+12px)] -mt-3">
+          {/* Левый баннер-слайдер с симметричным скруглением [42px] */}
+          <div className="flex-1 relative h-full">
             <AnimatePresence initial={false} mode="wait">
               {activeSlide === 0 ? (
                 /* СЛАЙД 1: Студия и филиалы */
@@ -80,7 +80,7 @@ export default function AdminSettings() {
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
                   style={{ backgroundColor: '#A86C78', color: '#FFFFFF' }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing select-none border-none"
+                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing select-none border-none"
                 >
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">
@@ -124,7 +124,7 @@ export default function AdminSettings() {
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
                   style={{ backgroundColor: '#A86C78', color: '#FFFFFF' }}
-                  className="absolute inset-0 p-5 pt-7 rounded-b-[42px] rounded-t-none shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing select-none border-none"
+                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing select-none border-none"
                 >
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">
