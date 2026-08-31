@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, User, Users, Home, LayoutGrid, Settings, Sparkles } from 'lucide-react';
+import { Calendar, User, Users, Home, LayoutGrid, Settings } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import ManagementMenu from './ManagementMenu';
 import { useTheme } from '@/context/ThemeContext';
 import { useRole } from '@/context/RoleContext';
+import TetMascotButton from './TetMascotButton';
 
 export default function BottomNav() {
   const [location, setLocation] = useLocation();
@@ -46,10 +47,10 @@ export default function BottomNav() {
           menuZindex={94}
         />
         
-        <div className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-[95] flex items-center justify-center gap-1.5 pointer-events-none select-none max-w-full">
+        <div className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-[95] flex items-center justify-center gap-3 pointer-events-none select-none max-w-full">
           <nav
             id="urban-glass-admin-nav"
-            className="p-2 bg-[#e5e9eb]/80 dark:bg-[#1a1a1e]/85 shadow-none flex gap-1.5 items-center rounded-full w-max pointer-events-auto border-none"
+            className="p-2 bg-[#e5e9eb]/80 dark:bg-[#1a1a1e]/85 backdrop-blur-md shadow-none flex gap-1.5 items-center rounded-full w-max pointer-events-auto border-none"
           >
             {/* 1. Главная */}
             <Link
@@ -175,22 +176,14 @@ export default function BottomNav() {
             )}
           </nav>
 
-          {/* AI Кнопка */}
-          <div className="p-2 bg-[#e5e9eb]/80 dark:bg-[#1a1a1e]/85 shadow-none rounded-full flex items-center justify-center pointer-events-auto border-none shrink-0">
-            <Link
-              href="/admin/ai"
-              className={navBtnClass}
-              title="AI Ассистент"
-              onClick={e => {
-                e.preventDefault();
+          {/* AI Маскот Тет (без подложки, компактный размер с динамичным ореолом) */}
+          <div className="flex items-center justify-center pointer-events-auto shrink-0">
+            <TetMascotButton
+              onClick={() => {
                 setIsMenuOpen(false);
                 setLocation('/admin/ai');
               }}
-            >
-              <div className="w-[68px] h-[68px] rounded-full flex items-center justify-center bg-gradient-to-tr from-[#CCFF00] via-[#00F0FF] to-[#BD00FF] text-black shadow-none transition-all hover:scale-105 active:scale-95 border-none">
-                <Sparkles size={28} className="w-7 h-7 stroke-[2.5] text-black" />
-              </div>
-            </Link>
+            />
           </div>
         </div>
       </>
@@ -205,7 +198,7 @@ export default function BottomNav() {
   return (
     <nav
       id="urban-glass-client-nav"
-      className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 p-2 bg-[#e5e9eb]/80 dark:bg-[#1a1a1e]/85 shadow-none flex gap-1.5 items-center z-[95] rounded-full w-max pointer-events-auto border-none"
+      className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 p-2 bg-[#e5e9eb]/80 dark:bg-[#1a1a1e]/85 backdrop-blur-md shadow-none flex gap-1.5 items-center z-[95] rounded-full w-max pointer-events-auto border-none"
     >
       <Link
         href="/"
