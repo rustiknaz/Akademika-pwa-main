@@ -44,11 +44,6 @@ export const PRESET_BG_IMAGES = [
     id: "preset1",
     name: "Dark Mesh",
     url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80"
-  },
-  {
-    id: "preset2",
-    name: "Urban Glass",
-    url: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=1200&q=80"
   }
 ];
 
@@ -56,8 +51,8 @@ interface ThemeContextType {
   theme: ThemeType;
   setTheme: (theme: ThemeType) => void;
   accent: AccentType;
-  setAccent: (accent: AccentType) => void;
-  accentColor: string; // e.g. "#CCFF00"
+  setAccent: (accent: AccentType | string) => void;
+  accentColor: string;
   accentTextColor: "text-black" | "text-white";
   accentTextHex: string;
   accentConfig: AccentConfig;
@@ -66,7 +61,21 @@ interface ThemeContextType {
   removeBgImage: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const defaultThemeContext: ThemeContextType = {
+  theme: "dark",
+  setTheme: () => {},
+  accent: "lime",
+  setAccent: () => {},
+  accentColor: "#CCFF00",
+  accentTextColor: "text-black",
+  accentTextHex: "#000000",
+  accentConfig: ACCENTS.lime,
+  bgImage: null,
+  setBgImage: () => {},
+  removeBgImage: () => {},
+};
+
+const ThemeContext = createContext<ThemeContextType>(defaultThemeContext);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeType>(() => {
@@ -79,13 +88,25 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   });
 
   const [bgImage, setBgImageState] = useState<string | null>(() => {
-    return localStorage.getItem("app-bg-image") || null;
+    return localStorage.getItem("app_custom_bg_data") || localStorage.getItem("app_bg_val") || null;
   });
 
+  const applyCustomBg = (val: string | null) => {
+    const root = document.documentElement;
+    if (!val || val === "default") {
+      root.style.setProperty("--app-custom-bg", "linear-gradient(135deg, #18181b 0%, #09090b 100%)");
+    } else if (val.startsWith("data:") || val.startsWith("http") || val.startsWith("blob:") || val.startsWith("url(")) {
+      root.style.setProperty("--app-custom-bg", val.startsWith("url(") ? val : `url("${val}") center center / cover no-repeat fixed`);
+    } else {
+      root.style.setProperty("--app-custom-bg", val);
+    }
+  };
+
   const setBgImage = (url: string | null) => {
+    setBgImageState(url);
     if (url) {
-      setBgImageState(url);
-      localStorage.setItem("app-bg-image", url);
+      localStorage.setItem("app_bg_val", url);
+      applyCustomBg(url);
     } else {
       removeBgImage();
     }
@@ -93,7 +114,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const removeBgImage = () => {
     setBgImageState(null);
-    localStorage.removeItem("app-bg-image");
+    localStorage.removeItem("app_bg_val");
+    localStorage.removeItem("app_custom_bg_data");
+    localStorage.removeItem("app_bg_id");
+    applyCustomBg(null);
   };
 
   const setTheme = (newTheme: ThemeType) => {
@@ -112,31 +136,22 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
+    const savedCustom = localStorage.getItem("app_custom_bg_data");
+    const savedVal = localStorage.getItem("app_bg_val");
+    applyCustomBg(savedCustom || savedVal || "default");
+  }, []);
+
+  useEffect(() => {
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
-      document.body.style.backgroundColor = bgImage ? "transparent" : "#000000";
+      document.documentElement.classList.remove("light");
       document.body.style.color = "#ffffff";
     } else {
       document.documentElement.classList.remove("dark");
-      document.body.style.backgroundColor = bgImage ? "transparent" : "#FFFFFF";
+      document.documentElement.classList.add("light");
       document.body.style.color = "#000000";
     }
-  }, [theme, bgImage]);
-
-  // Apply background image state class when bgImage is set
-  useEffect(() => {
-    if (bgImage) {
-      document.documentElement.style.backgroundColor = 'transparent';
-      document.body.style.backgroundColor = 'transparent';
-      document.body.style.backgroundImage = '';
-      document.documentElement.classList.add('theme-bg-active');
-    } else {
-      document.documentElement.style.backgroundColor = theme === 'dark' ? '#000000' : '#FFFFFF';
-      document.body.style.backgroundColor = theme === 'dark' ? '#000000' : '#FFFFFF';
-      document.body.style.backgroundImage = '';
-      document.documentElement.classList.remove('theme-bg-active');
-    }
-  }, [bgImage, theme]);
+  }, [theme]);
 
   useEffect(() => {
     document.documentElement.classList.remove("theme-lime", "theme-orange", "theme-violet");
@@ -178,8 +193,5 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 export function useTheme() {
   const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
-  return context;
+  return context || defaultThemeContext;
 }

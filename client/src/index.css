@@ -8,6 +8,9 @@
   --font-sans: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
+  /* Динамическая переменная фона обоев */
+  --app-custom-bg: linear-gradient(135deg, #18181b 0%, #09090b 100%);
+
   /* Pantone Accent Defaults (Lime) */
   --accentColor: #CCFF00;
   --accentTextColor: #000000;
@@ -108,7 +111,7 @@
   --accentGlowRgb: 204, 255, 0;
   --primary-color: #CCFF00;
   --primary-text: #000000;
-  --primary: 72 100% 50%; /* #CCFF00 */
+  --primary: 72 100% 50%;
   --primary-foreground: 240 6% 10%;
 }
 
@@ -118,7 +121,7 @@
   --accentGlowRgb: 255, 85, 40;
   --primary-color: #FF5528;
   --primary-text: #FFFFFF;
-  --primary: 13 100% 57%; /* #FF5528 */
+  --primary: 13 100% 57%;
   --primary-foreground: 0 0% 100%;
 }
 
@@ -128,7 +131,7 @@
   --accentGlowRgb: 99, 85, 216;
   --primary-color: #6355D8;
   --primary-text: #FFFFFF;
-  --primary: 246 62% 59%; /* #6355D8 */
+  --primary: 246 62% 59%;
   --primary-foreground: 0 0% 100%;
 }
 
@@ -136,10 +139,36 @@
   * {
     @apply border-border;
   }
+  
+  html {
+    min-height: 100%;
+    min-height: 100dvh;
+    background: var(--app-custom-bg) !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+    background-repeat: no-repeat !important;
+  }
+
   body {
-    @apply bg-white dark:bg-black text-foreground font-sans antialiased selection:bg-primary/20 transition-colors duration-300;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: transparent !important;
+    color: hsl(var(--foreground));
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  #root, 
+  .page-root {
+    background: transparent !important;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
   h1, h2, h3 {
     @apply text-foreground;
   }
@@ -151,7 +180,7 @@
   }
 
   .step:before {
-@apply absolute w-8 h-8 bg-muted rounded-full font-mono font-bold text-center text-base inline-flex items-center justify-center -indent-px border border-border text-foreground;
+    @apply absolute w-8 h-8 bg-muted rounded-full font-mono font-bold text-center text-base inline-flex items-center justify-center -indent-px border border-border text-foreground;
     @apply ml-[-50px] mt-[-4px];
     content: counter(step);
   }
@@ -170,16 +199,6 @@
   .rounded-3xl {
     border-radius: 42px !important;
   }
-
-/* When a background image is active, keep the page root transparent so the image shines through.
-   Target only page-level wrappers with the .page-root helper, not card/UI elements. */
-.theme-bg-active html,
-.theme-bg-active body,
-.theme-bg-active #root,
-.theme-bg-active .page-root {
-  background-color: transparent !important;
-  background-image: none !important;
-}
 
   .rounded-inner,
   .rounded-2xl {
@@ -202,7 +221,7 @@
   border-radius: 28px !important;
 }
 
-/* 2. Средние / Вложенные объёмные карточки (Выручка, Продажи, Касса, Каналы) (20px - 24px) */
+/* 2. Средние / Вложенные объёмные карточки (20px - 24px) */
 .ui-card {
   border-radius: 20px !important;
 }
@@ -212,24 +231,22 @@
   border-radius: 16px !important;
 }
 
-/* 4. Узкие плашки, плашки задач, списка, вместимости зала, ЗП (12px - 14px) */
+/* 4. Узкие плашки и строки списков (14px) */
 .ui-inner-strip, .ui-strip, .ui-row-item {
   border-radius: 14px !important;
 }
 
-/* 5. Чистые капсулы (Бейджи "0 записей", "30 уроков", Теги, Фильтры, Аватары, Круги) */
-.ui-badge, .ui-tag, .ui-chip {
+/* 5. Чистые капсулы */
+.ui-badge, .ui-tag, .ui-chip, .ui-pill {
   border-radius: 9999px !important;
 }
 
-/* Однострочные поиски и капсульные инпуты */
 input[type="text"].ui-input-pill,
-input[type="search"],
-.ui-pill {
+input[type="search"] {
   border-radius: 9999px !important;
 }
 
-/* Многострочные поля ввода (textarea) - мягкий радиус 16px */
+/* Многострочные поля ввода (textarea) */
 textarea, .ui-textarea {
   border-radius: 16px !important;
 }
@@ -245,7 +262,6 @@ textarea, .ui-textarea {
   padding: 4px !important;
 }
 
-/* Активные табы внутри переключателей */
 .ui-tab-item {
   border-radius: 9999px !important;
 }
@@ -274,5 +290,3 @@ textarea, .ui-textarea {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(150, 150, 150, 0.5);
 }
-
-
