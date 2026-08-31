@@ -17,20 +17,14 @@ import {
   SplitSquareHorizontal,
   Receipt,
   SlidersHorizontal,
-  BarChart3
+  BarChart3,
+  X
 } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import CustomFilterDropdown from "../components/CustomFilterDropdown";
 import FloatingActionButton from "../components/FloatingActionButton";
 import { useTheme } from '@/context/ThemeContext';
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -108,7 +102,7 @@ function ModalDatePicker({
 
   return (
     <div
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[250] flex items-center justify-center p-4 animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div
@@ -216,7 +210,8 @@ export default function AdminFinance() {
   
   // Модалки
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  const [isPOSOpen, setIsPOSOpen] = useState(false);
+  const [isPOSDrawerOpen, setIsPOSDrawerOpen] = useState(false);
+  const [selectedTransactionForDrawer, setSelectedTransactionForDrawer] = useState<any | null>(null);
 
   // Состояние POS-терминала
   const [posData, setPosData] = useState({
@@ -254,12 +249,12 @@ export default function AdminFinance() {
     }
     
     toast({ 
-      title: "Оплата прошла успешно", 
+      title: "Оплата проведена ✨", 
       description: posData.fiscalize 
-        ? "Транзакция сохранена, данные отправлены в ОФД (ФЗ-54). Чек сформирован." 
-        : "Транзакция сохранена во внутренней базе."
+        ? "Транзакция сохранена, чек отправлен в ОФД (ФЗ-54)." 
+        : "Транзакция зафиксирована во внутренней кассе."
     });
-    setIsPOSOpen(false);
+    setIsPOSDrawerOpen(false);
     setPosData({ client: '', itemType: 'membership', amount: '', method: 'card', fiscalize: true });
   };
 
@@ -437,8 +432,8 @@ export default function AdminFinance() {
                   {/* Блок быстрых действий Кассы */}
                   <div className="grid grid-cols-2 gap-3 px-0.5">
                     <button
-                      onClick={() => setIsPOSOpen(true)}
-                      className="bg-[#009175]/15 hover:bg-[#009175]/25 border-none p-3.5 rounded-[22px] shadow-sm flex flex-col items-center justify-center gap-2 transition-all cursor-pointer"
+                      onClick={() => setIsPOSDrawerOpen(true)}
+                      className="bg-[#009175]/15 hover:bg-[#009175]/25 border-none p-3.5 rounded-[24px] shadow-sm flex flex-col items-center justify-center gap-2 transition-all cursor-pointer"
                     >
                       <div className="w-10 h-10 rounded-full bg-[#009175] text-[#EDFF68] flex items-center justify-center shrink-0">
                         <ShoppingCart size={20} className="stroke-[2.5]" />
@@ -450,7 +445,7 @@ export default function AdminFinance() {
 
                     <button
                       onClick={() => toast({ title: "В разработке", description: "Модуль внесения расхода" })}
-                      className="bg-black/10 hover:bg-black/20 border-none p-3.5 rounded-[22px] shadow-sm flex flex-col items-center justify-center gap-2 transition-all cursor-pointer"
+                      className="bg-black/10 hover:bg-black/20 border-none p-3.5 rounded-[24px] shadow-sm flex flex-col items-center justify-center gap-2 transition-all cursor-pointer"
                     >
                       <div className="w-10 h-10 rounded-full bg-rose-500/20 text-rose-600 flex items-center justify-center shrink-0">
                         <ArrowDownRight size={20} className="stroke-[2.5]" />
@@ -503,7 +498,8 @@ export default function AdminFinance() {
             displayedTransactions.map((t) => (
               <div
                 key={t.id}
-                className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-2 pl-2.5 pr-5 flex items-center gap-3.5 shadow-md transition group text-left"
+                onClick={() => setSelectedTransactionForDrawer(t)}
+                className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-2 pl-2.5 pr-5 flex items-center gap-3.5 shadow-md transition group text-left cursor-pointer hover:bg-white/60 dark:hover:bg-black/50"
               >
                 {/* Круглая иконка операции (размер 70px) */}
                 <div className={`w-[70px] h-[70px] rounded-full flex items-center justify-center shrink-0 ${
@@ -550,7 +546,7 @@ export default function AdminFinance() {
       </div>
 
       <FloatingActionButton
-        onClick={() => setIsPOSOpen(true)}
+        onClick={() => setIsPOSDrawerOpen(true)}
         ariaLabel="Касса (Продажа)"
         id="floating-add-transaction-btn"
         style={{ backgroundColor: '#009175', color: '#EDFF68' }}
@@ -564,112 +560,232 @@ export default function AdminFinance() {
         onUpdate={(date) => setSelectedDate(date)}
       />
 
-      {/* МОДАЛЬНОЕ ОКНО POS (КАССА) */}
-      <Dialog open={isPOSOpen} onOpenChange={setIsPOSOpen}>
-        <DialogContent className="!rounded-[28px] !border-zinc-800 bg-[#161618] text-white p-7 max-w-md shadow-2xl max-h-[90vh] overflow-y-auto scrollbar-none">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-white flex items-center gap-2">
-              <ShoppingCart size={22} className="text-[#EDFF68]" />
-              Кассовый терминал
-            </DialogTitle>
-          </DialogHeader>
+      {/* ─── ШТОРКА 1: ДЕТАЛИ ТРАНЗАКЦИИ (BOTTOM SHEET DRAWER) ─── */}
+      <AnimatePresence>
+        {selectedTransactionForDrawer && (
+          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedTransactionForDrawer(null)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-md cursor-pointer"
+            />
 
-          <form onSubmit={handlePOSSubmit} className="space-y-5 pt-3">
-            
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Клиент (поиск)</label>
-              <Input
-                value={posData.client}
-                onChange={e => setPosData({ ...posData, client: e.target.value })}
-                placeholder="Имя, телефон или штрихкод..."
-                className="rounded-2xl border-zinc-800 h-12 bg-[#1C1C1E] text-white text-sm font-medium px-4 focus-visible:border-[#009175]"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Что продаем?</label>
-                <select
-                  value={posData.itemType}
-                  onChange={e => setPosData({ ...posData, itemType: e.target.value })}
-                  className="w-full bg-[#1C1C1E] border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#009175]"
-                >
-                  <option value="membership">Абонемент</option>
-                  <option value="service">Услуга / Аренда</option>
-                  <option value="product">Товар (Вода, мерч)</option>
-                </select>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Сумма (₽)</label>
-                <Input
-                  required
-                  type="number"
-                  value={posData.amount}
-                  onChange={e => setPosData({ ...posData, amount: e.target.value })}
-                  placeholder="0"
-                  className="rounded-2xl border-zinc-800 h-12 bg-[#1C1C1E] text-[#EDFF68] font-mono text-lg font-bold px-4 focus-visible:border-[#009175]"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2.5 pt-2">
-              <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Способ оплаты</label>
-              <div className="grid grid-cols-3 gap-2">
-                {PAYMENT_METHODS.map((method) => {
-                  const Icon = method.icon;
-                  const isSelected = posData.method === method.id;
-                  return (
-                    <button
-                      key={method.id}
-                      type="button"
-                      onClick={() => setPosData({ ...posData, method: method.id })}
-                      className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl border transition-all cursor-pointer ${
-                        isSelected 
-                          ? `${method.bg} border-current shadow-sm` 
-                          : 'bg-[#1C1C1E] border-zinc-800 hover:bg-zinc-800 text-stone-400'
-                      }`}
-                    >
-                      <Icon size={20} className={isSelected ? method.color : ''} />
-                      <span className={`text-[10px] font-bold uppercase tracking-wider ${isSelected ? method.color : ''}`}>
-                        {method.label}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div 
-              onClick={() => setPosData({ ...posData, fiscalize: !posData.fiscalize })}
-              className="bg-[#1C1C1E] border border-zinc-800 rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:border-zinc-700 transition-colors mt-2"
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 26, stiffness: 240 }}
+              className="relative z-10 w-full max-w-lg bg-[#18181b] border-t border-x border-zinc-800 rounded-t-[42px] p-6 pt-7 pb-8 shadow-2xl flex flex-col text-white max-h-[85dvh]"
             >
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${posData.fiscalize ? 'bg-[#009175]/10 text-[#009175]' : 'bg-zinc-800 text-zinc-500'}`}>
-                  <Receipt size={20} />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-sm font-bold text-white">Фискализация чека</span>
-                  <span className="text-[10px] font-medium text-stone-400 uppercase tracking-wider mt-0.5">Отправка в ОФД (ФЗ-54)</span>
-                </div>
-              </div>
-              <div className={`w-12 h-6 rounded-full p-1 transition-colors ${posData.fiscalize ? 'bg-[#009175]' : 'bg-zinc-700'}`}>
-                <div className={`w-4 h-4 rounded-full bg-white transition-transform ${posData.fiscalize ? 'translate-x-6' : 'translate-x-0'}`} />
-              </div>
-            </div>
-
-            <DialogFooter className="pt-4 pb-2">
-              <Button
-                type="submit"
-                style={{ backgroundColor: '#009175', color: '#EDFF68' }}
-                className="w-full rounded-full h-14 font-black text-sm uppercase tracking-wider shadow-md hover:opacity-90 border-none cursor-pointer"
+              <button
+                onClick={() => setSelectedTransactionForDrawer(null)}
+                className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-white rounded-full bg-white/5 hover:bg-zinc-800 transition-colors z-10 border-none cursor-pointer"
               >
-                Оплатить {posData.amount ? `${Number(posData.amount).toLocaleString('ru-RU')} ₽` : ''}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+                <X size={18} />
+              </button>
+
+              <div className="flex items-start justify-between pb-4 border-b border-zinc-800/60 pr-10">
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-zinc-400">
+                    Детали операции
+                  </span>
+                  <h3 className="text-xl font-black text-white mt-0.5">{selectedTransactionForDrawer.title}</h3>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto scrollbar-none pt-4 pb-6 space-y-4">
+                <div className="bg-[#1C1C1E] border border-zinc-800 p-5 rounded-[28px] flex flex-col items-center justify-center text-center">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-zinc-400">Сумма платежа</span>
+                  <span className={`text-3xl font-black font-mono mt-1 ${
+                    selectedTransactionForDrawer.type === 'income' ? 'text-[#EDFF68]' : 'text-rose-400'
+                  }`}>
+                    {selectedTransactionForDrawer.type === 'income' ? '+' : '-'}{selectedTransactionForDrawer.amount.toLocaleString('ru-RU')} ₽
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px]">
+                    <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider block mb-1">Категория</span>
+                    <span className="text-sm font-bold text-white">{selectedTransactionForDrawer.category}</span>
+                  </div>
+
+                  <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px]">
+                    <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider block mb-1">Дата и время</span>
+                    <span className="text-xs font-mono font-bold text-white">
+                      {new Date(selectedTransactionForDrawer.date).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px] flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <Receipt size={18} className="text-[#009175]" />
+                    <span className="text-xs font-bold text-white">Электронный чек (ОФД)</span>
+                  </div>
+                  <span className="text-[10px] font-black uppercase px-2.5 py-1 bg-emerald-500/15 text-emerald-400 rounded-full">
+                    Фискализирован
+                  </span>
+                </div>
+
+                <div className="pt-2">
+                  <Button
+                    onClick={() => {
+                      toast({ title: "Чек отправлен", description: "Электронный чек выслан клиенту" });
+                      setSelectedTransactionForDrawer(null);
+                    }}
+                    style={{ backgroundColor: '#009175', color: '#EDFF68' }}
+                    className="w-full h-14 rounded-full font-black text-xs uppercase tracking-wider shadow-md hover:opacity-90 transition-all border-none cursor-pointer"
+                  >
+                    Отправить чек клиенту
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ─── ШТОРКА 2: POS КАССОВЫЙ ТЕРМИНАЛ (BOTTOM SHEET DRAWER) ─── */}
+      <AnimatePresence>
+        {isPOSDrawerOpen && (
+          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsPOSDrawerOpen(false)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-md cursor-pointer"
+            />
+
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 26, stiffness: 240 }}
+              className="relative z-10 w-full max-w-lg bg-[#18181b] border-t border-x border-zinc-800 rounded-t-[42px] p-6 pt-7 pb-8 shadow-2xl flex flex-col text-white max-h-[88dvh]"
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-800/60">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-full bg-[#009175]/30 text-[#EDFF68] flex items-center justify-center font-bold">
+                    <ShoppingCart size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black uppercase tracking-wider text-white">
+                      Кассовый терминал
+                    </h3>
+                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                      Прием оплаты и фискализация
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setIsPOSDrawerOpen(false)}
+                  className="p-2 text-zinc-400 hover:text-white rounded-full bg-white/5 hover:bg-zinc-800 transition-colors border-none cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <form onSubmit={handlePOSSubmit} className="space-y-4 pt-4 flex-1 overflow-y-auto scrollbar-none pr-1">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Клиент (поиск)</label>
+                  <Input
+                    value={posData.client}
+                    onChange={e => setPosData({ ...posData, client: e.target.value })}
+                    placeholder="Имя, телефон или штрихкод..."
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-sm font-bold px-4 focus-visible:border-[#009175]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Что продаем?</label>
+                    <select
+                      value={posData.itemType}
+                      onChange={e => setPosData({ ...posData, itemType: e.target.value })}
+                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#009175]"
+                    >
+                      <option value="membership">Абонемент</option>
+                      <option value="service">Услуга / Аренда</option>
+                      <option value="product">Товар (Вода, мерч)</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Сумма (₽)</label>
+                    <Input
+                      required
+                      type="number"
+                      value={posData.amount}
+                      onChange={e => setPosData({ ...posData, amount: e.target.value })}
+                      placeholder="0"
+                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-[#EDFF68] font-mono text-base font-black px-4 focus-visible:border-[#009175]"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2 pt-1">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">Способ оплаты</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {PAYMENT_METHODS.map((method) => {
+                      const Icon = method.icon;
+                      const isSelected = posData.method === method.id;
+                      return (
+                        <button
+                          key={method.id}
+                          type="button"
+                          onClick={() => setPosData({ ...posData, method: method.id })}
+                          className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl border transition-all cursor-pointer ${
+                            isSelected 
+                              ? `${method.bg} border-current shadow-sm` 
+                              : 'bg-black/30 border-zinc-800 hover:bg-zinc-800 text-stone-400'
+                          }`}
+                        >
+                          <Icon size={18} className={isSelected ? method.color : ''} />
+                          <span className={`text-[10px] font-bold uppercase tracking-wider ${isSelected ? method.color : ''}`}>
+                            {method.label}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div 
+                  onClick={() => setPosData({ ...posData, fiscalize: !posData.fiscalize })}
+                  className="bg-black/30 border border-zinc-800 rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:border-zinc-700 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center ${posData.fiscalize ? 'bg-[#009175]/20 text-[#009175]' : 'bg-zinc-800 text-zinc-500'}`}>
+                      <Receipt size={18} />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold text-white">Фискализация чека</span>
+                      <span className="text-[10px] font-medium text-stone-400 uppercase tracking-wider">Отправка в ОФД (ФЗ-54)</span>
+                    </div>
+                  </div>
+                  <div className={`w-11 h-6 rounded-full p-0.5 transition-colors ${posData.fiscalize ? 'bg-[#009175]' : 'bg-zinc-700'}`}>
+                    <div className={`w-5 h-5 rounded-full bg-white transition-transform ${posData.fiscalize ? 'translate-x-5' : 'translate-x-0'}`} />
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <Button
+                    type="submit"
+                    style={{ backgroundColor: '#009175', color: '#EDFF68' }}
+                    className="w-full rounded-full h-14 font-black text-xs uppercase tracking-wider shadow-lg hover:opacity-90 border-none cursor-pointer"
+                  >
+                    Оплатить {posData.amount ? `${Number(posData.amount).toLocaleString('ru-RU')} ₽` : ''}
+                  </Button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
     </div>
   );

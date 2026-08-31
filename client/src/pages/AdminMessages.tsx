@@ -11,7 +11,8 @@ import {
   Clock, 
   Phone, 
   Filter, 
-  Bot 
+  Bot,
+  X
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import BottomNav from "../components/BottomNav";
@@ -415,98 +416,107 @@ export default function AdminMessages() {
 
       </div>
 
-      {/* ─── МОДАЛКА БЫСТРОГО ОТВЕТА ─── */}
+      {/* ─── ШТОРКА: ДИАЛОГ И БЫСТРЫЙ AI-ОТВЕТ (BOTTOM SHEET DRAWER) ─── */}
       <AnimatePresence>
         {selectedChat && (
-          <div className="fixed inset-0 z-[150] flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedChat(null)}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm cursor-pointer"
+              className="fixed inset-0 bg-black/70 backdrop-blur-md cursor-pointer"
             />
 
             <motion.div
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 250 }}
-              className="relative z-10 w-full max-w-lg bg-[#18181b] border-t sm:border border-zinc-800 rounded-t-[28px] sm:rounded-[28px] p-6 shadow-2xl flex flex-col gap-4 text-white"
+              transition={{ type: "spring", damping: 26, stiffness: 240 }}
+              className="relative z-10 w-full max-w-lg bg-[#18181b] border-t border-x border-zinc-800 rounded-t-[42px] p-6 pt-7 pb-8 shadow-2xl flex flex-col text-white max-h-[88dvh]"
             >
-              <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+              <button
+                onClick={() => setSelectedChat(null)}
+                className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-white rounded-full bg-white/5 hover:bg-zinc-800 transition-colors z-10 border-none cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-800/60 pr-10">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center font-bold text-lg">
+                  <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center font-bold text-lg text-white">
                     {selectedChat.avatar}
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-base">{selectedChat.name}</h3>
+                      <h3 className="font-bold text-base text-white">{selectedChat.name}</h3>
                       <span 
                         style={{ backgroundColor: 'rgba(199, 55, 58, 0.25)', color: '#FFF100' }}
-                        className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase"
+                        className="text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider"
                       >
                         {selectedChat.stage}
                       </span>
                     </div>
-                    <p className="text-[11px] text-zinc-400 font-mono">{selectedChat.phone}</p>
+                    <p className="text-[11px] text-zinc-400 font-mono mt-0.5">{selectedChat.phone}</p>
                   </div>
                 </div>
 
                 <a
                   href={`tel:${selectedChat.phone}`}
                   style={{ backgroundColor: 'rgba(199, 55, 58, 0.25)', color: '#FFF100' }}
-                  className="w-10 h-10 rounded-full flex items-center justify-center hover:opacity-80 transition-colors"
+                  className="w-10 h-10 rounded-full flex items-center justify-center hover:opacity-80 transition-colors shadow-xs"
                 >
                   <Phone size={18} />
                 </a>
               </div>
 
-              <div className="p-4 rounded-2xl bg-white/5 border border-white/5 text-xs text-zinc-200 leading-relaxed">
-                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block mb-1">
-                  Сообщение ({selectedChat.channel.toUpperCase()}):
-                </span>
-                {selectedChat.lastMessage}
-              </div>
-
-              <button
-                type="button"
-                onClick={handleGenerateAiResponse}
-                disabled={isAiGenerating}
-                className="w-full h-10 rounded-full bg-white/10 hover:bg-white/15 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer border border-white/10 text-white disabled:opacity-50"
-              >
-                <Sparkles size={15} className={isAiGenerating ? 'animate-spin text-[#FFF100]' : 'text-[#FFF100]'} />
-                {isAiGenerating ? 'AI думает...' : 'Сгенерировать AI-ответ'}
-              </button>
-
-              <form onSubmit={handleSendReply} className="space-y-3">
-                <textarea
-                  rows={3}
-                  value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
-                  placeholder="Напишите ответ или используйте подсказку AI выше..."
-                  className="w-full rounded-[18px] p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#C7373A] bg-black/40 border border-zinc-800 text-white resize-none"
-                />
-
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedChat(null)}
-                    className="flex-1 h-12 rounded-full border border-zinc-800 text-zinc-400 font-bold text-xs uppercase hover:bg-zinc-800 transition-colors cursor-pointer"
-                  >
-                    Закрыть
-                  </button>
-
-                  <button
-                    type="submit"
-                    style={{ backgroundColor: '#C7373A', color: '#FFF100' }}
-                    className="flex-1 h-12 rounded-full font-black text-xs uppercase flex items-center justify-center gap-2 shadow-md hover:opacity-90 transition-all cursor-pointer border-none"
-                  >
-                    <Send size={15} />
-                    Отправить
-                  </button>
+              <div className="flex-1 overflow-y-auto scrollbar-none pt-3 pb-4 space-y-3">
+                <div className="p-4 rounded-2xl bg-[#1C1C1E] border border-zinc-800 text-xs text-zinc-200 leading-relaxed">
+                  <span className="text-[10px] font-black text-zinc-500 uppercase tracking-wider block mb-1">
+                    Входящее ({selectedChat.channel.toUpperCase()}):
+                  </span>
+                  {selectedChat.lastMessage}
                 </div>
-              </form>
+
+                <button
+                  type="button"
+                  onClick={handleGenerateAiResponse}
+                  disabled={isAiGenerating}
+                  className="w-full h-11 rounded-full bg-white/10 hover:bg-white/15 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer border border-white/10 text-white disabled:opacity-50"
+                >
+                  <Sparkles size={15} className={isAiGenerating ? 'animate-spin text-[#FFF100]' : 'text-[#FFF100]'} />
+                  {isAiGenerating ? 'AI думает...' : 'Сгенерировать AI-ответ'}
+                </button>
+
+                <form onSubmit={handleSendReply} className="space-y-3 pt-1">
+                  <textarea
+                    rows={3}
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                    placeholder="Напишите ответ или используйте AI-подсказку..."
+                    className="w-full rounded-2xl p-4 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#C7373A] bg-black/40 border border-zinc-800 text-white resize-none"
+                  />
+
+                  <div className="flex gap-2.5 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedChat(null)}
+                      className="flex-1 h-14 rounded-full border border-zinc-800 text-zinc-400 font-bold text-xs uppercase hover:bg-zinc-800 transition-colors cursor-pointer"
+                    >
+                      Закрыть
+                    </button>
+
+                    <button
+                      type="submit"
+                      style={{ backgroundColor: '#C7373A', color: '#FFF100' }}
+                      className="flex-1 h-14 rounded-full font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg hover:opacity-90 transition-all cursor-pointer border-none"
+                    >
+                      <Send size={16} />
+                      Отправить
+                    </button>
+                  </div>
+                </form>
+              </div>
             </motion.div>
           </div>
         )}

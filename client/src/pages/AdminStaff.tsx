@@ -13,7 +13,10 @@ import {
   Calculator,
   RussianRuble,
   SlidersHorizontal,
-  Search
+  Search,
+  X,
+  Sparkles,
+  ShieldCheck
 } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import BottomNav from "../components/BottomNav";
@@ -21,29 +24,22 @@ import CustomFilterDropdown from "../components/CustomFilterDropdown";
 import FloatingActionButton from "../components/FloatingActionButton";
 import { useTheme } from '@/context/ThemeContext';
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 // Моковые данные сотрудников
-const MOCK_STAFF = [
-  { id: '1', name: 'Мария Ковалева', role: 'trainer', phone: '+7 (911) 111-11-11', rate: '1200 ₽ / час', avatar: 'М' },
-  { id: '2', name: 'Алексей Петров', role: 'admin', phone: '+7 (922) 222-22-22', rate: '3000 ₽ / смена', avatar: 'А' },
-  { id: '3', name: 'Дарья Смирнова', role: 'trainer', phone: '+7 (933) 333-33-33', rate: '1500 ₽ / час', avatar: 'Д' },
-  { id: '4', name: 'Евгения Морозова', role: 'trainer', phone: '+7 (944) 444-44-44', rate: '1000 ₽ / час', avatar: 'Е' },
+const INITIAL_STAFF = [
+  { id: '1', name: 'Мария Ковалева', role: 'trainer', phone: '+7 (911) 111-11-11', rate: '1200 ₽ / час', avatar: 'М', activeClasses: 4 },
+  { id: '2', name: 'Алексей Петров', role: 'admin', phone: '+7 (922) 222-22-22', rate: '3000 ₽ / смена', avatar: 'А', activeClasses: 0 },
+  { id: '3', name: 'Дарья Смирнова', role: 'trainer', phone: '+7 (933) 333-33-33', rate: '1500 ₽ / час', avatar: 'Д', activeClasses: 3 },
+  { id: '4', name: 'Евгения Морозова', role: 'trainer', phone: '+7 (944) 444-44-44', rate: '1000 ₽ / час', avatar: 'Е', activeClasses: 2 },
 ];
 
 // Моковые данные по зарплатам
-const MOCK_PAYROLL = [
-  { id: '1', name: 'Мария Ковалева', role: 'trainer', amount: 36000, period: 'Июль 2026 (I часть)', status: 'pending' },
-  { id: '2', name: 'Алексей Петров', role: 'admin', amount: 45000, period: 'Июль 2026 (I часть)', status: 'pending' },
-  { id: '3', name: 'Дарья Смирнова', role: 'trainer', amount: 28500, period: 'Июль 2026 (I часть)', status: 'pending' },
+const INITIAL_PAYROLL = [
+  { id: '1', name: 'Мария Ковалева', role: 'trainer', amount: 36000, period: 'Июль 2026 (I часть)', hours: 30, status: 'pending' },
+  { id: '2', name: 'Алексей Петров', role: 'admin', amount: 45000, period: 'Июль 2026 (I часть)', hours: 15, status: 'pending' },
+  { id: '3', name: 'Дарья Смирнова', role: 'trainer', amount: 28500, period: 'Июль 2026 (I часть)', hours: 19, status: 'pending' },
 ];
 
 export default function AdminStaff() {
@@ -60,13 +56,25 @@ export default function AdminStaff() {
   const [search, setSearch] = useState('');
   const [isSearchVisible, setIsSearchVisible] = useState(false);
 
-  // Модалки
-  const [isAddStaffOpen, setIsAddStaffOpen] = useState(false);
-  const [isPayModalOpen, setIsPayModalOpen] = useState(false);
-  const [selectedPayroll, setSelectedPayroll] = useState<any>(null);
+  // Списки
+  const [staffList, setStaffList] = useState(INITIAL_STAFF);
+  const [payrollList, setPayrollList] = useState(INITIAL_PAYROLL);
+
+  // Шторки
+  const [isAddStaffDrawerOpen, setIsAddStaffDrawerOpen] = useState(false);
+  const [selectedStaffForDrawer, setSelectedStaffForDrawer] = useState<any | null>(null);
+  const [selectedPayrollForDrawer, setSelectedPayrollForDrawer] = useState<any | null>(null);
+
+  // Форма добавления нового сотрудника
+  const [newStaffData, setNewStaffData] = useState({
+    name: '',
+    phone: '',
+    role: 'trainer',
+    rate: '1200 ₽ / час'
+  });
 
   // Списки с учетом фильтра и поиска
-  const displayedStaff = MOCK_STAFF.filter(s => {
+  const displayedStaff = staffList.filter(s => {
     if (roleFilter === 'Тренеры' && s.role !== 'trainer') return false;
     if (roleFilter === 'Администраторы' && s.role !== 'admin') return false;
     if (search.trim()) {
@@ -77,7 +85,7 @@ export default function AdminStaff() {
     return true;
   });
 
-  const displayedPayroll = MOCK_PAYROLL.filter(p => {
+  const displayedPayroll = payrollList.filter(p => {
     if (roleFilter === 'Тренеры' && p.role !== 'trainer') return false;
     if (roleFilter === 'Администраторы' && p.role !== 'admin') return false;
     if (search.trim()) {
@@ -89,13 +97,46 @@ export default function AdminStaff() {
 
   const totalPayroll = displayedPayroll.reduce((acc, p) => acc + p.amount, 0);
 
-  const handlePay = (e: React.FormEvent) => {
+  const handleCreateStaff = (e: React.FormEvent) => {
     e.preventDefault();
-    toast({ 
-      title: "Зарплата выплачена", 
-      description: `Сотрудник ${selectedPayroll?.name} получил выплату.` 
+    if (!newStaffData.name.trim() || !newStaffData.phone.trim()) {
+      toast({ variant: "destructive", title: "Ошибка", description: "Заполните имя и телефон сотрудника" });
+      return;
+    }
+
+    const newStaff = {
+      id: Date.now().toString(),
+      name: newStaffData.name.trim(),
+      phone: newStaffData.phone.trim(),
+      role: newStaffData.role,
+      rate: newStaffData.rate.trim() || '1200 ₽ / час',
+      avatar: newStaffData.name.trim()[0].toUpperCase(),
+      activeClasses: newStaffData.role === 'trainer' ? 1 : 0
+    };
+
+    setStaffList([newStaff, ...staffList]);
+    toast({
+      title: "Сотрудник добавлен ✨",
+      description: `${newStaff.name} успешно внесен в штат команды.`
     });
-    setIsPayModalOpen(false);
+
+    setIsAddStaffDrawerOpen(false);
+    setNewStaffData({
+      name: '',
+      phone: '',
+      role: 'trainer',
+      rate: '1200 ₽ / час'
+    });
+  };
+
+  const handlePay = () => {
+    if (!selectedPayrollForDrawer) return;
+    setPayrollList(prev => prev.filter(p => p.id !== selectedPayrollForDrawer.id));
+    toast({ 
+      title: "Выплата проведена ✨", 
+      description: `Зарплата ${selectedPayrollForDrawer.amount.toLocaleString('ru-RU')} ₽ успешно переведена (${selectedPayrollForDrawer.name}).` 
+    });
+    setSelectedPayrollForDrawer(null);
   };
 
   const filterPopupStyle: React.CSSProperties = {
@@ -282,7 +323,7 @@ export default function AdminStaff() {
                   <div className="relative flex items-center justify-between z-[100]">
                     <div className="relative">
                       <button 
-                        onPointerDown={(e) => e.stopPropagation()}
+                        onPointerDown={(e) => e.stopPropagation()} 
                         onClick={(e) => {
                           e.stopPropagation();
                           setIsFilterOpen(!isFilterOpen);
@@ -420,7 +461,8 @@ export default function AdminStaff() {
               displayedStaff.map((staff) => (
                 <div
                   key={staff.id}
-                  className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-2 pl-2.5 pr-5 flex items-center gap-3.5 shadow-md transition group text-left"
+                  onClick={() => setSelectedStaffForDrawer(staff)}
+                  className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-2 pl-2.5 pr-5 flex items-center gap-3.5 shadow-md transition group text-left cursor-pointer hover:bg-white/60 dark:hover:bg-black/50"
                 >
                   <div className="w-[70px] h-[70px] rounded-full bg-white/40 dark:bg-white/10 backdrop-blur-md flex items-center justify-center text-2xl font-black text-slate-900 dark:text-white shrink-0 select-none shadow-xs">
                     {staff.avatar}
@@ -440,6 +482,7 @@ export default function AdminStaff() {
                   <div className="flex items-center gap-2 ml-auto shrink-0">
                     <a 
                       href={`tel:${staff.phone}`} 
+                      onClick={(e) => e.stopPropagation()}
                       className="w-11 h-11 rounded-full bg-[#6EB52F]/15 text-[#364F41] dark:text-[#6EB52F] hover:bg-[#6EB52F]/25 flex items-center justify-center transition-all shadow-xs"
                       title="Позвонить сотруднику"
                     >
@@ -460,7 +503,8 @@ export default function AdminStaff() {
               displayedPayroll.map((payroll) => (
                 <div
                   key={payroll.id}
-                  className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-2 pl-4 pr-3 flex items-center gap-3.5 shadow-md transition text-left"
+                  onClick={() => setSelectedPayrollForDrawer(payroll)}
+                  className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-2 pl-4 pr-3 flex items-center gap-3.5 shadow-md transition text-left cursor-pointer hover:bg-white/60 dark:hover:bg-black/50"
                 >
                   <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
                     <h4 className="font-bold text-base text-slate-950 dark:text-white truncate">
@@ -479,14 +523,14 @@ export default function AdminStaff() {
                     </span>
 
                     <Button
-                      onClick={() => {
-                        setSelectedPayroll(payroll);
-                        setIsPayModalOpen(true);
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedPayrollForDrawer(payroll);
                       }}
                       style={{ backgroundColor: '#6EB52F', color: '#364F41' }}
                       className="rounded-full h-10 px-4 text-[11px] font-black uppercase tracking-wider transition-all shadow-xs border-none cursor-pointer hover:opacity-90"
                     >
-                      Выплатить
+                      Выплата
                     </Button>
                   </div>
                 </div>
@@ -502,41 +546,272 @@ export default function AdminStaff() {
       </div>
 
       <FloatingActionButton
-        onClick={() => setIsAddStaffOpen(true)}
-        ariaLabel={activeSlide === 0 ? "Добавить сотрудника" : "Начислить бонус/штраф"}
+        onClick={() => setIsAddStaffDrawerOpen(true)}
+        ariaLabel="Добавить сотрудника"
         id="floating-action-btn"
         style={{ backgroundColor: '#364F41', color: '#6EB52F' }}
         className="!bg-[#364F41] !text-[#6EB52F] shadow-lg shadow-[#364F41]/30 hover:opacity-95"
       />
 
-      {/* МОДАЛКА ВЫПЛАТЫ */}
-      <Dialog open={isPayModalOpen} onOpenChange={setIsPayModalOpen}>
-        <DialogContent className="!rounded-[28px] !border-zinc-800 bg-[#161618] text-white p-7 max-w-sm shadow-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-white flex items-center gap-2">
-              <RussianRuble size={22} className="text-[#6EB52F]" />
-              Выплата ЗП
-            </DialogTitle>
-          </DialogHeader>
+      {/* ─── ШТОРКА 1: ПРОФИЛЬ СОТРУДНИКА (BOTTOM SHEET DRAWER) ─── */}
+      <AnimatePresence>
+        {selectedStaffForDrawer && (
+          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedStaffForDrawer(null)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-md cursor-pointer"
+            />
 
-          <form onSubmit={handlePay} className="space-y-4 pt-3">
-            <div className="text-center p-4 bg-white/5 rounded-2xl border border-white/10 mb-4">
-              <p className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1">{selectedPayroll?.name}</p>
-              <p className="text-2xl font-black text-[#6EB52F] font-mono">{selectedPayroll?.amount.toLocaleString('ru-RU')} ₽</p>
-            </div>
-
-            <DialogFooter className="pt-2">
-              <Button
-                type="submit"
-                style={{ backgroundColor: '#6EB52F', color: '#364F41' }}
-                className="w-full rounded-full h-12 font-black text-xs uppercase tracking-wider shadow-md border-none cursor-pointer hover:opacity-90"
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 26, stiffness: 240 }}
+              className="relative z-10 w-full max-w-lg bg-[#18181b] border-t border-x border-zinc-800 rounded-t-[42px] p-6 pt-7 pb-8 shadow-2xl flex flex-col text-white max-h-[85dvh]"
+            >
+              <button
+                onClick={() => setSelectedStaffForDrawer(null)}
+                className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-white rounded-full bg-white/5 hover:bg-zinc-800 transition-colors z-10 border-none cursor-pointer"
               >
-                Подтвердить выплату
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+                <X size={18} />
+              </button>
+
+              <div className="flex items-center gap-4 mb-4 pb-4 border-b border-zinc-800/60 pr-8">
+                <div className="w-16 h-16 rounded-full bg-zinc-800 border-2 border-zinc-700 flex items-center justify-center text-2xl font-black text-white shrink-0 shadow-md">
+                  {selectedStaffForDrawer.avatar}
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <h3 className="text-2xl font-black text-white truncate">{selectedStaffForDrawer.name}</h3>
+                  <span className="text-xs font-bold text-[#6EB52F] uppercase tracking-wider mt-0.5">
+                    {selectedStaffForDrawer.role === 'trainer' ? 'Преподаватель / Хореограф' : 'Администратор студии'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto scrollbar-none pt-2 pb-6 space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px]">
+                    <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider block mb-1">Ставка</span>
+                    <span className="text-sm font-black font-mono text-white">{selectedStaffForDrawer.rate}</span>
+                  </div>
+
+                  <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px]">
+                    <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider block mb-1">Активных групп</span>
+                    <span className="text-sm font-black font-mono text-white">{selectedStaffForDrawer.activeClasses || 0} групп</span>
+                  </div>
+                </div>
+
+                <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px] flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <Phone size={16} className="text-[#6EB52F]" />
+                    <span className="text-xs font-mono font-bold text-white">{selectedStaffForDrawer.phone}</span>
+                  </div>
+
+                  <a
+                    href={`tel:${selectedStaffForDrawer.phone}`}
+                    style={{ backgroundColor: '#6EB52F', color: '#364F41' }}
+                    className="px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider shadow-xs"
+                  >
+                    Позвонить
+                  </a>
+                </div>
+
+                <div className="pt-2">
+                  <Button
+                    onClick={() => {
+                      toast({ title: "Расписание преподавателя", description: "Загрузка календаря смен" });
+                      setSelectedStaffForDrawer(null);
+                    }}
+                    style={{ backgroundColor: '#364F41', color: '#6EB52F' }}
+                    className="w-full h-14 rounded-full font-black text-xs uppercase tracking-wider shadow-md hover:opacity-90 transition-all border-none cursor-pointer"
+                  >
+                    Открыть расписание сотрудника
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ─── ШТОРКА 2: ВЫПЛАТА ЗАРПЛАТЫ (BOTTOM SHEET DRAWER) ─── */}
+      <AnimatePresence>
+        {selectedPayrollForDrawer && (
+          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedPayrollForDrawer(null)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-md cursor-pointer"
+            />
+
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 26, stiffness: 240 }}
+              className="relative z-10 w-full max-w-lg bg-[#18181b] border-t border-x border-zinc-800 rounded-t-[42px] p-6 pt-7 pb-8 shadow-2xl flex flex-col text-white max-h-[85dvh]"
+            >
+              <button
+                onClick={() => setSelectedPayrollForDrawer(null)}
+                className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-white rounded-full bg-white/5 hover:bg-zinc-800 transition-colors z-10 border-none cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="flex items-start justify-between pb-3 border-b border-zinc-800/60 pr-10">
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-zinc-400">
+                    Ведомость начислений
+                  </span>
+                  <h3 className="text-xl font-black text-white mt-0.5">{selectedPayrollForDrawer.name}</h3>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto scrollbar-none pt-4 pb-6 space-y-4">
+                <div className="bg-[#1C1C1E] border border-zinc-800 p-5 rounded-[28px] flex flex-col items-center justify-center text-center">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-zinc-400">Сумма к выплате</span>
+                  <span className="text-3xl font-black font-mono text-[#6EB52F] mt-1">
+                    {selectedPayrollForDrawer.amount.toLocaleString('ru-RU')} ₽
+                  </span>
+                  <span className="text-xs font-bold text-zinc-400 mt-1 uppercase tracking-wider">
+                    {selectedPayrollForDrawer.period}
+                  </span>
+                </div>
+
+                <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px] flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <ShieldCheck size={18} className="text-[#6EB52F]" />
+                    <span className="text-xs font-bold text-white">Учтено часов / смен</span>
+                  </div>
+                  <span className="text-sm font-black font-mono text-white">
+                    {selectedPayrollForDrawer.hours || 0} ч.
+                  </span>
+                </div>
+
+                <div className="pt-2">
+                  <Button
+                    onClick={handlePay}
+                    style={{ backgroundColor: '#6EB52F', color: '#364F41' }}
+                    className="w-full h-14 rounded-full font-black text-xs uppercase tracking-wider shadow-md hover:opacity-90 transition-all border-none cursor-pointer"
+                  >
+                    Подтвердить и выплатить
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ─── ШТОРКА 3: ДОБАВЛЕНИЕ СОТРУДНИКА (BOTTOM SHEET DRAWER) ─── */}
+      <AnimatePresence>
+        {isAddStaffDrawerOpen && (
+          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsAddStaffDrawerOpen(false)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-md cursor-pointer"
+            />
+
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 26, stiffness: 240 }}
+              className="relative z-10 w-full max-w-lg bg-[#18181b] border-t border-x border-zinc-800 rounded-t-[42px] p-6 pt-7 pb-8 shadow-2xl flex flex-col text-white max-h-[88dvh]"
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-800/60">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-full bg-[#6EB52F]/20 text-[#6EB52F] flex items-center justify-center font-bold">
+                    <UserPlus size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black uppercase tracking-wider text-white">
+                      Новый сотрудник
+                    </h3>
+                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                      Добавление в команду студии
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setIsAddStaffDrawerOpen(false)}
+                  className="p-2 text-zinc-400 hover:text-white rounded-full bg-white/5 hover:bg-zinc-800 transition-colors border-none cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <form onSubmit={handleCreateStaff} className="space-y-4 pt-4 flex-1 overflow-y-auto scrollbar-none pr-1">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Имя и Фамилия</label>
+                  <Input
+                    required
+                    value={newStaffData.name}
+                    onChange={(e) => setNewStaffData({ ...newStaffData, name: e.target.value })}
+                    placeholder="Например: Артем Соколов"
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-sm font-bold px-4 focus-visible:border-[#6EB52F]"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Телефон</label>
+                  <Input
+                    required
+                    value={newStaffData.phone}
+                    onChange={(e) => setNewStaffData({ ...newStaffData, phone: e.target.value })}
+                    placeholder="+7 (999) 000-00-00"
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-sm font-bold px-4 focus-visible:border-[#6EB52F]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Должность</label>
+                    <select
+                      value={newStaffData.role}
+                      onChange={(e) => setNewStaffData({ ...newStaffData, role: e.target.value })}
+                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#6EB52F]"
+                    >
+                      <option value="trainer">Преподаватель</option>
+                      <option value="admin">Администратор</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Ставка оплаты</label>
+                    <Input
+                      required
+                      value={newStaffData.rate}
+                      onChange={(e) => setNewStaffData({ ...newStaffData, rate: e.target.value })}
+                      placeholder="1200 ₽ / час"
+                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-xs font-bold px-4 focus-visible:border-[#6EB52F]"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-3">
+                  <Button
+                    type="submit"
+                    style={{ backgroundColor: '#364F41', color: '#6EB52F' }}
+                    className="w-full rounded-full h-14 font-black text-xs uppercase tracking-wider shadow-lg hover:opacity-90 border-none cursor-pointer"
+                  >
+                    Сохранить в штат
+                  </Button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <BottomNav />
     </div>

@@ -11,25 +11,18 @@ import {
   Check, 
   Phone, 
   ChevronLeft, 
-  ChevronRight,
-  SlidersHorizontal,
-  Users,
-  Filter,
-  X
+  ChevronRight, 
+  SlidersHorizontal, 
+  Users, 
+  Filter, 
+  X,
+  UserPlus
 } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from '@/context/ThemeContext';
 import FloatingActionButton from "../components/FloatingActionButton";
 import CustomFilterDropdown from "../components/CustomFilterDropdown";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter
-} from "@/components/ui/dialog";
 
 export type LeadStage = 'new' | 'trial_scheduled' | 'trial_attended' | 'bought' | 'lost';
 export type LeadSource = 'instagram' | 'site' | 'referral' | 'ads';
@@ -103,7 +96,7 @@ function ModalDatePicker({
   for (let i = 1; i <= remaining; i++) cells.push({ date: new Date(year, month + 1, i), isCurrentMonth: false });
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[250] flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={onClose}>
       <div className="!bg-[#09090b] border !border-zinc-850 !rounded-[24px] p-5 max-w-sm w-full shadow-2xl shadow-black/80 flex flex-col text-white animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-5">
           <h3 className="text-sm font-bold text-white tracking-wide">{viewDate.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }).replace(/\s*г\./, '').toLowerCase()}</h3>
@@ -164,7 +157,7 @@ export default function AdminStudents() {
   const funnelStagesList = ['Все этапы', 'Новая заявка', 'Назначен пробный', 'Пришел на пробный', 'Отказ'];
   const funnelSourcesList = ['Все источники', 'Instagram', 'Сайт', 'Сарафан', 'Реклама'];
 
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
   const [newStudent, setNewStudent] = useState({
     full_name: '', phone: '', initial_visits: 8, source: 'instagram' as LeadSource, stage: 'bought' as LeadStage
   });
@@ -207,21 +200,42 @@ export default function AdminStudents() {
     e.preventDefault();
     setIsCreating(true);
     try {
-      const { data: profile, error: pError } = await supabase.from('profiles').insert([{
-        full_name: newStudent.full_name, phone: newStudent.phone, stage: activeSlide === 0 ? 'bought' : newStudent.stage, source: newStudent.source, role: 'user'
-      }]).select().single();
+      const targetStage = activeSlide === 0 ? 'bought' : newStudent.stage;
+
+      const profilePayload: Record<string, any> = {
+        full_name: newStudent.full_name.trim(),
+        phone: newStudent.phone.trim(),
+        stage: targetStage,
+        source: newStudent.source,
+        role: 'user'
+      };
+
+      const { data: profile, error: pError } = await supabase
+        .from('profiles')
+        .insert([profilePayload])
+        .select()
+        .single();
+
       if (pError) throw pError;
-      const { error: sError } = await supabase.from('subscriptions').insert([{
-        user_id: profile.id, visits_left: newStudent.initial_visits, expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-      }]);
-      if (sError) throw sError;
-      toast({ title: "Успешно", description: "Запись сохранена" });
-      setIsAddModalOpen(false);
+
+      if (profile && targetStage === 'bought') {
+        const { error: sError } = await supabase.from('subscriptions').insert([{
+          user_id: profile.id,
+          visits_left: Number(newStudent.initial_visits) || 0,
+          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+        }]);
+        if (sError) console.warn('Subscription insert warning:', sError.message);
+      }
+
+      toast({ title: "Успешно", description: "Клиент добавлен в систему" });
+      setIsAddDrawerOpen(false);
       setNewStudent({ full_name: '', phone: '', initial_visits: 8, source: 'instagram', stage: 'bought' });
       await fetchStudentsData();
     } catch (err: any) {
-      toast({ variant: "destructive", title: "Ошибка", description: err.message });
-    } finally { setIsCreating(false); }
+      toast({ variant: "destructive", title: "Ошибка создания", description: err.message || "Проверьте права доступа в базе" });
+    } finally { 
+      setIsCreating(false); 
+    }
   };
 
   const handleMoveStage = async (studentId: string, nextStage: LeadStage) => {
@@ -286,7 +300,6 @@ export default function AdminStudents() {
     );
   }
 
-  // Фирменный стиль матового блюра для выпадающего меню фильтров
   const filterPopupStyle: React.CSSProperties = {
     backdropFilter: 'blur(40px)',
     WebkitBackdropFilter: 'blur(40px)',
@@ -295,7 +308,6 @@ export default function AdminStudents() {
     borderRadius: '36px'
   };
 
-  // Фирменный стиль для строки поиска
   const searchInputStyle: React.CSSProperties = {
     backdropFilter: 'blur(30px)',
     WebkitBackdropFilter: 'blur(30px)',
@@ -633,104 +645,236 @@ export default function AdminStudents() {
         </div>
       </div>
 
+      {/* ─── ШТОРКА 1: ДЕТАЛЬНАЯ ИНФОРМАЦИЯ О КЛИЕНТЕ (BOTTOM SHEET DRAWER) ─── */}
       <AnimatePresence>
         {selectedStudentForDrawer && (
-          <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedStudentForDrawer(null)} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[150] cursor-pointer" />
-            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", damping: 25, stiffness: 250 }} className="fixed bottom-0 left-0 right-0 max-w-md mx-auto !bg-[#18181b] border-t !border-zinc-800 rounded-t-[28px] p-6 pb-6 z-[200] select-none flex flex-col max-h-[85dvh]" style={{ backgroundColor: '#18181b' }}>
-              <div className="w-12 h-1 bg-zinc-700 rounded-full mx-auto mb-4 shrink-0" />
-              <button onClick={() => setSelectedStudentForDrawer(null)} className="absolute top-4 right-4 p-2 text-zinc-500 hover:text-white rounded-full hover:bg-zinc-800 transition-colors z-10"><X size={18} /></button>
-              <div className="flex-1 overflow-y-auto scrollbar-none pb-36">
+          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              onClick={() => setSelectedStudentForDrawer(null)} 
+              className="fixed inset-0 bg-black/70 backdrop-blur-md cursor-pointer" 
+            />
+            <motion.div 
+              initial={{ y: "100%" }} 
+              animate={{ y: 0 }} 
+              exit={{ y: "100%" }} 
+              transition={{ type: "spring", damping: 26, stiffness: 240 }} 
+              className="relative z-10 w-full max-w-lg bg-[#18181b] border-t border-x border-zinc-800 rounded-t-[42px] p-6 pt-7 pb-8 shadow-2xl flex flex-col text-white max-h-[85dvh]"
+            >
+              <button 
+                onClick={() => setSelectedStudentForDrawer(null)} 
+                className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-white rounded-full bg-white/5 hover:bg-zinc-800 transition-colors z-10 border-none cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="flex-1 overflow-y-auto scrollbar-none pb-8 pr-1">
                 <div className="flex flex-col">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-14 h-14 !rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-white overflow-hidden shrink-0">
-                      {selectedStudentForDrawer.avatar_url ? <img src={selectedStudentForDrawer.avatar_url} alt={selectedStudentForDrawer.full_name || 'Avatar'} className="w-full h-full object-cover" referrerPolicy="no-referrer" /> : <span className="text-xl font-semibold">{selectedStudentForDrawer.full_name?.[0]?.toUpperCase() || '?'}</span>}
+                  <div className="flex items-center gap-4 mb-5">
+                    <div className="w-16 h-16 rounded-full bg-zinc-800 border-2 border-zinc-700 flex items-center justify-center text-white overflow-hidden shrink-0 shadow-md">
+                      {selectedStudentForDrawer.avatar_url ? (
+                        <img src={selectedStudentForDrawer.avatar_url} alt={selectedStudentForDrawer.full_name || 'Avatar'} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                      ) : (
+                        <span className="text-2xl font-black">{selectedStudentForDrawer.full_name?.[0]?.toUpperCase() || '?'}</span>
+                      )}
                     </div>
-                    <div className="flex flex-col items-start justify-center gap-1.5 min-w-0">
-                      <h2 className="text-2xl font-semibold text-white leading-tight truncate">{selectedStudentForDrawer.full_name || 'Без имени'}</h2>
+                    <div className="flex flex-col items-start justify-center gap-1.5 min-w-0 pr-8">
+                      <h2 className="text-2xl font-black text-white leading-tight truncate">{selectedStudentForDrawer.full_name || 'Без имени'}</h2>
                       {selectedStudentForDrawer.phone && (
-                        <a href={`tel:${selectedStudentForDrawer.phone}`} className="!rounded-full bg-zinc-900 border border-zinc-800 px-3 py-1 flex items-center gap-2 text-sm text-zinc-300 w-fit select-none m-0 ml-0"><Phone size={13} className="text-[#00BAEF]" /><span className="truncate">{selectedStudentForDrawer.phone}</span></a>
+                        <a href={`tel:${selectedStudentForDrawer.phone}`} className="rounded-full bg-zinc-900 border border-zinc-800 px-3.5 py-1 flex items-center gap-2 text-xs font-mono text-zinc-300 w-fit select-none">
+                          <Phone size={13} className="text-[#00BAEF]" />
+                          <span className="truncate">{selectedStudentForDrawer.phone}</span>
+                        </a>
                       )}
                     </div>
                   </div>
-                  <div className="space-y-2 my-2">
-                    <label className="text-xs font-bold text-stone-400 uppercase tracking-wider block">Этап сделки / Воронка</label>
+
+                  <div className="space-y-2.5 my-2">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">Этап сделки / Воронка</label>
                     <div className="grid grid-cols-2 gap-2">
                       {(['new', 'trial_scheduled', 'trial_attended', 'bought', 'lost'] as LeadStage[]).map((stageKey) => {
                         const isCurrent = (selectedStudentForDrawer.stage || 'bought') === stageKey;
                         const conf = STAGES_CONFIG[stageKey];
                         return (
-                          <button key={stageKey} type="button" onClick={() => handleMoveStage(selectedStudentForDrawer.id, stageKey)} className={`py-2 px-3 rounded-xl text-xs font-bold transition-all border text-left flex items-center justify-between cursor-pointer ${isCurrent ? `${conf.bg} ${conf.color} border-current shadow-sm` : 'bg-zinc-900/60 border-zinc-800 text-stone-400 hover:bg-zinc-800'}`}>
-                            <span>{conf.label}</span>{isCurrent && <Check size={12} className="stroke-[3]" />}
+                          <button 
+                            key={stageKey} 
+                            type="button" 
+                            onClick={() => handleMoveStage(selectedStudentForDrawer.id, stageKey)} 
+                            className={`py-3 px-3.5 rounded-2xl text-xs font-bold transition-all border text-left flex items-center justify-between cursor-pointer ${
+                              isCurrent 
+                                ? `${conf.bg} ${conf.color} border-current shadow-sm` 
+                                : 'bg-zinc-900/60 border-zinc-800 text-stone-400 hover:bg-zinc-800'
+                            }`}
+                          >
+                            <span>{conf.label}</span>
+                            {isCurrent && <Check size={14} className="stroke-[3]" />}
                           </button>
                         );
                       })}
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-3.5 my-4">
-                    <div className="!bg-[#18181b] border !border-zinc-800 p-4 !rounded-[24px] flex flex-col gap-1">
-                      <span className="text-zinc-500 text-xs font-bold uppercase tracking-wider">Остаток занятий</span>
-                      <span className="text-[#00BAEF] text-lg font-medium font-mono">{selectedStudentForDrawer.subscriptions?.[0]?.visits_left ?? 0}</span>
+
+                  <div className="grid grid-cols-2 gap-3 my-4">
+                    <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[24px] flex flex-col gap-1">
+                      <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider">Остаток занятий</span>
+                      <span className="text-[#00BAEF] text-2xl font-black font-mono">{selectedStudentForDrawer.subscriptions?.[0]?.visits_left ?? 0}</span>
                     </div>
-                    <div className="!bg-[#18181b] border !border-zinc-800 p-4 !rounded-[24px] flex flex-col gap-1 min-w-0">
-                      <span className="text-zinc-500 text-xs font-bold uppercase tracking-wider">Источник</span>
-                      <span className="text-white text-sm font-medium truncate capitalize">{SOURCES_CONFIG[(selectedStudentForDrawer.source as LeadSource) || 'instagram']?.label || 'Instagram'}</span>
+                    <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[24px] flex flex-col gap-1 min-w-0">
+                      <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider">Источник</span>
+                      <span className="text-white text-sm font-bold truncate capitalize mt-1">
+                        {SOURCES_CONFIG[(selectedStudentForDrawer.source as LeadSource) || 'instagram']?.label || 'Instagram'}
+                      </span>
                     </div>
                   </div>
+
                   <div className="flex gap-3 mt-2">
-                    <button onClick={() => { toast({ title: "Заморозка абонемента", description: `Абонемент для ${selectedStudentForDrawer.full_name} успешно заморожен на 14 дней`, }); setSelectedStudentForDrawer(null); }} className="flex-1 py-3 text-xs font-bold border border-zinc-800 hover:bg-zinc-800/60 rounded-full transition-colors cursor-pointer text-center text-stone-300">Заморозить</button>
-                    <button onClick={() => { toast({ title: "История посещений", description: "Раздел истории посещений в разработке", }); }} className="flex-1 py-3 text-xs font-bold border border-[#00BAEF]/30 text-[#00BAEF] hover:bg-[#00BAEF]/10 rounded-full transition-all cursor-pointer text-center">История</button>
+                    <button 
+                      onClick={() => { 
+                        toast({ title: "Заморозка абонемента", description: `Абонемент для ${selectedStudentForDrawer.full_name} заморожен на 14 дней` }); 
+                        setSelectedStudentForDrawer(null); 
+                      }} 
+                      className="flex-1 py-3.5 text-xs font-black uppercase tracking-wider border border-zinc-800 hover:bg-zinc-800/60 rounded-full transition-colors cursor-pointer text-center text-stone-300"
+                    >
+                      Заморозить
+                    </button>
+                    <button 
+                      onClick={() => { 
+                        toast({ title: "История посещений", description: "Раздел истории посещений в разработке" }); 
+                      }} 
+                      style={{ backgroundColor: '#00548E', color: '#00BAEF' }}
+                      className="flex-1 py-3.5 text-xs font-black uppercase tracking-wider rounded-full transition-all cursor-pointer text-center border-none shadow-md"
+                    >
+                      История
+                    </button>
                   </div>
                 </div>
               </div>
             </motion.div>
-          </>
+          </div>
         )}
       </AnimatePresence>
 
-      <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className="!rounded-[28px] !border-zinc-850 shadow-2xl bg-[#18181b] text-white p-8 z-[200]">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-semibold text-white">{activeSlide === 0 ? 'Новый ученик' : 'Новый лид'}</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleAddStudent} className="space-y-4 pt-3">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Имя Фамилия</label>
-              <Input required value={newStudent.full_name} onChange={(e) => setNewStudent({...newStudent, full_name: e.target.value})} placeholder="Иван Иванов" className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#00BAEF]/30 bg-black/40 text-white placeholder:text-stone-600 text-sm font-medium px-5 focus-visible:border-[#00BAEF]" />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Телефон</label>
-              <Input required value={newStudent.phone} onChange={(e) => setNewStudent({...newStudent, phone: e.target.value.replace(/\D/g, '')})} placeholder="79001234567" className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#00BAEF]/30 bg-black/40 text-white placeholder:text-stone-600 text-sm font-medium px-5 focus-visible:border-[#00BAEF]" />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Источник</label>
-                <select value={newStudent.source} onChange={(e) => setNewStudent({ ...newStudent, source: e.target.value as LeadSource })} className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3.5 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#00BAEF]">
-                  <option value="instagram">📸 Instagram</option><option value="site">🌐 Сайт</option><option value="referral">👥 Сарафан</option><option value="ads">⚡ Реклама</option>
-                </select>
+      {/* ─── ШТОРКА 2: СОЗДАНИЕ КЛИЕНТА / ЛИДА (BOTTOM SHEET DRAWER) ─── */}
+      <AnimatePresence>
+        {isAddDrawerOpen && (
+          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              onClick={() => setIsAddDrawerOpen(false)} 
+              className="fixed inset-0 bg-black/70 backdrop-blur-md cursor-pointer" 
+            />
+            <motion.div 
+              initial={{ y: "100%" }} 
+              animate={{ y: 0 }} 
+              exit={{ y: "100%" }} 
+              transition={{ type: "spring", damping: 26, stiffness: 240 }} 
+              className="relative z-10 w-full max-w-lg bg-[#18181b] border-t border-x border-zinc-800 rounded-t-[42px] p-6 pt-7 pb-8 shadow-2xl flex flex-col text-white max-h-[88dvh]"
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-800/60">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-full bg-[#00548E]/30 text-[#00BAEF] flex items-center justify-center font-bold">
+                    <UserPlus size={18} />
+                  </div>
+                  <h3 className="text-lg font-black uppercase tracking-wider text-white">
+                    {activeSlide === 0 ? 'Новый ученик' : 'Новый лид'}
+                  </h3>
+                </div>
+
+                <button 
+                  onClick={() => setIsAddDrawerOpen(false)} 
+                  className="p-2 text-zinc-400 hover:text-white rounded-full bg-white/5 hover:bg-zinc-800 transition-colors border-none cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
               </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Этап сделки</label>
-                <select value={newStudent.stage} onChange={(e) => setNewStudent({ ...newStudent, stage: e.target.value as LeadStage })} className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3.5 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#00BAEF]">
-                  <option value="bought">Купил (Действующий)</option><option value="new">Новая заявка</option><option value="trial_scheduled">Назначен пробный</option><option value="trial_attended">Пришел на пробный</option><option value="lost">Отказ</option>
-                </select>
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Начальный баланс (занятий)</label>
-              <Input required type="number" value={newStudent.initial_visits} onChange={(e) => setNewStudent({...newStudent, initial_visits: parseInt(e.target.value)})} className="rounded-[16px] border-zinc-800 h-12 focus-visible:ring-1 focus-visible:ring-[#00BAEF]/30 bg-black/40 text-white text-sm font-medium px-5 focus-visible:border-[#00BAEF]" />
-            </div>
-            <DialogFooter className="pt-3">
-              <Button type="submit" disabled={isCreating} style={{ backgroundColor: '#00548E', color: '#00BAEF' }} className="w-full rounded-full h-12 font-bold text-sm tracking-wide shadow-md hover:opacity-90 border-none cursor-pointer">
-                {isCreating ? "Создание..." : "Сохранить"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+
+              <form onSubmit={handleAddStudent} className="space-y-4 pt-4 flex-1 overflow-y-auto scrollbar-none pr-1">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Имя и Фамилия</label>
+                  <Input 
+                    required 
+                    value={newStudent.full_name} 
+                    onChange={(e) => setNewStudent({...newStudent, full_name: e.target.value})} 
+                    placeholder="Например: Екатерина Смирнова" 
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white placeholder:text-zinc-600 text-sm font-bold px-4 focus-visible:border-[#00BAEF]" 
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Телефон</label>
+                  <Input 
+                    required 
+                    value={newStudent.phone} 
+                    onChange={(e) => setNewStudent({...newStudent, phone: e.target.value.replace(/\D/g, '')})} 
+                    placeholder="79991234567" 
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white placeholder:text-zinc-600 text-sm font-bold font-mono px-4 focus-visible:border-[#00BAEF]" 
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Источник</label>
+                    <select 
+                      value={newStudent.source} 
+                      onChange={(e) => setNewStudent({ ...newStudent, source: e.target.value as LeadSource })} 
+                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#00BAEF]"
+                    >
+                      <option value="instagram">📸 Instagram</option>
+                      <option value="site">🌐 Сайт</option>
+                      <option value="referral">👥 Сарафан</option>
+                      <option value="ads">⚡ Реклама</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Этап сделки</label>
+                    <select 
+                      value={newStudent.stage} 
+                      onChange={(e) => setNewStudent({ ...newStudent, stage: e.target.value as LeadStage })} 
+                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#00BAEF]"
+                    >
+                      <option value="bought">Купил (Действующий)</option>
+                      <option value="new">Новая заявка</option>
+                      <option value="trial_scheduled">Назначен пробный</option>
+                      <option value="trial_attended">Пришел на пробный</option>
+                      <option value="lost">Отказ</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Начальный баланс (занятий)</label>
+                  <Input 
+                    required 
+                    type="number" 
+                    value={newStudent.initial_visits} 
+                    onChange={(e) => setNewStudent({...newStudent, initial_visits: parseInt(e.target.value) || 0})} 
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-base font-black px-4 focus-visible:border-[#00BAEF]" 
+                  />
+                </div>
+
+                <div className="pt-3">
+                  <Button 
+                    type="submit" 
+                    disabled={isCreating} 
+                    style={{ backgroundColor: '#00548E', color: '#00BAEF' }} 
+                    className="w-full rounded-full h-14 font-black text-xs uppercase tracking-wider shadow-lg hover:opacity-90 border-none cursor-pointer"
+                  >
+                    {isCreating ? "Сохранение..." : "Сохранить клиента"}
+                  </Button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <FloatingActionButton 
-        onClick={() => setIsAddModalOpen(true)} 
+        onClick={() => setIsAddDrawerOpen(true)} 
         ariaLabel={activeSlide === 0 ? "Добавить ученика" : "Добавить лид"} 
         id="floating-add-student-btn"
         style={{ backgroundColor: '#00548E', color: '#00BAEF' }}

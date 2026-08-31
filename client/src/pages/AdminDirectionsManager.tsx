@@ -21,7 +21,9 @@ import {
   GraduationCap, 
   Baby, 
   SlidersHorizontal, 
-  Settings 
+  Settings,
+  CalendarPlus,
+  Ticket
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import FloatingActionButton from "../components/FloatingActionButton";
@@ -29,6 +31,7 @@ import BottomNav from "../components/BottomNav";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/context/ThemeContext';
 import { useRole } from '@/context/RoleContext';
+import { Button } from "@/components/ui/button";
 
 export interface DirectionItem {
   id: number;
@@ -290,57 +293,18 @@ export function DirectionsAndGroupsManager() {
 
   const branchesList = ['Филиал: Невский', 'Филиал: Центральный'];
 
-  // Edit & delete confirm states
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [selectedDetail, setSelectedDetail] = useState<{
-    type: 'direction' | 'group' | 'age' | 'level';
-    item: any;
-  } | null>(null);
-  const [deleteConfirm, setDeleteConfirm] = useState<{
-    type: 'direction' | 'group' | 'age' | 'level';
-    id: number;
-    name: string;
-  } | null>(null);
-
-  const confirmDelete = () => {
-    if (!deleteConfirm) return;
-    const { type, id, name } = deleteConfirm;
-    if (type === 'direction') {
-      setDirections(directions.filter(d => d.id !== id));
-      toast({
-        title: "Направление удалено",
-        description: `Направление «${name}» успешно удалено из справочника.`
-      });
-    } else if (type === 'group') {
-      setGroups(groups.filter(g => g.id !== id));
-      toast({
-        title: "Группа удалена",
-        description: `Группа «${name}» успешно удалена из расписания.`
-      });
-    } else if (type === 'age') {
-      setAges(ages.filter(a => a.id !== id));
-      toast({
-        title: "Возрастная категория удалена",
-        description: `Категория «${name}» успешно удалена.`
-      });
-    } else if (type === 'level') {
-      setLevels(levels.filter(l => l.id !== id));
-      toast({
-        title: "Уровень подготовки удален",
-        description: `Уровень «${name}» успешно удален.`
-      });
-    }
-    setDeleteConfirm(null);
-  };
-
   // State data
   const [directions, setDirections] = useState<DirectionItem[]>(DEFAULT_DIRECTIONS);
   const [groups, setGroups] = useState<GroupItem[]>(DEFAULT_GROUPS);
   const [ages, setAges] = useState<AgeCategoryItem[]>(DEFAULT_AGES);
   const [levels, setLevels] = useState<LevelItem[]>(DEFAULT_LEVELS);
 
-  // Modal State
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // Шторка просмотра существующей группы
+  const [selectedGroupForDrawer, setSelectedGroupForDrawer] = useState<GroupItem | null>(null);
+
+  // Шторка создания / редактирования
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   // Form State
   const [formName, setFormName] = useState('');
@@ -378,7 +342,7 @@ export function DirectionsAndGroupsManager() {
     setFormAge(ages[0]?.range || '16+ Лет');
     setFormRange('18+ лет');
     setFormDescription('');
-    setIsModalOpen(true);
+    setIsDrawerOpen(true);
   };
 
   const handleEditDirection = (dir: DirectionItem) => {
@@ -390,10 +354,11 @@ export function DirectionsAndGroupsManager() {
     setFormCoach(dir.coaches[0] || 'Мария Ковалева');
     setFormLevel(dir.level || 'Все уровни');
     setFormDescription(dir.description || '');
-    setIsModalOpen(true);
+    setIsDrawerOpen(true);
   };
 
   const handleEditGroup = (group: GroupItem) => {
+    setSelectedGroupForDrawer(null);
     setMainView('groups');
     setActiveTab('groups');
     setEditingId(group.id);
@@ -413,7 +378,15 @@ export function DirectionsAndGroupsManager() {
     setFormHall(group.hall || 'Зал 1 (Main Glass)');
     setFormLevel(group.level || 'Beginners Pro');
     setFormAge(group.age || '16+ Лет');
-    setIsModalOpen(true);
+    setIsDrawerOpen(true);
+  };
+
+  const handleDeleteGroup = (id: number, name: string) => {
+    if (confirm(`Удалить группу «${name}»?`)) {
+      setGroups(prev => prev.filter(g => g.id !== id));
+      setSelectedGroupForDrawer(null);
+      toast({ title: "Группа удалена", description: `Группа «${name}» удалена.` });
+    }
   };
 
   const handleEditAge = (age: AgeCategoryItem) => {
@@ -423,7 +396,7 @@ export function DirectionsAndGroupsManager() {
     setFormName(age.name);
     setFormRange(age.range);
     setFormDescription(age.description);
-    setIsModalOpen(true);
+    setIsDrawerOpen(true);
   };
 
   const handleEditLevel = (lvl: LevelItem) => {
@@ -433,7 +406,7 @@ export function DirectionsAndGroupsManager() {
     setFormName(lvl.name);
     setFormLevel(lvl.tag);
     setFormDescription(lvl.description);
-    setIsModalOpen(true);
+    setIsDrawerOpen(true);
   };
 
   useEffect(() => {
@@ -560,8 +533,8 @@ export function DirectionsAndGroupsManager() {
         };
         setGroups([newGroup, ...groups]);
         toast({
-          title: "Группа создана и добавлена в расписание!",
-          description: `Группа «${newGroup.name}» (${formattedSchedule}) успешно внесена в календарь.`
+          title: "Группа создана!",
+          description: `Группа «${newGroup.name}» внесена в систему.`
         });
       }
     } else if (activeTab === 'ages') {
@@ -573,7 +546,7 @@ export function DirectionsAndGroupsManager() {
           description: formDescription.trim() || 'Возрастная группа студии.'
         } : a));
         toast({
-          title: "Возрастная категория обновлена!",
+          title: "Категория обновлена!",
           description: `Категория «${formName.trim()}» успешно обновлена.`
         });
       } else {
@@ -586,7 +559,7 @@ export function DirectionsAndGroupsManager() {
         };
         setAges([newAge, ...ages]);
         toast({
-          title: "Возрастная категория добавлена!",
+          title: "Категория сохранена!",
           description: `Категория «${newAge.name}» (${newAge.range}) успешно сохранена.`
         });
       }
@@ -599,7 +572,7 @@ export function DirectionsAndGroupsManager() {
           description: formDescription.trim() || 'Уровень подготовки группы.'
         } : l));
         toast({
-          title: "Уровень подготовки обновлен!",
+          title: "Уровень обновлен!",
           description: `Уровень «${formName.trim()}» успешно сохранен.`
         });
       } else {
@@ -612,7 +585,7 @@ export function DirectionsAndGroupsManager() {
         };
         setLevels([newLevel, ...levels]);
         toast({
-          title: "Уровень подготовки добавлен!",
+          title: "Уровень добавлен!",
           description: `Уровень «${newLevel.name}» успешно внесен в справочник.`
         });
       }
@@ -621,7 +594,7 @@ export function DirectionsAndGroupsManager() {
     setEditingId(null);
     setFormName('');
     setFormDescription('');
-    setIsModalOpen(false);
+    setIsDrawerOpen(false);
   };
 
   const filteredGroups = groups.filter((g) => {
@@ -943,7 +916,7 @@ export function DirectionsAndGroupsManager() {
               {directions.map((dir) => (
                 <div
                   key={dir.id}
-                  onClick={() => setSelectedDetail({ type: 'direction', item: dir })}
+                  onClick={() => handleEditDirection(dir)}
                   className="w-full text-left bg-white/40 dark:bg-black/35 backdrop-blur-md border-none p-5 flex flex-col gap-3 rounded-[42px] shadow-md transition-all duration-200 cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 overflow-hidden group"
                 >
                   <div className="flex justify-between items-start gap-2">
@@ -975,7 +948,13 @@ export function DirectionsAndGroupsManager() {
                       {currentRole === 'owner' && (
                         <button
                           type="button"
-                          onClick={(e) => { e.stopPropagation(); setDeleteConfirm({ type: 'direction', id: dir.id, name: dir.name }); }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (confirm(`Удалить направление «${dir.name}»?`)) {
+                              setDirections(prev => prev.filter(d => d.id !== dir.id));
+                              toast({ title: "Удалено", description: `Направление «${dir.name}» удалено.` });
+                            }
+                          }}
                           className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center text-red-500 hover:text-red-600 transition-colors cursor-pointer ml-1 border-none outline-none"
                           title="Удалить"
                         >
@@ -1019,7 +998,7 @@ export function DirectionsAndGroupsManager() {
                 filteredGroups.map((group) => (
                   <div
                     key={group.id}
-                    onClick={() => setSelectedDetail({ type: 'group', item: group })}
+                    onClick={() => setSelectedGroupForDrawer(group)}
                     className="w-full text-left bg-white/40 dark:bg-black/35 backdrop-blur-md border-none p-5 flex flex-col gap-3 rounded-[42px] shadow-md transition-all duration-200 cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 overflow-hidden group"
                   >
                     <div className="flex justify-between items-start gap-2">
@@ -1068,7 +1047,10 @@ export function DirectionsAndGroupsManager() {
                         {currentRole === 'owner' && (
                           <button
                             type="button"
-                            onClick={(e) => { e.stopPropagation(); setDeleteConfirm({ type: 'group', id: group.id, name: group.name }); }}
+                            onClick={(e) => { 
+                              e.stopPropagation(); 
+                              handleDeleteGroup(group.id, group.name);
+                            }}
                             className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center text-red-500 hover:text-red-600 transition-colors cursor-pointer ml-1 border-none outline-none"
                             title="Удалить"
                           >
@@ -1120,7 +1102,7 @@ export function DirectionsAndGroupsManager() {
               {ages.map((age) => (
                 <div
                   key={age.id}
-                  onClick={() => setSelectedDetail({ type: 'age', item: age })}
+                  onClick={() => handleEditAge(age)}
                   className="w-full text-left bg-white/40 dark:bg-black/35 backdrop-blur-md border-none p-5 flex flex-col gap-3 rounded-[42px] shadow-md transition-all duration-200 cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 overflow-hidden group"
                 >
                   <div className="flex justify-between items-start gap-2">
@@ -1148,7 +1130,13 @@ export function DirectionsAndGroupsManager() {
                       </button>
                       <button
                         type="button"
-                        onClick={(e) => { e.stopPropagation(); setDeleteConfirm({ type: 'age', id: age.id, name: age.name }); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (confirm(`Удалить категорию «${age.name}»?`)) {
+                            setAges(prev => prev.filter(a => a.id !== age.id));
+                            toast({ title: "Удалено", description: `Категория «${age.name}» удалена.` });
+                          }
+                        }}
                         className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center text-red-500 hover:text-red-600 transition-colors cursor-pointer ml-1 border-none outline-none"
                         title="Удалить"
                       >
@@ -1182,7 +1170,7 @@ export function DirectionsAndGroupsManager() {
               {levels.map((lvl) => (
                 <div
                   key={lvl.id}
-                  onClick={() => setSelectedDetail({ type: 'level', item: lvl })}
+                  onClick={() => handleEditLevel(lvl)}
                   className="w-full text-left bg-white/40 dark:bg-black/35 backdrop-blur-md border-none p-5 flex flex-col gap-3 rounded-[42px] shadow-md transition-all duration-200 cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 overflow-hidden group"
                 >
                   <div className="flex justify-between items-start gap-2">
@@ -1210,7 +1198,13 @@ export function DirectionsAndGroupsManager() {
                       </button>
                       <button
                         type="button"
-                        onClick={(e) => { e.stopPropagation(); setDeleteConfirm({ type: 'level', id: lvl.id, name: lvl.name }); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (confirm(`Удалить уровень «${lvl.name}»?`)) {
+                            setLevels(prev => prev.filter(l => l.id !== lvl.id));
+                            toast({ title: "Удалено", description: `Уровень «${lvl.name}» удален.` });
+                          }
+                        }}
                         className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center text-red-500 hover:text-red-600 transition-colors cursor-pointer ml-1 border-none outline-none"
                         title="Удалить"
                       >
@@ -1245,28 +1239,124 @@ export function DirectionsAndGroupsManager() {
         />
       )}
 
-      {/* МОДАЛЬНОЕ ОКНО ДОБАВЛЕНИЯ/РЕДАКТИРОВАНИЯ */}
+      {/* ─── ШТОРКА 1: ДЕТАЛИ ГРУППЫ (BOTTOM SHEET DRAWER) ─── */}
       <AnimatePresence>
-        {isModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        {selectedGroupForDrawer && (
+          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setIsModalOpen(false)}
-              className="absolute inset-0 bg-black/70 backdrop-blur-md"
+              onClick={() => setSelectedGroupForDrawer(null)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-md cursor-pointer"
             />
 
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              transition={{ type: "spring", stiffness: 350, damping: 25 }}
-              className="relative z-10 w-full max-w-md p-6 rounded-[28px] border shadow-2xl backdrop-blur-xl bg-[#18181b] border-zinc-800 text-white max-h-[90dvh] overflow-y-auto scrollbar-none"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 26, stiffness: 240 }}
+              className="relative z-10 w-full max-w-lg bg-[#18181b] border-t border-x border-zinc-800 rounded-t-[42px] p-6 pt-7 pb-8 shadow-2xl flex flex-col text-white max-h-[85dvh]"
             >
-              <div className="flex justify-between items-center mb-5">
+              <button
+                onClick={() => setSelectedGroupForDrawer(null)}
+                className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-white rounded-full bg-white/5 hover:bg-zinc-800 transition-colors z-10 border-none cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="flex items-start justify-between pb-3 border-b border-zinc-800/60 pr-10">
                 <div>
-                  <h3 className="text-lg font-bold uppercase">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#00E96E]/20 text-[#00E96E]">
+                      {selectedGroupForDrawer.direction}
+                    </span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-white/10 text-zinc-300">
+                      {selectedGroupForDrawer.level}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-black text-white">{selectedGroupForDrawer.name}</h3>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto scrollbar-none pt-4 pb-6 space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px]">
+                    <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider block mb-1">Расписание</span>
+                    <span className="text-xs font-bold text-white flex items-center gap-1">
+                      <Clock size={13} className="text-[#00E96E]" /> {selectedGroupForDrawer.schedule}
+                    </span>
+                  </div>
+
+                  <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px]">
+                    <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider block mb-1">Зал</span>
+                    <span className="text-xs font-bold text-white flex items-center gap-1">
+                      <Building2 size={13} className="text-[#00E96E]" /> {selectedGroupForDrawer.hall}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px]">
+                    <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider block mb-1">Преподаватель</span>
+                    <span className="text-xs font-bold text-white">{selectedGroupForDrawer.coach}</span>
+                  </div>
+
+                  <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px]">
+                    <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider block mb-1">Заполненность</span>
+                    <span className="text-xs font-mono font-bold text-white">
+                      <span className="text-[#00E96E] font-black">{selectedGroupForDrawer.enrolled}</span> из {selectedGroupForDrawer.capacity} мест
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex gap-2.5 pt-2">
+                  <Button
+                    onClick={() => handleEditGroup(selectedGroupForDrawer)}
+                    style={{ backgroundColor: '#00E96E', color: '#362486' }}
+                    className="flex-1 h-14 rounded-full font-black text-xs uppercase tracking-wider shadow-md hover:opacity-90 transition-all border-none cursor-pointer"
+                  >
+                    <Pencil size={15} className="mr-1.5" />
+                    Редактировать
+                  </Button>
+
+                  {currentRole === 'owner' && (
+                    <Button
+                      onClick={() => handleDeleteGroup(selectedGroupForDrawer.id, selectedGroupForDrawer.name)}
+                      className="h-14 px-5 rounded-full bg-red-500/15 hover:bg-red-500 hover:text-white text-red-400 font-bold text-xs uppercase transition-all border-none cursor-pointer"
+                    >
+                      <Trash2 size={16} />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ─── ШТОРКА 2: СОЗДАНИЕ / РЕДАКТИРОВАНИЕ (BOTTOM SHEET DRAWER) ─── */}
+      <AnimatePresence>
+        {isDrawerOpen && (
+          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsDrawerOpen(false)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-md cursor-pointer"
+            />
+
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 26, stiffness: 240 }}
+              className="relative z-10 w-full max-w-lg bg-[#18181b] border-t border-x border-zinc-800 rounded-t-[42px] p-6 pt-7 pb-8 shadow-2xl flex flex-col text-white max-h-[88dvh]"
+            >
+              <div className="flex justify-between items-center pb-3 border-b border-zinc-800/60 pr-8">
+                <div>
+                  <h3 className="text-lg font-black uppercase tracking-wider">
                     {editingId !== null 
                       ? (activeTab === 'directions' 
                           ? 'Редактировать Направление' 
@@ -1283,23 +1373,23 @@ export function DirectionsAndGroupsManager() {
                               ? 'Новый Возрастной Диапазон'
                               : 'Новый Уровень Подготовки')}
                   </h3>
-                  <p className="text-xs text-zinc-400 mt-0.5">
-                    {editingId !== null ? 'Отредактируйте параметры записи' : 'Заполните параметры для внесения в систему'}
+                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mt-0.5">
+                    {editingId !== null ? 'Отредактируйте параметры' : 'Заполните параметры записи'}
                   </p>
                 </div>
                 <button 
-                  onClick={() => setIsModalOpen(false)}
-                  className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors cursor-pointer border-none outline-none text-white"
+                  onClick={() => setIsDrawerOpen(false)}
+                  className="p-2 text-zinc-400 hover:text-white rounded-full bg-white/5 hover:bg-zinc-800 transition-colors border-none cursor-pointer"
                 >
                   <X size={18} />
                 </button>
               </div>
 
-              <form onSubmit={handleCreate} className="space-y-4">
+              <form onSubmit={handleCreate} className="space-y-4 pt-4 flex-1 overflow-y-auto scrollbar-none pr-1">
                 {activeTab !== 'groups' && (
-                  <div>
-                    <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
-                      1. Название {
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">
+                      Название {
                         activeTab === 'directions' ? 'направления' : activeTab === 'ages' ? 'категории' : 'уровня'
                       }
                     </label>
@@ -1315,21 +1405,21 @@ export function DirectionsAndGroupsManager() {
                             ? "Например: Дети (4-7 лет)"
                             : "Например: Pro / Продвинутые"
                       }
-                      className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#00E96E] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
+                      className="w-full h-12 rounded-2xl px-4 font-bold text-sm bg-black/40 border border-zinc-800 text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#00E96E] transition-colors"
                     />
                   </div>
                 )}
 
                 {activeTab === 'directions' && (
                   <>
-                    <div>
-                      <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
-                        2. Выбор категории / Дисциплины
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">
+                        Выбор категории / Дисциплины
                       </label>
                       <select
                         value={formCategory}
                         onChange={(e) => setFormCategory(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#00E96E] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-2xl px-4 font-bold text-xs bg-black/40 border border-zinc-800 text-white focus:outline-none focus:border-[#00E96E] transition-colors cursor-pointer"
                       >
                         {CATEGORIES_LIST.map((cat) => (
                           <option key={cat} value={cat} className="bg-zinc-900 text-white">{cat}</option>
@@ -1337,14 +1427,14 @@ export function DirectionsAndGroupsManager() {
                       </select>
                     </div>
 
-                    <div>
-                      <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
-                        3. Назначенный тренер
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">
+                        Назначенный тренер
                       </label>
                       <select
                         value={formCoach}
                         onChange={(e) => setFormCoach(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#00E96E] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-2xl px-4 font-bold text-xs bg-black/40 border border-zinc-800 text-white focus:outline-none focus:border-[#00E96E] transition-colors cursor-pointer"
                       >
                         {COACHES_LIST.map((coach) => (
                           <option key={coach} value={coach} className="bg-zinc-900 text-white">{coach}</option>
@@ -1356,14 +1446,14 @@ export function DirectionsAndGroupsManager() {
 
                 {activeTab === 'groups' && (
                   <>
-                    <div>
-                      <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
-                        1. Направление
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">
+                        Направление
                       </label>
                       <select
                         value={formDirection}
                         onChange={(e) => setFormDirection(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#00E96E] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-2xl px-4 font-bold text-xs bg-black/40 border border-zinc-800 text-white focus:outline-none focus:border-[#00E96E] transition-colors cursor-pointer"
                       >
                         {directions.map((dir) => (
                           <option key={dir.id} value={dir.name} className="bg-zinc-900 text-white">{dir.name}</option>
@@ -1371,48 +1461,50 @@ export function DirectionsAndGroupsManager() {
                       </select>
                     </div>
 
-                    <div>
-                      <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
-                        2. Уровень подготовки
-                      </label>
-                      <select
-                        value={formLevel}
-                        onChange={(e) => setFormLevel(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#00E96E] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
-                      >
-                        {levels.map((lvl) => (
-                          <option key={lvl.id} value={lvl.tag || lvl.name} className="bg-zinc-900 text-white">
-                            {lvl.name} ({lvl.tag})
-                          </option>
-                        ))}
-                      </select>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">
+                          Уровень
+                        </label>
+                        <select
+                          value={formLevel}
+                          onChange={(e) => setFormLevel(e.target.value)}
+                          className="w-full h-12 rounded-2xl px-4 font-bold text-xs bg-black/40 border border-zinc-800 text-white focus:outline-none focus:border-[#00E96E] transition-colors cursor-pointer"
+                        >
+                          {levels.map((lvl) => (
+                            <option key={lvl.id} value={lvl.tag || lvl.name} className="bg-zinc-900 text-white">
+                              {lvl.name} ({lvl.tag})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">
+                          Возраст
+                        </label>
+                        <select
+                          value={formAge}
+                          onChange={(e) => setFormAge(e.target.value)}
+                          className="w-full h-12 rounded-2xl px-4 font-bold text-xs bg-black/40 border border-zinc-800 text-white focus:outline-none focus:border-[#00E96E] transition-colors cursor-pointer"
+                        >
+                          {ages.map((a) => (
+                            <option key={a.id} value={a.range || a.name} className="bg-zinc-900 text-white">
+                              {a.name} ({a.range})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
 
-                    <div>
-                      <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
-                        3. Возрастная категория
-                      </label>
-                      <select
-                        value={formAge}
-                        onChange={(e) => setFormAge(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#00E96E] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
-                      >
-                        {ages.map((a) => (
-                          <option key={a.id} value={a.range || a.name} className="bg-zinc-900 text-white">
-                            {a.name} ({a.range})
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
-                        4. Назначенный тренер
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">
+                        Назначенный тренер
                       </label>
                       <select
                         value={formCoach}
                         onChange={(e) => setFormCoach(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#00E96E] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
+                        className="w-full h-12 rounded-2xl px-4 font-bold text-xs bg-black/40 border border-zinc-800 text-white focus:outline-none focus:border-[#00E96E] transition-colors cursor-pointer"
                       >
                         {COACHES_LIST.map((coach) => (
                           <option key={coach} value={coach} className="bg-zinc-900 text-white">{coach}</option>
@@ -1420,20 +1512,20 @@ export function DirectionsAndGroupsManager() {
                       </select>
                     </div>
 
-                    <div className="space-y-3 p-3.5 rounded-[20px] bg-zinc-800/50 border border-zinc-700/60">
+                    <div className="space-y-3 p-4 rounded-[24px] bg-black/40 border border-zinc-800">
                       <div className="flex justify-between items-center">
-                        <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider block">
-                          5. Расписание
+                        <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">
+                          Расписание
                         </label>
-                        <label className="flex items-center gap-2 cursor-pointer text-xs text-zinc-300 font-medium select-none">
+                        <label className="flex items-center gap-2 cursor-pointer text-xs text-zinc-300 font-bold select-none">
                           <input
                             type="checkbox"
                             checked={isCustomTimes}
                             onChange={(e) => setIsCustomTimes(e.target.checked)}
                             className="sr-only peer"
                           />
-                          <div className="w-8 h-4 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#00E96E] relative" />
-                          <span className="text-[11px]">Разное время по дням</span>
+                          <div className="w-8 h-4 bg-zinc-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#00E96E] relative" />
+                          <span className="text-[10px] uppercase">Разное время</span>
                         </label>
                       </div>
 
@@ -1446,7 +1538,7 @@ export function DirectionsAndGroupsManager() {
                               type="button"
                               onClick={() => toggleDaySelect(day)}
                               style={selected ? { backgroundColor: '#00E96E', color: '#362486' } : {}}
-                              className={`flex-1 min-w-[36px] h-10 rounded-full font-bold text-xs transition-all border-none outline-none cursor-pointer flex items-center justify-center ${
+                              className={`flex-1 min-w-[36px] h-10 rounded-full font-black text-xs transition-all border-none outline-none cursor-pointer flex items-center justify-center ${
                                 selected ? 'shadow-md scale-105' : 'bg-zinc-800 text-zinc-400 hover:text-white'
                               }`}
                             >
@@ -1462,24 +1554,24 @@ export function DirectionsAndGroupsManager() {
                             type="text"
                             value={formTime}
                             onChange={(e) => setFormTime(e.target.value)}
-                            placeholder="Время по умолчанию (например: 19:00)"
-                            className="w-full h-11 rounded-[14px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#00E96E] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
+                            placeholder="Время (например: 19:00)"
+                            className="w-full h-11 rounded-2xl px-4 font-bold text-xs bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#00E96E] transition-colors font-mono"
                           />
-                          <Clock size={16} className="absolute right-4 top-3.5 text-zinc-400 pointer-events-none" />
+                          <Clock size={16} className="absolute right-4 top-3 text-zinc-400 pointer-events-none" />
                         </div>
                       ) : (
                         <div className="space-y-2 pt-1">
                           {formDays.map((day) => (
-                            <div key={day} className="flex items-center gap-3 p-2 rounded-[14px] bg-zinc-900/90 border border-zinc-700/60">
-                              <span className="w-10 h-8 rounded-full bg-zinc-800 text-white font-bold text-xs flex items-center justify-center shrink-0 border border-zinc-700">
+                            <div key={day} className="flex items-center gap-3 p-2 rounded-2xl bg-zinc-900 border border-zinc-800">
+                              <span className="w-10 h-8 rounded-full bg-zinc-800 text-white font-black text-xs flex items-center justify-center shrink-0">
                                 {day}
                               </span>
                               <input
                                 type="text"
                                 value={formDayTimes[day] || formTime || '19:00'}
                                 onChange={(e) => setFormDayTimes({ ...formDayTimes, [day]: e.target.value })}
-                                placeholder="Время (например: 19:00)"
-                                className="flex-1 h-8 rounded-[10px] px-3 font-medium focus:outline-none focus:ring-1 focus:ring-[#00E96E] text-xs bg-zinc-800/90 border border-white/10 text-white transition-colors"
+                                placeholder="19:00"
+                                className="flex-1 h-8 rounded-xl px-3 font-mono font-bold text-xs bg-black/40 border border-zinc-800 text-white focus:outline-none focus:border-[#00E96E]"
                               />
                             </div>
                           ))}
@@ -1487,40 +1579,42 @@ export function DirectionsAndGroupsManager() {
                       )}
                     </div>
 
-                    <div>
-                      <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
-                        6. Зал проведения
-                      </label>
-                      <select
-                        value={formHall}
-                        onChange={(e) => setFormHall(e.target.value)}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#00E96E] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors cursor-pointer"
-                      >
-                        {HALLS_LIST.map((h) => (
-                          <option key={h} value={h} className="bg-zinc-900 text-white">{h}</option>
-                        ))}
-                      </select>
-                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">
+                          Зал
+                        </label>
+                        <select
+                          value={formHall}
+                          onChange={(e) => setFormHall(e.target.value)}
+                          className="w-full h-12 rounded-2xl px-4 font-bold text-xs bg-black/40 border border-zinc-800 text-white focus:outline-none focus:border-[#00E96E] transition-colors cursor-pointer"
+                        >
+                          {HALLS_LIST.map((h) => (
+                            <option key={h} value={h} className="bg-zinc-900 text-white">{h}</option>
+                          ))}
+                        </select>
+                      </div>
 
-                    <div>
-                      <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
-                        7. Максимальное количество мест в группе
-                      </label>
-                      <input
-                        type="number"
-                        min={1}
-                        max={50}
-                        value={formCapacity}
-                        onChange={(e) => setFormCapacity(Number(e.target.value))}
-                        className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#00E96E] text-sm bg-zinc-800/80 border border-white/10 text-white transition-colors"
-                      />
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">
+                          Мест в группе
+                        </label>
+                        <input
+                          type="number"
+                          min={1}
+                          max={50}
+                          value={formCapacity}
+                          onChange={(e) => setFormCapacity(Number(e.target.value))}
+                          className="w-full h-12 rounded-2xl px-4 font-black font-mono text-sm bg-black/40 border border-zinc-800 text-white focus:outline-none focus:border-[#00E96E]"
+                        />
+                      </div>
                     </div>
                   </>
                 )}
 
                 {activeTab === 'ages' && (
-                  <div>
-                    <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">
                       Возрастной диапазон
                     </label>
                     <input
@@ -1528,46 +1622,46 @@ export function DirectionsAndGroupsManager() {
                       value={formRange}
                       onChange={(e) => setFormRange(e.target.value)}
                       placeholder="Например: 12-16 лет"
-                      className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#00E96E] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
+                      className="w-full h-12 rounded-2xl px-4 font-bold text-sm bg-black/40 border border-zinc-800 text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#00E96E]"
                     />
                   </div>
                 )}
 
                 {activeTab === 'levels' && (
-                  <div>
-                    <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
-                      Метка / Краткое обозначение
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">
+                      Метка / Обозначение
                     </label>
                     <input
                       type="text"
                       value={formLevel}
                       onChange={(e) => setFormLevel(e.target.value)}
                       placeholder="Например: Продвинутые / PRO"
-                      className="w-full h-12 rounded-[16px] px-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#00E96E] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors"
+                      className="w-full h-12 rounded-2xl px-4 font-bold text-sm bg-black/40 border border-zinc-800 text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#00E96E]"
                     />
                   </div>
                 )}
 
                 {activeTab !== 'groups' && (
-                  <div>
-                    <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">
                       Описание / Примечание
                     </label>
                     <textarea
                       rows={2}
                       value={formDescription}
                       onChange={(e) => setFormDescription(e.target.value)}
-                      placeholder="Короткое описание для базы и мобильного приложения..."
-                      className="w-full rounded-[16px] p-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#00E96E] text-sm bg-zinc-800/80 border border-white/10 text-white placeholder:text-zinc-500 transition-colors resize-none"
+                      placeholder="Короткое описание..."
+                      className="w-full rounded-2xl p-4 font-medium text-xs bg-black/40 border border-zinc-800 text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#00E96E] resize-none"
                     />
                   </div>
                 )}
 
-                <div className="pt-2">
+                <div className="pt-3">
                   <button
                     type="submit"
                     style={{ backgroundColor: '#00E96E', color: '#362486' }}
-                    className="w-full h-14 font-black text-sm uppercase rounded-full flex items-center justify-center gap-2 shadow-lg hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer border-none outline-none"
+                    className="w-full h-14 font-black text-xs uppercase tracking-wider rounded-full flex items-center justify-center gap-2 shadow-lg hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer border-none outline-none"
                   >
                     <Check size={18} strokeWidth={3} />
                     {editingId !== null
@@ -1575,10 +1669,10 @@ export function DirectionsAndGroupsManager() {
                       : (activeTab === 'directions' 
                           ? 'СОХРАНИТЬ НАПРАВЛЕНИЕ'
                           : activeTab === 'groups'
-                            ? 'СОХРАНИТЬ И ДОБАВИТЬ В РАСПИСАНИЕ'
+                            ? 'ДОБАВИТЬ В РАСПИСАНИЕ'
                             : activeTab === 'ages'
-                              ? 'СОХРАНИТЬ ВОЗРАСТНУЮ КАТЕГОРИЮ'
-                              : 'СОХРАНИТЬ УРОВЕНЬ ПОДГОТОВКИ')}
+                              ? 'СОХРАНИТЬ КАТЕГОРИЮ'
+                              : 'СОХРАНИТЬ УРОВЕНЬ')}
                   </button>
                 </div>
               </form>

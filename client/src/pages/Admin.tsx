@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { supabase } from '../lib/supabase';
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { 
   ArrowLeft, 
   Loader2, 
@@ -120,6 +121,19 @@ export default function Admin() {
   const [viewMode, setViewMode] = useState<'day' | 'week' | 'month'>('day');
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [pickerCurrentDate, setPickerCurrentDate] = useState<Date>(new Date());
+
+  // Шторка создания нового занятия
+  const [isCreateClassDrawerOpen, setIsCreateClassDrawerOpen] = useState(false);
+  const [isCreatingClass, setIsCreatingClass] = useState(false);
+  const [newClassData, setNewClassData] = useState({
+    title: '',
+    teacher_name: TEACHERS[0],
+    branch: 'Филиал: Невский',
+    hall: 'Зал 1 (Main Glass)',
+    time: '19:00',
+    max_students: 15,
+    type: 'Групповая'
+  });
 
   const branchHallsMap: Record<string, string[]> = {
     'Филиал: Невский': ['Зал 1 (Main Glass)', 'Зал 2 (Light Studio)'],
@@ -491,6 +505,68 @@ export default function Admin() {
     }
   };
 
+  const handleCreateClass = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newClassData.title.trim()) {
+      toast({ variant: "destructive", title: "Ошибка", description: "Укажите название направления или урока" });
+      return;
+    }
+
+    setIsCreatingClass(true);
+    try {
+      const [hours, minutes] = newClassData.time.split(':').map(Number);
+      const startTime = new Date(selectedDate);
+      startTime.setHours(hours || 19, minutes || 0, 0, 0);
+
+      const endTime = new Date(startTime);
+      endTime.setHours(endTime.getHours() + 1);
+
+      const { data, error } = await supabase
+        .from('classes')
+        .insert([{
+          title: newClassData.title.trim(),
+          teacher_name: newClassData.teacher_name,
+          branch: newClassData.branch,
+          hall: newClassData.hall,
+          start_time: startTime.toISOString(),
+          end_time: endTime.toISOString(),
+          max_students: Number(newClassData.max_students) || 15,
+          type: newClassData.type,
+          status: 'active'
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      toast({
+        title: "Занятие создано!",
+        description: `Урок «${newClassData.title}» добавлен в расписание.`
+      });
+
+      setIsCreateClassDrawerOpen(false);
+      setNewClassData({
+        title: '',
+        teacher_name: TEACHERS[0],
+        branch: 'Филиал: Невский',
+        hall: 'Зал 1 (Main Glass)',
+        time: '19:00',
+        max_students: 15,
+        type: 'Групповая'
+      });
+
+      await fetchClassesData();
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Ошибка создания",
+        description: err.message || "Не удалось добавить урок в расписание"
+      });
+    } finally {
+      setIsCreatingClass(false);
+    }
+  };
+
   const isToday = (dateString: string) => {
     const d = new Date(dateString);
     const today = new Date();
@@ -703,8 +779,8 @@ export default function Admin() {
                 </div>
               </div>
 
-              {/* 2. Баннер Финансовой сводки (#005C5E) / Операционных задач (#8E2A2B) */}
-              <div className="relative h-[184px] w-full overflow-hidden rounded-[42px] select-none shadow-lg">
+              {/* 2. Баннер Финансовой сводки (#009175 / #EDFF68) / Операционных задач (#602BC3 / #F974DC) */}
+              <div className="relative h-[184px] w-full overflow-hidden rounded-[42px] select-none shadow-md">
                 <AnimatePresence initial={false} mode="wait">
                   {activeSlide === 0 ? (
                     <motion.div
@@ -720,35 +796,35 @@ export default function Admin() {
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.25 }}
                       onClick={() => setLocation('/admin/finance')}
-                      style={{ backgroundColor: '#005C5E', color: '#FFFFFF' }}
+                      style={{ backgroundColor: '#009175', color: '#EDFF68' }}
                       className="absolute inset-0 p-6 flex flex-col justify-between cursor-grab active:cursor-grabbing"
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">ФИНАНСОВАЯ СВОДКА</span>
-                          <h3 className="text-sm font-bold text-white mt-0.5">Показатели за сегодня</h3>
+                          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#EDFF68]/70">ФИНАНСОВАЯ СВОДКА</span>
+                          <h3 className="text-sm font-bold text-[#EDFF68] mt-0.5">Показатели за сегодня</h3>
                         </div>
-                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white">
+                        <div className="w-10 h-10 rounded-full bg-[#EDFF68]/20 flex items-center justify-center text-[#EDFF68]">
                           <Award size={20} />
                         </div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="flex flex-col gap-0.5">
-                          <span className="text-[10px] font-black uppercase tracking-wider text-white/70">ВЫРУЧКА</span>
-                          <span className="text-3xl font-black text-white font-mono">₽14 500</span>
+                          <span className="text-[10px] font-black uppercase tracking-wider text-[#EDFF68]/70">ВЫРУЧКА</span>
+                          <span className="text-3xl font-black text-[#EDFF68] font-mono">₽14 500</span>
                         </div>
                         <div className="flex flex-col gap-0.5">
-                          <span className="text-[10px] font-black uppercase tracking-wider text-white/70">ПРОДАЖИ</span>
+                          <span className="text-[10px] font-black uppercase tracking-wider text-[#EDFF68]/70">ПРОДАЖИ</span>
                           <div className="flex items-baseline gap-1">
-                            <span className="text-3xl font-black text-white font-mono">3</span>
-                            <span className="text-sm font-bold text-white/70">абон.</span>
+                            <span className="text-3xl font-black text-[#EDFF68] font-mono">3</span>
+                            <span className="text-sm font-bold text-[#EDFF68]/70">абон.</span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex justify-between items-center pt-2 border-t border-white/15 text-[11px] font-bold text-white/80 uppercase tracking-wide">
-                        <span>Средний чек: <span className="text-white font-mono">₽4 833</span></span>
+                      <div className="flex justify-between items-center pt-2 border-t border-[#EDFF68]/15 text-[11px] font-bold text-[#EDFF68]/80 uppercase tracking-wide">
+                        <span>Средний чек: <span className="text-[#EDFF68] font-mono">₽4 833</span></span>
                         <span>+12% к прошлой пятнице</span>
                       </div>
                     </motion.div>
@@ -766,43 +842,43 @@ export default function Admin() {
                       exit={{ opacity: 0, x: 20 }}
                       transition={{ duration: 0.25 }}
                       onClick={() => setLocation('/admin/notifications')}
-                      style={{ backgroundColor: '#8E2A2B', color: '#FFFFFF' }}
+                      style={{ backgroundColor: '#602BC3', color: '#F974DC' }}
                       className="absolute inset-0 p-6 flex flex-col justify-between cursor-grab active:cursor-grabbing"
                     >
                       <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">ОПЕРАЦИОННЫЕ ЗАДАЧИ</span>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-white/70">Сегодня</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#F974DC]/70">ОПЕРАЦИОННЫЕ ЗАДАЧИ</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#F974DC]/70">Сегодня</span>
                       </div>
                       
                       <div className="flex flex-col gap-2">
-                        <div className="bg-white/15 rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between backdrop-blur-sm shadow-xs">
+                        <div className="bg-[#F974DC]/15 rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between backdrop-blur-sm shadow-xs">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white">
+                            <div className="w-8 h-8 rounded-full bg-[#F974DC]/20 flex items-center justify-center text-[#F974DC]">
                               <AlertTriangle size={16} />
                             </div>
                             <div className="flex flex-col">
                               <span className="text-[11px] font-bold text-white leading-tight">Заканчиваются абонементы</span>
-                              <span className="text-[10px] font-medium text-white/80">Осталось 1 или меньше занятий</span>
+                              <span className="text-[10px] font-medium text-[#F974DC]/80">Осталось 1 или меньше занятий</span>
                             </div>
                           </div>
-                          <span className="bg-white text-[#8E2A2B] text-[11px] font-black px-3 py-1 rounded-full">{expiringSubsCount}</span>
+                          <span className="bg-[#F974DC] text-[#602BC3] text-[11px] font-black px-3 py-1 rounded-full">{expiringSubsCount}</span>
                         </div>
 
-                        <div className="bg-white/15 rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between backdrop-blur-sm shadow-xs">
+                        <div className="bg-[#F974DC]/15 rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between backdrop-blur-sm shadow-xs">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white">
+                            <div className="w-8 h-8 rounded-full bg-[#F974DC]/20 flex items-center justify-center text-[#F974DC]">
                               <User size={16} />
                             </div>
                             <div className="flex flex-col">
                               <span className="text-[11px] font-bold text-white leading-tight">Должники</span>
-                              <span className="text-[10px] font-medium text-white/80">Нужно продлить абонемент</span>
+                              <span className="text-[10px] font-medium text-[#F974DC]/80">Нужно продлить абонемент</span>
                             </div>
                           </div>
-                          <span className="bg-white text-[#8E2A2B] text-[11px] font-black px-3 py-1 rounded-full">{debtorsCount}</span>
+                          <span className="bg-[#F974DC] text-[#602BC3] text-[11px] font-black px-3 py-1 rounded-full">{debtorsCount}</span>
                         </div>
                       </div>
 
-                      <div className="pt-1 text-[10px] font-bold text-white/70 uppercase tracking-wider text-right">
+                      <div className="pt-1 text-[10px] font-bold text-[#F974DC]/70 uppercase tracking-wider text-right">
                         Смахните для просмотра финансов →
                       </div>
                     </motion.div>
@@ -814,21 +890,23 @@ export default function Admin() {
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); setActiveSlide(0); }}
+                    style={{ backgroundColor: activeSlide === 0 ? '#EDFF68' : 'rgba(237, 255, 104, 0.4)' }}
                     className={`h-1.5 rounded-full transition-all duration-300 border-none p-0 cursor-pointer ${
-                      activeSlide === 0 ? 'w-5 bg-white' : 'w-1.5 bg-white/40'
+                      activeSlide === 0 ? 'w-5' : 'w-1.5'
                     }`}
                   />
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); setActiveSlide(1); }}
+                    style={{ backgroundColor: activeSlide === 1 ? '#F974DC' : 'rgba(249, 116, 220, 0.4)' }}
                     className={`h-1.5 rounded-full transition-all duration-300 border-none p-0 cursor-pointer ${
-                      activeSlide === 1 ? 'w-5 bg-white' : 'w-1.5 bg-white/40'
+                      activeSlide === 1 ? 'w-5' : 'w-1.5'
                     }`}
                   />
                 </div>
               </div>
 
-              {/* 3. Баннер быстрых действий (#CCFF00 Lime) */}
+              {/* 3. Баннер быстрых действий (#CCFF00 Lime) - без изменений */}
               <div 
                 style={{ backgroundColor: '#CCFF00', color: '#000000' }}
                 className="rounded-[42px] p-5 shadow-md flex flex-col"
@@ -890,15 +968,15 @@ export default function Admin() {
                 </div>
               </div>           
       
-              {/* 4. Баннер: Активные записи (#B75344 Burnt Sienna) */}
+              {/* 4. Баннер: Активные записи (Бирюзовый #00BCC8 + Лайм #D0FF00) */}
               <div
-                style={{ backgroundColor: '#B75344', color: '#FFFFFF' }}
+                style={{ backgroundColor: '#00BCC8', color: '#D0FF00' }}
                 className="p-5 md:p-6 shadow-md overflow-visible rounded-[42px] relative"
               >
                 <div className="flex justify-between items-center mb-4 relative z-20">
                   <div>
-                    <span className="text-white/70 text-[10px] font-black uppercase tracking-wider">Активные записи</span>
-                    <h3 className="text-white text-base font-black uppercase tracking-wider mt-0.5">
+                    <span className="text-[#D0FF00]/70 text-[10px] font-black uppercase tracking-wider">Активные записи</span>
+                    <h3 className="text-[#D0FF00] text-base font-black uppercase tracking-wider mt-0.5">
                       {homeSelectedBranch === 'Все филиалы' ? 'Все филиалы' : homeSelectedBranch.replace('Филиал: ', '')}
                     </h3>
                   </div>
@@ -912,11 +990,11 @@ export default function Admin() {
                           e.stopPropagation();
                           setIsHomeBookingsFilterOpen(!isHomeBookingsFilterOpen);
                         }}
-                        className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer border-none shadow-none relative"
+                        className="w-9 h-9 rounded-full bg-[#D0FF00]/20 hover:bg-[#D0FF00]/30 text-[#D0FF00] flex items-center justify-center transition-all cursor-pointer border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={16} className="stroke-[2.5]" />
                         {(homeSelectedBranch !== 'Все филиалы' || homeSelectedHall !== 'Все залы') && (
-                          <span className="absolute top-0 right-0 w-2.5 h-2.5 border-2 border-[#B75344] rounded-full bg-white shrink-0" />
+                          <span className="absolute top-0 right-0 w-2.5 h-2.5 border-2 border-[#00BCC8] rounded-full bg-[#D0FF00] shrink-0" />
                         )}
                       </button>
 
@@ -952,7 +1030,7 @@ export default function Admin() {
                             <button
                               type="button"
                               onClick={() => setIsHomeBookingsFilterOpen(false)}
-                              style={{ backgroundColor: '#B75344', color: '#FFFFFF' }}
+                              style={{ backgroundColor: '#00BCC8', color: '#D0FF00' }}
                               className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
@@ -972,7 +1050,7 @@ export default function Admin() {
                       )}
                     </div>
 
-                    <span className="text-xs font-black px-3 py-1.5 rounded-full uppercase tracking-wider font-mono bg-white text-[#B75344] shadow-xs">
+                    <span className="text-xs font-black px-3 py-1.5 rounded-full uppercase tracking-wider font-mono bg-[#D0FF00] text-[#00BCC8] shadow-xs">
                       {todayMainBookings.length} ЗАПИСЕЙ
                     </span>
                   </div>
@@ -986,17 +1064,17 @@ export default function Admin() {
                       return (
                         <div 
                           key={booking.id}
-                          className="w-full bg-white/15 backdrop-blur-sm rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between gap-2 shadow-xs"
+                          className="w-full bg-[#D0FF00]/15 backdrop-blur-sm rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between gap-2 shadow-xs"
                         >
                           <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${
-                            booking.status === 'completed' ? 'bg-emerald-300' :
-                            booking.status === 'missed' ? 'bg-red-300' : 'bg-amber-300'
+                            booking.status === 'completed' ? 'bg-[#D0FF00]' :
+                            booking.status === 'missed' ? 'bg-rose-400' : 'bg-amber-300'
                           }`} />
 
                           <div className="space-y-0.5 min-w-0 flex-1 text-white">
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-xs font-black text-white font-mono tracking-wide">{classTime}</span>
-                              <span className="text-white/60 font-medium">•</span>
+                              <span className="text-xs font-black text-[#D0FF00] font-mono tracking-wide">{classTime}</span>
+                              <span className="text-[#D0FF00]/60 font-medium">•</span>
                               <span className="text-xs font-bold text-white/90 truncate max-w-[130px] tracking-wide">{booking.classes.title}</span>
                             </div>
                             
@@ -1011,7 +1089,7 @@ export default function Admin() {
                                 <Button
                                   size="icon"
                                   onClick={() => handleCheckIn(booking.id, booking.user_id)}
-                                  className="w-8 h-8 rounded-full bg-white text-emerald-700 hover:bg-white/90 transition-all flex items-center justify-center focus:outline-none border-none"
+                                  className="w-8 h-8 rounded-full bg-[#D0FF00] text-[#00BCC8] hover:bg-[#D0FF00]/90 transition-all flex items-center justify-center focus:outline-none border-none"
                                   title="Отметить визит"
                                 >
                                   <CheckCircle2 className="w-4.5 h-4.5 stroke-[2.5]" />
@@ -1030,7 +1108,7 @@ export default function Admin() {
                               <div className="flex items-center gap-1.5">
                                 <span className={`text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${
                                   booking.status === 'completed' 
-                                    ? 'bg-white/25 text-white' 
+                                    ? 'bg-[#D0FF00]/25 text-[#D0FF00]' 
                                     : 'bg-black/30 text-white'
                                 }`}>
                                   {booking.status === 'completed' ? '✓' : '✖'}
@@ -1038,7 +1116,7 @@ export default function Admin() {
 
                                 <button
                                   onClick={() => handleUndoStatus(booking.id, booking.status, booking.user_id)}
-                                  className="text-xs font-bold text-white/80 hover:text-white px-2 py-1 rounded-full transition-colors uppercase tracking-wider bg-white/10 hover:bg-white/20"
+                                  className="text-xs font-bold text-[#D0FF00]/80 hover:text-[#D0FF00] px-2 py-1 rounded-full transition-colors uppercase tracking-wider bg-[#D0FF00]/10 hover:bg-[#D0FF00]/20"
                                 >
                                   Сбросить
                                 </button>
@@ -1049,25 +1127,25 @@ export default function Admin() {
                       );
                     })
                   ) : (
-                    <div className="w-full bg-white/15 py-4 px-6 rounded-full text-center flex items-center justify-center">
-                      <span className="text-white/80 font-bold text-xs uppercase tracking-wider">Нет активных записей на сегодня</span>
+                    <div className="w-full bg-[#D0FF00]/15 py-4 px-6 rounded-full text-center flex items-center justify-center">
+                      <span className="text-[#D0FF00]/90 font-bold text-xs uppercase tracking-wider">Нет активных записей на сегодня</span>
                     </div>
                   )}
 
                   {todayWaitingBookings.length > 0 && (
-                    <div className="mt-4 pt-4 space-y-2 border-t border-white/15">
+                    <div className="mt-4 pt-4 space-y-2 border-t border-[#D0FF00]/15">
                       <h4 className="text-xs font-bold text-amber-200 uppercase tracking-widest px-1">Очередь ({todayWaitingBookings.length})</h4>
                       {todayWaitingBookings.map((booking) => {
                         const classTime = new Date(booking.classes.start_time).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
                         return (
                           <div 
                             key={booking.id}
-                            className="w-full bg-white/15 p-2 pl-4 pr-3 rounded-full flex items-center justify-between gap-2 shadow-xs"
+                            className="w-full bg-[#D0FF00]/15 p-2 pl-4 pr-3 rounded-full flex items-center justify-between gap-2 shadow-xs"
                           >
                             <div className="space-y-0.5 min-w-0 flex-1 text-white">
                               <div className="flex items-center gap-1 flex-wrap">
-                                <span className="text-xs font-black text-white font-mono tracking-wide">{classTime}</span>
-                                <span className="text-white/60 font-medium">•</span>
+                                <span className="text-xs font-black text-[#D0FF00] font-mono tracking-wide">{classTime}</span>
+                                <span className="text-[#D0FF00]/60 font-medium">•</span>
                                 <span className="text-xs font-bold text-white/90 truncate max-w-[130px] tracking-wide">{booking.classes.title}</span>
                               </div>
                               <h4 className="text-xs font-bold text-white truncate">{booking.profiles.full_name}</h4>
@@ -1075,7 +1153,7 @@ export default function Admin() {
                             <Button
                               size="sm"
                               onClick={() => handlePromoteFromWaiting(booking.id, booking.class_id)}
-                              className="bg-white hover:bg-white/90 text-[#B75344] text-xs font-bold uppercase tracking-wider px-3 py-1.5 h-auto rounded-full transition-colors shrink-0 border-none"
+                              className="bg-[#D0FF00] hover:bg-[#D0FF00]/90 text-[#00BCC8] text-xs font-black uppercase tracking-wider px-3 py-1.5 h-auto rounded-full transition-colors shrink-0 border-none"
                             >
                               В основу
                             </Button>
@@ -1224,9 +1302,9 @@ export default function Admin() {
                                     onClick={() => { 
                                       setSelectedBranch('Все филиалы'); 
                                       setSelectedHall('Все залы'); 
-                                      setSelectedDirection('Все направления');
-                                      setSelectedAge('Все возраста');
-                                      setSelectedType('Все типы');
+                                      setSelectedDirection('Все направления'); 
+                                      setSelectedAge('Все возраста'); 
+                                      setSelectedType('Все типы'); 
                                     }} 
                                     className="px-4 bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 text-xs font-bold rounded-full border-none hover:bg-black/10 dark:hover:bg-white/20 transition-all cursor-pointer outline-none"
                                   >
@@ -1371,9 +1449,9 @@ export default function Admin() {
                                     onClick={() => { 
                                       setSelectedBranch('Все филиалы'); 
                                       setSelectedHall('Все залы'); 
-                                      setSelectedDirection('Все направления');
-                                      setSelectedAge('Все возраста');
-                                      setSelectedType('Все типы');
+                                      setSelectedDirection('Все направления'); 
+                                      setSelectedAge('Все возраста'); 
+                                      setSelectedType('Все типы'); 
                                     }} 
                                     className="px-4 bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 text-xs font-bold rounded-full border-none hover:bg-black/10 dark:hover:bg-white/20 transition-all cursor-pointer outline-none"
                                   >
@@ -1575,7 +1653,7 @@ export default function Admin() {
 
       {view === 'classes' && (
         <FloatingActionButton
-          onClick={() => setLocation('/add-class')}
+          onClick={() => setIsCreateClassDrawerOpen(true)}
           ariaLabel="Создать урок"
           id="floating-create-class-btn"
           style={{ backgroundColor: '#00BCC8', color: '#D0FF00' }}
@@ -1583,10 +1661,10 @@ export default function Admin() {
         />
       )}
 
-      {/* CLASS OPTIONS BOTTOM SHEET */}
+      {/* ─── ШТОРКА 1: УПРАВЛЕНИЕ СУЩЕСТВУЮЩИМ ЗАНЯТИЕМ (BOTTOM SHEET DRAWER) ─── */}
       <AnimatePresence>
         {isClassSheetOpen && selectedClassForSheet && (
-          <>
+          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -1595,45 +1673,43 @@ export default function Admin() {
                 setIsClassSheetOpen(false);
                 setIsCancelConfirmOpen(false);
               }}
-              className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 cursor-pointer"
+              className="fixed inset-0 bg-black/70 backdrop-blur-md cursor-pointer"
             />
 
             <motion.div
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 26, stiffness: 220 }}
-              className="fixed bottom-0 left-0 right-0 bg-[#161618] border-t border-white/10 rounded-t-[28px] max-h-[85dvh] flex flex-col z-50 shadow-2xl overflow-hidden"
+              transition={{ type: "spring", damping: 26, stiffness: 240 }}
+              className="relative z-10 w-full max-w-lg bg-[#18181b] border-t border-x border-zinc-800 rounded-t-[42px] p-6 pt-7 pb-8 shadow-2xl flex flex-col text-white max-h-[85dvh]"
             >
-              <div className="w-12 h-1.5 bg-zinc-700/60 rounded-full mx-auto mt-3 mb-2 shrink-0" />
+              <button
+                onClick={() => {
+                  setIsClassSheetOpen(false);
+                  setIsCancelConfirmOpen(false);
+                }}
+                className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-white rounded-full bg-white/5 hover:bg-zinc-800 transition-colors z-10 border-none cursor-pointer"
+              >
+                <X size={18} />
+              </button>
 
-              <div className="px-6 pb-3 pt-1 border-b border-zinc-800/40 flex justify-between items-center shrink-0">
+              <div className="flex items-start justify-between pb-3 border-b border-zinc-800/60 pr-10">
                 <div>
-                  <h3 className="text-base font-medium text-white">{selectedClassForSheet.title}</h3>
+                  <h3 className="text-xl font-black text-white">{selectedClassForSheet.title}</h3>
                   <p className="text-xs font-bold text-[#00BCC8] tracking-wide uppercase mt-0.5">
-                    Управление уроком • Зал {selectedClassForSheet.id % 2 === 0 ? "2" : "1"}
+                    Управление уроком • {selectedClassForSheet.hall || 'Зал 1 (Main Glass)'}
                   </p>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full bg-zinc-900/80 hover:bg-zinc-800/60 text-stone-400 hover:text-white w-9 h-9 border border-zinc-800/40 transition-colors"
-                  onClick={() => {
-                    setIsClassSheetOpen(false);
-                    setIsCancelConfirmOpen(false);
-                  }}
-                >
-                  <X className="w-5 h-5" />
-                </Button>
               </div>
 
-              <div className="px-6 py-6 overflow-y-auto scrollbar-none pb-28 space-y-6 flex-1">
-                <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px] space-y-3 shadow-md">
+              <div className="flex-1 overflow-y-auto scrollbar-none pt-4 pb-8 pr-1 space-y-5">
+                {/* Быстрая продажа / запись */}
+                <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[24px] space-y-3 shadow-md">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold text-cyan-300 uppercase tracking-wider">
+                    <span className="text-xs font-black text-[#D0FF00] uppercase tracking-wider">
                       ⚡ Быстрая продажа / Запись
                     </span>
-                    <span className="text-[10px] font-mono text-zinc-400">
+                    <span className="text-[10px] font-mono text-zinc-400 font-bold">
                       Свободно: {(selectedClassForSheet.max_students || 15) - (bookings.filter(b => b.class_id === selectedClassForSheet.id && b.status !== 'cancelled').length)} мест
                     </span>
                   </div>
@@ -1645,7 +1721,7 @@ export default function Admin() {
                         setIsClassSheetOpen(false);
                         setIsSellMembershipOpen(true);
                       }}
-                      className="py-2.5 px-3 bg-zinc-900 hover:bg-zinc-850 border border-zinc-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      className="py-3 px-3 bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 text-white rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                       <span>🎟️ Продать абонемент</span>
                     </button>
@@ -1656,15 +1732,16 @@ export default function Admin() {
                         setIsClassSheetOpen(false);
                         setIsAddPaymentOpen(true);
                       }}
-                      className="py-2.5 px-3 bg-zinc-900 hover:bg-zinc-850 border border-zinc-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      className="py-3 px-3 bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 text-white rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                       <span>💳 Разовая оплата</span>
                     </button>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-stone-400 uppercase tracking-wider block">Изменить хореографа</label>
+                {/* Выбор педагога */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">Изменить хореографа</label>
                   <div className="relative">
                     <select
                       value={selectedClassForSheet.teacher_name}
@@ -1672,20 +1749,19 @@ export default function Admin() {
                         const newTeacher = e.target.value;
                         await handleUpdateTeacher(selectedClassForSheet.id, newTeacher);
                       }}
-                      className="w-full bg-[#1C1C1E] border border-zinc-800 rounded-2xl px-4 py-3.5 text-sm font-medium text-white appearance-none focus:outline-none focus:border-[#00BCC8] transition-colors cursor-pointer"
+                      className="w-full bg-[#1C1C1E] border border-zinc-800 rounded-2xl px-4 py-3.5 text-xs font-bold text-white appearance-none focus:outline-none focus:border-[#00BCC8] transition-colors cursor-pointer"
                     >
                       {TEACHERS.map(t => (
                         <option key={t} value={t}>{t}</option>
                       ))}
                     </select>
-                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-stone-400 pointer-events-none" />
+                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-zinc-400 pointer-events-none" />
                   </div>
                 </div>
 
-                <div className="border-t border-zinc-900/60 my-2"></div>
-
-                <div className="space-y-3">
-                  <label className="text-xs font-bold text-stone-400 uppercase tracking-wider block">Опасная зона</label>
+                {/* Опасная зона (Отмена) */}
+                <div className="space-y-2 pt-1">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">Статус занятия</label>
                   
                   {!isCancelConfirmOpen ? (
                     <Button
@@ -1706,13 +1782,13 @@ export default function Admin() {
                         <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
                         <div className="leading-tight">
                           <h4 className="text-xs font-bold uppercase tracking-wider">Подтверждение отмены</h4>
-                          <p className="text-xs font-bold text-red-200/80 mt-1 tracking-wide">
-                            Вы действительно хотите отменить занятие на сегодня? Статус изменится на «Отменено».
+                          <p className="text-xs font-medium text-red-200/80 mt-1 tracking-wide">
+                            Статус занятия изменится на «Отменено».
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex gap-2 pt-1.5">
+                      <div className="flex gap-2 pt-1">
                         <Button
                           size="sm"
                           onClick={async () => {
@@ -1720,7 +1796,7 @@ export default function Admin() {
                             setIsCancelConfirmOpen(false);
                             setIsClassSheetOpen(false);
                           }}
-                          className="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-4 py-2 rounded-full transition-colors shrink-0 shadow-md"
+                          className="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-4 py-2 rounded-full transition-colors shrink-0 shadow-md border-none"
                         >
                           Да, отменить
                         </Button>
@@ -1728,7 +1804,7 @@ export default function Admin() {
                           size="sm"
                           variant="ghost"
                           onClick={() => setIsCancelConfirmOpen(false)}
-                          className="bg-zinc-800 text-stone-300 hover:bg-zinc-700 text-xs font-bold px-4 py-2 rounded-full transition-colors shrink-0"
+                          className="bg-zinc-800 text-stone-300 hover:bg-zinc-700 text-xs font-bold px-4 py-2 rounded-full transition-colors shrink-0 border-none"
                         >
                           Назад
                         </Button>
@@ -1737,43 +1813,40 @@ export default function Admin() {
                   )}
                 </div>
 
-                <div className="border-t border-zinc-900/60 my-2"></div>
-
+                {/* Отзывы */}
                 {(() => {
                   const sheetClassReviews = reviews.filter(
                     r => r.classId === selectedClassForSheet.id || 
                     r.className?.toLowerCase() === selectedClassForSheet.title?.toLowerCase()
                   );
                   return (
-                    <div className="space-y-3">
-                      <label className="text-xs font-bold text-stone-400 uppercase tracking-wider block">
+                    <div className="space-y-2 pt-2">
+                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">
                         Отзывы учеников ({sheetClassReviews.length})
                       </label>
                       
                       {sheetClassReviews.length > 0 ? (
-                        <div className="space-y-2.5 max-h-[180px] overflow-y-auto scrollbar-none pr-1">
+                        <div className="space-y-2 max-h-[160px] overflow-y-auto scrollbar-none pr-1">
                           {sheetClassReviews.map((rev: any) => (
-                            <div key={rev.id} className="bg-[#1C1C1E] border border-zinc-850 p-3.5 rounded-[20px] flex flex-col gap-1.5 shadow-sm">
+                            <div key={rev.id} className="bg-[#1C1C1E] border border-zinc-800 p-3 rounded-2xl flex flex-col gap-1 shadow-sm">
                               <div className="flex justify-between items-center">
-                                <span className="text-xs font-medium text-white">{rev.studentName}</span>
+                                <span className="text-xs font-bold text-white">{rev.studentName}</span>
                                 <div className="flex items-center gap-1">
-                                  <span className="text-xs font-bold text-[#00BCC8] font-mono tracking-wide">★ {rev.rating.toFixed(1)}</span>
-                                  <span className="text-xs text-zinc-500 font-bold tracking-wide">{rev.date}</span>
+                                  <span className="text-xs font-black text-[#00BCC8] font-mono">★ {rev.rating.toFixed(1)}</span>
+                                  <span className="text-[10px] text-zinc-500 font-bold">{rev.date}</span>
                                 </div>
                               </div>
-                              {rev.comment ? (
+                              {rev.comment && (
                                 <p className="text-xs text-stone-300 font-medium leading-relaxed italic">
                                   "{rev.comment}"
                                 </p>
-                              ) : (
-                                <span className="text-xs text-zinc-600 font-bold uppercase tracking-wider">Без текстового комментария</span>
                               )}
                             </div>
                           ))}
                         </div>
                       ) : (
-                        <div style={{ borderRadius: '16px' }} className="bg-white dark:bg-[#18181b] border border-black/10 dark:border-zinc-800/60 border-dashed rounded-xl py-6 text-center text-slate-400 dark:text-stone-400 text-xs font-bold uppercase tracking-wider shadow-xs">
-                          Отзывов о занятии пока нет
+                        <div className="bg-[#1C1C1E] border border-zinc-800 border-dashed rounded-2xl py-4 text-center text-zinc-500 text-xs font-bold uppercase tracking-wider">
+                          Отзывов пока нет
                         </div>
                       )}
                     </div>
@@ -1781,7 +1854,159 @@ export default function Admin() {
                 })()}
               </div>
             </motion.div>
-          </>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ─── ШТОРКА 2: СОЗДАНИЕ НОВОГО ЗАНЯТИЯ (BOTTOM SHEET DRAWER) ─── */}
+      <AnimatePresence>
+        {isCreateClassDrawerOpen && (
+          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsCreateClassDrawerOpen(false)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-md cursor-pointer"
+            />
+
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 26, stiffness: 240 }}
+              className="relative z-10 w-full max-w-lg bg-[#18181b] border-t border-x border-zinc-800 rounded-t-[42px] p-6 pt-7 pb-8 shadow-2xl flex flex-col text-white max-h-[88dvh]"
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-800/60">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-full bg-[#00BCC8]/20 text-[#00BCC8] flex items-center justify-center font-bold">
+                    <CalendarPlus size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black uppercase tracking-wider text-white">
+                      Новое занятие
+                    </h3>
+                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                      {selectedDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', weekday: 'short' })}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setIsCreateClassDrawerOpen(false)}
+                  className="p-2 text-zinc-400 hover:text-white rounded-full bg-white/5 hover:bg-zinc-800 transition-colors border-none cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <form onSubmit={handleCreateClass} className="space-y-4 pt-4 flex-1 overflow-y-auto scrollbar-none pr-1">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Направление / Название урока</label>
+                  <Input
+                    required
+                    value={newClassData.title}
+                    onChange={(e) => setNewClassData({ ...newClassData, title: e.target.value })}
+                    placeholder="Например: High Heels Choreography"
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white placeholder:text-zinc-600 text-sm font-bold px-4 focus-visible:border-[#00BCC8]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Преподаватель</label>
+                    <select
+                      value={newClassData.teacher_name}
+                      onChange={(e) => setNewClassData({ ...newClassData, teacher_name: e.target.value })}
+                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#00BCC8]"
+                    >
+                      {TEACHERS.map(t => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Время начала</label>
+                    <Input
+                      required
+                      type="time"
+                      value={newClassData.time}
+                      onChange={(e) => setNewClassData({ ...newClassData, time: e.target.value })}
+                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-sm font-bold px-4 focus-visible:border-[#00BCC8]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Филиал</label>
+                    <select
+                      value={newClassData.branch}
+                      onChange={(e) => setNewClassData({ ...newClassData, branch: e.target.value })}
+                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#00BCC8]"
+                    >
+                      <option value="Филиал: Невский">Филиал: Невский</option>
+                      <option value="Филиал: Центральный">Филиал: Центральный</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Зал</label>
+                    <select
+                      value={newClassData.hall}
+                      onChange={(e) => setNewClassData({ ...newClassData, hall: e.target.value })}
+                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#00BCC8]"
+                    >
+                      <option value="Зал 1 (Main Glass)">Зал 1 (Main Glass)</option>
+                      <option value="Зал 2 (Light Studio)">Зал 2 (Light Studio)</option>
+                      <option value="Зал 3 (VIP Room)">Зал 3 (VIP Room)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Тип урока</label>
+                    <select
+                      value={newClassData.type}
+                      onChange={(e) => setNewClassData({ ...newClassData, type: e.target.value })}
+                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#00BCC8]"
+                    >
+                      <option value="Групповая">Групповая</option>
+                      <option value="Индивидуальная">Индивидуальная</option>
+                      <option value="Мастер-класс">Мастер-класс</option>
+                      <option value="Аренда">Аренда</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Вместимость (мест)</label>
+                    <Input
+                      required
+                      type="number"
+                      min={1}
+                      max={50}
+                      value={newClassData.max_students}
+                      onChange={(e) => setNewClassData({ ...newClassData, max_students: Number(e.target.value) || 15 })}
+                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-sm font-bold px-4 focus-visible:border-[#00BCC8]"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-3">
+                  <Button
+                    type="submit"
+                    disabled={isCreatingClass}
+                    style={{ backgroundColor: '#00BCC8', color: '#D0FF00' }}
+                    className="w-full rounded-full h-14 font-black text-xs uppercase tracking-wider shadow-lg hover:opacity-90 border-none cursor-pointer"
+                  >
+                    {isCreatingClass ? "Создание..." : "Добавить в расписание"}
+                  </Button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
 

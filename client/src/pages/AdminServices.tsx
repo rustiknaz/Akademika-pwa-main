@@ -17,7 +17,9 @@ import {
   Snowflake,
   MapPin,
   Users,
-  SlidersHorizontal
+  SlidersHorizontal,
+  X,
+  Check
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,13 +28,6 @@ import { useTheme } from '@/context/ThemeContext';
 import BottomNav from "../components/BottomNav";
 import FloatingActionButton from "../components/FloatingActionButton";
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter
-} from "@/components/ui/dialog";
 
 type MainCategory = 'memberships' | 'services';
 
@@ -142,7 +137,8 @@ export default function AdminServices() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   
   const [services, setServices] = useState<ServiceItem[]>(INITIAL_SERVICES);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedServiceForDrawer, setSelectedServiceForDrawer] = useState<ServiceItem | null>(null);
   const [editingItem, setEditingItem] = useState<ServiceItem | null>(null);
 
   // Состояние формы
@@ -175,10 +171,11 @@ export default function AdminServices() {
       description: '',
       popular: false
     });
-    setIsModalOpen(true);
+    setIsDrawerOpen(true);
   };
 
   const handleOpenEditModal = (item: ServiceItem) => {
+    setSelectedServiceForDrawer(null);
     setEditingItem(item);
     setFormData({
       title: item.title,
@@ -193,12 +190,13 @@ export default function AdminServices() {
       description: item.description,
       popular: !!item.popular
     });
-    setIsModalOpen(true);
+    setIsDrawerOpen(true);
   };
 
   const handleDelete = (id: string) => {
     if (confirm('Вы действительно хотите удалить эту позицию?')) {
       setServices(prev => prev.filter(s => s.id !== id));
+      setSelectedServiceForDrawer(null);
       toast({ title: 'Удалено', description: 'Позиция удалена из прайса' });
     }
   };
@@ -226,7 +224,7 @@ export default function AdminServices() {
 
     if (editingItem) {
       setServices(prev => prev.map(s => s.id === editingItem.id ? { ...s, ...payload } : s));
-      toast({ title: 'Сохранено', description: 'Изменения успешно обновлены' });
+      toast({ title: 'Сохранено ✨', description: 'Изменения успешно обновлены' });
     } else {
       const newItem: ServiceItem = {
         id: Date.now().toString(),
@@ -234,10 +232,10 @@ export default function AdminServices() {
         ...payload
       };
       setServices(prev => [newItem, ...prev]);
-      toast({ title: 'Создано', description: 'Новая позиция добавлена в каталог' });
+      toast({ title: 'Создано ✨', description: 'Новая позиция добавлена в каталог' });
     }
 
-    setIsModalOpen(false);
+    setIsDrawerOpen(false);
   };
 
   const activeFilter = mainCategory === 'memberships' ? membershipFilter : serviceFilter;
@@ -410,7 +408,7 @@ export default function AdminServices() {
                   <div className="relative flex items-center justify-between z-[100]">
                     <div className="relative">
                       <button 
-                        onPointerDown={(e) => e.stopPropagation()}
+                        onPointerDown={(e) => e.stopPropagation()} 
                         onClick={(e) => {
                           e.stopPropagation();
                           setIsFilterOpen(!isFilterOpen);
@@ -513,7 +511,8 @@ export default function AdminServices() {
                   initial={{ opacity: 0, scale: 0.96 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.96 }}
-                  className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md rounded-[42px] p-5 border-none shadow-md relative group overflow-hidden text-left"
+                  onClick={() => setSelectedServiceForDrawer(service)}
+                  className="w-full bg-white/40 dark:bg-black/35 backdrop-blur-md rounded-[42px] p-5 border-none shadow-md relative group overflow-hidden text-left cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 transition-all"
                 >
                   {service.popular && (
                     <div 
@@ -527,7 +526,7 @@ export default function AdminServices() {
 
                   <div className="flex justify-between items-start pr-12">
                     <div>
-                      <h3 className="text-base font-bold text-slate-950 dark:text-white">
+                      <h3 className="text-base font-bold text-slate-950 dark:text-white group-hover:text-[#F93380] transition-colors">
                         {service.title}
                       </h3>
                       <p className="text-xs font-medium text-slate-500 dark:text-zinc-400 mt-1 max-w-[280px] leading-relaxed">
@@ -580,15 +579,23 @@ export default function AdminServices() {
                       <div className="flex items-center gap-1">
                         <button
                           type="button"
-                          onClick={() => handleOpenEditModal(service)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenEditModal(service);
+                          }}
                           className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-slate-700 dark:text-white flex items-center justify-center transition-colors cursor-pointer border-none"
+                          title="Редактировать"
                         >
                           <Pencil size={13} />
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleDelete(service.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(service.id);
+                          }}
                           className="w-8 h-8 rounded-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 flex items-center justify-center transition-colors cursor-pointer border-none"
+                          title="Удалить"
                         >
                           <Trash2 size={13} />
                         </button>
@@ -615,175 +622,290 @@ export default function AdminServices() {
         className="!bg-[#8C0070] !text-[#F93380] shadow-lg shadow-[#8C0070]/30 hover:opacity-95"
       />
 
-      {/* Модальное окно добавления / редактирования */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="!rounded-[28px] !border-zinc-800 bg-[#161618] text-white p-7 max-w-md shadow-2xl max-h-[90vh] overflow-y-auto scrollbar-none">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-white">
-              {editingItem ? 'Редактировать позицию' : 'Новая позиция в прайсе'}
-            </DialogTitle>
-          </DialogHeader>
+      {/* ─── ШТОРКА 1: ДЕТАЛИ АБОНЕМЕНТА / УСЛУГИ (BOTTOM SHEET DRAWER) ─── */}
+      <AnimatePresence>
+        {selectedServiceForDrawer && (
+          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedServiceForDrawer(null)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-md cursor-pointer"
+            />
 
-          <form onSubmit={handleSave} className="space-y-4 pt-3">
-            
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Раздел</label>
-                <select
-                  value={formData.mainCategory}
-                  onChange={e => {
-                    const cat = e.target.value as MainCategory;
-                    setFormData({ 
-                      ...formData, 
-                      mainCategory: cat, 
-                      subCategory: cat === 'memberships' ? 'limited' : 'private' 
-                    });
-                  }}
-                  className="w-full bg-[#1C1C1E] border border-zinc-800 rounded-2xl px-3 h-11 text-xs font-bold text-white focus:outline-none focus:border-[#F93380]"
-                >
-                  <option value="memberships">Абонементы</option>
-                  <option value="services">Услуги</option>
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Категория</label>
-                <select
-                  value={formData.subCategory}
-                  onChange={e => setFormData({ ...formData, subCategory: e.target.value as SubCategory })}
-                  className="w-full bg-[#1C1C1E] border border-zinc-800 rounded-2xl px-3 h-11 text-xs font-bold text-white focus:outline-none focus:border-[#F93380]"
-                >
-                  {formData.mainCategory === 'memberships' ? (
-                    <>
-                      <option value="unlimited">Безлимитные</option>
-                      <option value="limited">С ограничением</option>
-                      <option value="time_based">Временные</option>
-                      <option value="single">Разовые визиты</option>
-                    </>
-                  ) : (
-                    <>
-                      <option value="private">Индивидуальные</option>
-                      <option value="rent">Аренда залов</option>
-                      <option value="choreography">Постановка</option>
-                      <option value="additional">Доп. сервисы</option>
-                    </>
-                  )}
-                </select>
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Название</label>
-              <Input
-                required
-                value={formData.title}
-                onChange={e => setFormData({ ...formData, title: e.target.value })}
-                placeholder="Например: Стандарт 8 занятий"
-                className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Стоимость (₽)</label>
-                <Input
-                  required
-                  type="number"
-                  value={formData.price}
-                  onChange={e => setFormData({ ...formData, price: e.target.value })}
-                  placeholder="4800"
-                  className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Кол-во занятий</label>
-                <Input
-                  type="number"
-                  value={formData.visitsCount}
-                  onChange={e => setFormData({ ...formData, visitsCount: e.target.value })}
-                  placeholder="Оставьте пустым если ∞"
-                  className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Срок (дней)</label>
-                <Input
-                  type="number"
-                  value={formData.durationDays}
-                  onChange={e => setFormData({ ...formData, durationDays: e.target.value })}
-                  placeholder="30"
-                  className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
-                />
-              </div>
-              
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Заморозка (дней)</label>
-                <Input
-                  type="number"
-                  value={formData.freezeDays}
-                  onChange={e => setFormData({ ...formData, freezeDays: e.target.value })}
-                  placeholder="Например: 7"
-                  className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Привязка к направлениям</label>
-              <Input
-                value={formData.linkedDirections}
-                onChange={e => setFormData({ ...formData, linkedDirections: e.target.value })}
-                placeholder="Например: Только K-Pop, High Heels"
-                className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Привязка к тренерам</label>
-              <Input
-                value={formData.linkedTrainers}
-                onChange={e => setFormData({ ...formData, linkedTrainers: e.target.value })}
-                placeholder="Например: Топ-хореографы"
-                className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Короткое описание</label>
-              <Input
-                value={formData.description}
-                onChange={e => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Особенности тарифа..."
-                className="rounded-2xl border-zinc-800 h-11 bg-[#1C1C1E] text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
-              />
-            </div>
-
-            <div className="flex items-center gap-2 pt-1 cursor-pointer" onClick={() => setFormData({ ...formData, popular: !formData.popular })}>
-              <input
-                type="checkbox"
-                checked={formData.popular}
-                onChange={e => setFormData({ ...formData, popular: e.target.checked })}
-                className="w-4 h-4 rounded text-[#F93380] focus:ring-0"
-              />
-              <span className="text-xs font-bold text-stone-300">Пометить как «Хит продаж»</span>
-            </div>
-
-            <DialogFooter className="pt-3 pb-2">
-              <Button
-                type="submit"
-                style={{ backgroundColor: '#8C0070', color: '#F93380' }}
-                className="w-full rounded-full h-12 font-black text-xs uppercase tracking-wider shadow-md hover:opacity-90 transition-all border-none cursor-pointer"
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 26, stiffness: 240 }}
+              className="relative z-10 w-full max-w-lg bg-[#18181b] border-t border-x border-zinc-800 rounded-t-[42px] p-6 pt-7 pb-8 shadow-2xl flex flex-col text-white max-h-[85dvh]"
+            >
+              <button
+                onClick={() => setSelectedServiceForDrawer(null)}
+                className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-white rounded-full bg-white/5 hover:bg-zinc-800 transition-colors z-10 border-none cursor-pointer"
               >
-                Сохранить в каталог
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+                <X size={18} />
+              </button>
+
+              <div className="flex items-start justify-between pb-3 border-b border-zinc-800/60 pr-10">
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-pink-400">
+                    {selectedServiceForDrawer.mainCategory === 'memberships' ? 'Тариф абонемента' : 'Услуга студии'}
+                  </span>
+                  <h3 className="text-xl font-black text-white mt-0.5">{selectedServiceForDrawer.title}</h3>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto scrollbar-none pt-4 pb-6 space-y-4">
+                <div className="bg-[#1C1C1E] border border-zinc-800 p-5 rounded-[28px] flex flex-col items-center justify-center text-center">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-zinc-400">Стоимость</span>
+                  <span className="text-3xl font-black font-mono text-[#F93380] mt-1">
+                    ₽{selectedServiceForDrawer.price.toLocaleString('ru-RU')}
+                  </span>
+                  <p className="text-xs text-zinc-300 font-medium mt-2 max-w-xs">
+                    {selectedServiceForDrawer.description}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px]">
+                    <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider block mb-1">Количество занятий</span>
+                    <span className="text-base font-black font-mono text-white">
+                      {selectedServiceForDrawer.visitsCount ? (selectedServiceForDrawer.visitsCount >= 999 ? 'Безлимит (∞)' : `${selectedServiceForDrawer.visitsCount} зан.`) : 'По часам'}
+                    </span>
+                  </div>
+
+                  <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px]">
+                    <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider block mb-1">Срок действия</span>
+                    <span className="text-base font-black font-mono text-white">
+                      {selectedServiceForDrawer.durationDays ? `${selectedServiceForDrawer.durationDays} дней` : 'Разово'}
+                    </span>
+                  </div>
+                </div>
+
+                {selectedServiceForDrawer.freezeDays ? (
+                  <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px] flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <Snowflake size={18} className="text-[#F93380]" />
+                      <span className="text-xs font-bold text-white">Доступная заморозка</span>
+                    </div>
+                    <span className="text-xs font-black font-mono text-white">
+                      {selectedServiceForDrawer.freezeDays} дней
+                    </span>
+                  </div>
+                ) : null}
+
+                <div className="flex gap-2.5 pt-2">
+                  <Button
+                    onClick={() => handleOpenEditModal(selectedServiceForDrawer)}
+                    style={{ backgroundColor: '#F93380', color: '#8C0070' }}
+                    className="flex-1 h-14 rounded-full font-black text-xs uppercase tracking-wider shadow-md hover:opacity-90 transition-all border-none cursor-pointer"
+                  >
+                    <Pencil size={15} className="mr-1.5" />
+                    Редактировать
+                  </Button>
+
+                  <Button
+                    onClick={() => handleDelete(selectedServiceForDrawer.id)}
+                    className="h-14 px-5 rounded-full bg-rose-500/15 hover:bg-rose-500 hover:text-white text-rose-400 font-bold text-xs uppercase transition-all border-none cursor-pointer"
+                  >
+                    <Trash2 size={16} />
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ─── ШТОРКА 2: СОЗДАНИЕ / РЕДАКТИРОВАНИЕ ПОЗИЦИИ (BOTTOM SHEET DRAWER) ─── */}
+      <AnimatePresence>
+        {isDrawerOpen && (
+          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsDrawerOpen(false)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-md cursor-pointer"
+            />
+
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 26, stiffness: 240 }}
+              className="relative z-10 w-full max-w-lg bg-[#18181b] border-t border-x border-zinc-800 rounded-t-[42px] p-6 pt-7 pb-8 shadow-2xl flex flex-col text-white max-h-[88dvh]"
+            >
+              <div className="flex justify-between items-center pb-3 border-b border-zinc-800/60 pr-8">
+                <div>
+                  <h3 className="text-lg font-black uppercase tracking-wider">
+                    {editingItem ? 'Редактировать позицию' : 'Новая позиция в прайсе'}
+                  </h3>
+                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mt-0.5">
+                    {editingItem ? 'Измените параметры тарифа' : 'Заполните параметры тарифа или услуги'}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsDrawerOpen(false)}
+                  className="p-2 text-zinc-400 hover:text-white rounded-full bg-white/5 hover:bg-zinc-800 transition-colors border-none cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <form onSubmit={handleSave} className="space-y-4 pt-4 flex-1 overflow-y-auto scrollbar-none pr-1">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Раздел</label>
+                    <select
+                      value={formData.mainCategory}
+                      onChange={e => {
+                        const cat = e.target.value as MainCategory;
+                        setFormData({ 
+                          ...formData, 
+                          mainCategory: cat, 
+                          subCategory: cat === 'memberships' ? 'limited' : 'private' 
+                        });
+                      }}
+                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#F93380]"
+                    >
+                      <option value="memberships">Абонементы</option>
+                      <option value="services">Услуги</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Категория</label>
+                    <select
+                      value={formData.subCategory}
+                      onChange={e => setFormData({ ...formData, subCategory: e.target.value as SubCategory })}
+                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#F93380]"
+                    >
+                      {formData.mainCategory === 'memberships' ? (
+                        <>
+                          <option value="unlimited">Безлимитные</option>
+                          <option value="limited">С ограничением</option>
+                          <option value="time_based">Временные</option>
+                          <option value="single">Разовые визиты</option>
+                        </>
+                      ) : (
+                        <>
+                          <option value="private">Индивидуальные</option>
+                          <option value="rent">Аренда залов</option>
+                          <option value="choreography">Постановка</option>
+                          <option value="additional">Доп. сервисы</option>
+                        </>
+                      )}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Название</label>
+                  <Input
+                    required
+                    value={formData.title}
+                    onChange={e => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="Например: Стандарт 8 занятий"
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-sm font-bold px-4 focus-visible:border-[#F93380]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Стоимость (₽)</label>
+                    <Input
+                      required
+                      type="number"
+                      value={formData.price}
+                      onChange={e => setFormData({ ...formData, price: e.target.value })}
+                      placeholder="4800"
+                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-sm font-bold px-4 focus-visible:border-[#F93380]"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Кол-во занятий</label>
+                    <Input
+                      type="number"
+                      value={formData.visitsCount}
+                      onChange={e => setFormData({ ...formData, visitsCount: e.target.value })}
+                      placeholder="Оставьте пустым если ∞"
+                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-sm font-bold px-4 focus-visible:border-[#F93380]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Срок (дней)</label>
+                    <Input
+                      type="number"
+                      value={formData.durationDays}
+                      onChange={e => setFormData({ ...formData, durationDays: e.target.value })}
+                      placeholder="30"
+                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-sm font-bold px-4 focus-visible:border-[#F93380]"
+                    />
+                  </div>
+                  
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Заморозка (дней)</label>
+                    <Input
+                      type="number"
+                      value={formData.freezeDays}
+                      onChange={e => setFormData({ ...formData, freezeDays: e.target.value })}
+                      placeholder="7"
+                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-sm font-bold px-4 focus-visible:border-[#F93380]"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Привязка к направлениям</label>
+                  <Input
+                    value={formData.linkedDirections}
+                    onChange={e => setFormData({ ...formData, linkedDirections: e.target.value })}
+                    placeholder="Например: K-Pop, High Heels"
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-xs font-bold px-4 focus-visible:border-[#F93380]"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">Короткое описание</label>
+                  <Input
+                    value={formData.description}
+                    onChange={e => setFormData({ ...formData, description: e.target.value })}
+                    placeholder="Особенности тарифа..."
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2.5 pt-1 cursor-pointer select-none" onClick={() => setFormData({ ...formData, popular: !formData.popular })}>
+                  <input
+                    type="checkbox"
+                    checked={formData.popular}
+                    onChange={e => setFormData({ ...formData, popular: e.target.checked })}
+                    className="w-4 h-4 rounded text-[#F93380] focus:ring-0 cursor-pointer"
+                  />
+                  <span className="text-xs font-bold text-zinc-300">Пометить как «Хит продаж»</span>
+                </div>
+
+                <div className="pt-3">
+                  <Button
+                    type="submit"
+                    style={{ backgroundColor: '#8C0070', color: '#F93380' }}
+                    className="w-full rounded-full h-14 font-black text-xs uppercase tracking-wider shadow-lg hover:opacity-90 transition-all border-none cursor-pointer"
+                  >
+                    Сохранить в каталог
+                  </Button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <BottomNav />
     </div>
