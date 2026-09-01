@@ -22,9 +22,9 @@ export default function BottomNav() {
   const navBtnClass = "relative w-[64px] h-[64px] rounded-full flex items-center justify-center cursor-pointer group focus:outline-none shrink-0 border-none outline-none bg-transparent p-0 touch-manipulation";
   const activeBg = accentColor || '#CCFF00';
 
-  // Безопасный отступ от нижнего края экрана с учетом домашней полосы жестов
+  // Сбалансированный отступ: 14px в браузере и минимальный зазор над полоской жестов в PWA
   const floatingBottomStyle = {
-    bottom: 'calc(env(safe-area-inset-bottom, 0px) + 12px)',
+    bottom: 'max(14px, calc(env(safe-area-inset-bottom, 0px) + 6px))',
   };
 
   const isAdminMode =
