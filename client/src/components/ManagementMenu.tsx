@@ -34,7 +34,7 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
     }
   }, [isOpen]);
 
-  // Основное меню с персональными цветами страниц[cite: 10]
+  // Основное меню с персональными цветами страниц
   const mainMenuItems = [
     {
       id: 'finance',
@@ -81,9 +81,9 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
       circleBg: '#3E3B39',
       circleColor: '#CAC9CD'
     },
-  ].filter(item => item.isSubmenuTrigger || (item.path && (isAllowed ? isAllowed(item.path) : true)));[cite: 10]
+  ].filter(item => item.isSubmenuTrigger || (item.path && (isAllowed ? isAllowed(item.path) : true)));
 
-  // Подменю «Настройки» с персональными цветами страниц[cite: 10]
+  // Подменю «Настройки» с персональными цветами страниц
   const settingsSubMenuItems = [
     {
       id: 'directions',
@@ -121,7 +121,7 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
       circleBg: '#262B2B',
       circleColor: '#E6CCB2'
     },
-  ].filter(item => (isAllowed ? isAllowed(item.path) : true));[cite: 10]
+  ].filter(item => (isAllowed ? isAllowed(item.path) : true));
 
   return (
     <AnimatePresence>
@@ -173,7 +173,6 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
                         } text-white shadow-2xl`}
                       >
                         <div className="flex items-center gap-3 min-w-0">
-                          {/* Кружок иконки окрашен в цвет своей страницы */}
                           <div
                             style={{ backgroundColor: item.circleBg, color: item.circleColor }}
                             className="flex items-center justify-center w-11 h-11 rounded-full shrink-0 shadow-sm transition-transform duration-200 group-hover:scale-105"
