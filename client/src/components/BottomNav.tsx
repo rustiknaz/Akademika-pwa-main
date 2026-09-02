@@ -20,9 +20,13 @@ export default function BottomNav() {
 
   const iconClass = "w-7 h-7 stroke-[2]";
   const navBtnClass = "relative w-[64px] h-[64px] rounded-full flex items-center justify-center cursor-pointer group focus:outline-none shrink-0 border-none outline-none bg-transparent p-0 touch-manipulation";
-  const activeBg = accentColor || '#CCFF00';
+  const defaultActiveBg = accentColor || '#CCFF00';
 
-  // Сбалансированный отступ: 14px в браузере и минимальный зазор над полоской жестов в PWA
+  // Фирменные цвета палитры Расписания (#004643 / #F0EDE5)
+  const scheduleActiveBg = '#004643';
+  const scheduleActiveColor = '#F0EDE5';
+
+  // Сбалансированный отступ: 14px в браузере и аккуратный зазор над полоской жестов в PWA
   const floatingBottomStyle = {
     bottom: 'max(14px, calc(env(safe-area-inset-bottom, 0px) + 6px))',
   };
@@ -72,7 +76,7 @@ export default function BottomNav() {
             >
               <div
                 style={{
-                  backgroundColor: isHomeActive ? activeBg : 'transparent',
+                  backgroundColor: isHomeActive ? defaultActiveBg : 'transparent',
                   color: isHomeActive ? '#000000' : undefined
                 }}
                 className={`w-[64px] h-[64px] rounded-full flex items-center justify-center border-none shadow-none transition-colors duration-150 ${
@@ -83,7 +87,7 @@ export default function BottomNav() {
               </div>
             </Link>
 
-            {/* 2. Расписание */}
+            {/* 2. Расписание (Глубокий изумруд #004643 + кремовая иконка #F0EDE5) */}
             <Link
               href="/admin/schedule"
               className={navBtnClass}
@@ -96,11 +100,11 @@ export default function BottomNav() {
             >
               <div
                 style={{
-                  backgroundColor: isScheduleActive ? activeBg : 'transparent',
-                  color: isScheduleActive ? '#000000' : undefined
+                  backgroundColor: isScheduleActive ? scheduleActiveBg : 'transparent',
+                  color: isScheduleActive ? scheduleActiveColor : undefined
                 }}
                 className={`w-[64px] h-[64px] rounded-full flex items-center justify-center border-none shadow-none transition-colors duration-150 ${
-                  isScheduleActive ? '' : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+                  isScheduleActive ? 'shadow-sm' : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
                 }`}
               >
                 <Calendar size={26} className={iconClass} />
@@ -121,7 +125,7 @@ export default function BottomNav() {
               >
                 <div
                   style={{
-                    backgroundColor: isStudentsActive ? activeBg : 'transparent',
+                    backgroundColor: isStudentsActive ? defaultActiveBg : 'transparent',
                     color: isStudentsActive ? '#000000' : undefined
                   }}
                   className={`w-[64px] h-[64px] rounded-full flex items-center justify-center border-none shadow-none transition-colors duration-150 ${
@@ -147,7 +151,7 @@ export default function BottomNav() {
               >
                 <div
                   style={{
-                    backgroundColor: isProfileActive ? activeBg : 'transparent',
+                    backgroundColor: isProfileActive ? defaultActiveBg : 'transparent',
                     color: isProfileActive ? '#000000' : undefined
                   }}
                   className={`w-[64px] h-[64px] rounded-full flex items-center justify-center border-none shadow-none transition-colors duration-150 ${
@@ -170,7 +174,7 @@ export default function BottomNav() {
               >
                 <div
                   style={{
-                    backgroundColor: isMoreActive ? activeBg : 'transparent',
+                    backgroundColor: isMoreActive ? defaultActiveBg : 'transparent',
                     color: isMoreActive ? '#000000' : undefined
                   }}
                   className={`w-[64px] h-[64px] rounded-full flex items-center justify-center border-none shadow-none transition-colors duration-150 ${
@@ -221,7 +225,7 @@ export default function BottomNav() {
         >
           <div
             style={{
-              backgroundColor: isClientHomeActive ? activeBg : 'transparent',
+              backgroundColor: isClientHomeActive ? defaultActiveBg : 'transparent',
               color: isClientHomeActive ? '#000000' : undefined
             }}
             className={`w-[64px] h-[64px] rounded-full flex items-center justify-center border-none shadow-none ${
@@ -241,11 +245,11 @@ export default function BottomNav() {
         >
           <div
             style={{
-              backgroundColor: isClientScheduleActive ? activeBg : 'transparent',
-              color: isClientScheduleActive ? '#000000' : undefined
+              backgroundColor: isClientScheduleActive ? scheduleActiveBg : 'transparent',
+              color: isClientScheduleActive ? scheduleActiveColor : undefined
             }}
             className={`w-[64px] h-[64px] rounded-full flex items-center justify-center border-none shadow-none ${
-              isClientScheduleActive ? '' : 'text-slate-600 dark:text-zinc-400'
+              isClientScheduleActive ? 'shadow-sm' : 'text-slate-600 dark:text-zinc-400'
             }`}
           >
             <Calendar size={26} className={iconClass} />
@@ -261,7 +265,7 @@ export default function BottomNav() {
         >
           <div
             style={{
-              backgroundColor: isClientProfileActive ? activeBg : 'transparent',
+              backgroundColor: isClientProfileActive ? defaultActiveBg : 'transparent',
               color: isClientProfileActive ? '#000000' : undefined
             }}
             className={`w-[64px] h-[64px] rounded-full flex items-center justify-center border-none shadow-none ${

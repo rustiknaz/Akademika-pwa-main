@@ -6,19 +6,19 @@ import {
   ChevronRight, 
   ChevronLeft, 
   ArrowUpRight, 
-  ArrowDownRight,
-  Wallet,
-  CalendarDays,
-  Plus,
-  ShoppingCart,
-  CreditCard,
-  Smartphone,
-  Banknote,
-  SplitSquareHorizontal,
-  Receipt,
-  SlidersHorizontal,
-  BarChart3,
-  X
+  ArrowDownRight, 
+  Wallet, 
+  CalendarDays, 
+  Plus, 
+  ShoppingCart, 
+  CreditCard, 
+  Smartphone, 
+  Banknote, 
+  SplitSquareHorizontal, 
+  Receipt, 
+  SlidersHorizontal, 
+  BarChart3, 
+  X 
 } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import CustomFilterDropdown from "../components/CustomFilterDropdown";
@@ -117,13 +117,13 @@ function ModalDatePicker({
           <div className="flex gap-2">
             <button
               onClick={() => setViewDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))}
-              className="w-9 h-9 border border-zinc-800 !rounded-[12px] flex items-center justify-center text-zinc-400 hover:text-[#EDFF68] bg-zinc-900/50 hover:bg-zinc-800 transition-colors cursor-pointer"
+              className="w-9 h-9 border border-zinc-800 !rounded-[12px] flex items-center justify-center text-zinc-400 hover:text-[#C6FF33] bg-zinc-900/50 hover:bg-zinc-800 transition-colors cursor-pointer"
             >
               <ChevronLeft size={16} />
             </button>
             <button
               onClick={() => setViewDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))}
-              className="w-9 h-9 border border-zinc-800 !rounded-[12px] flex items-center justify-center text-zinc-400 hover:text-[#EDFF68] bg-zinc-900/50 hover:bg-zinc-800 transition-colors cursor-pointer"
+              className="w-9 h-9 border border-zinc-800 !rounded-[12px] flex items-center justify-center text-zinc-400 hover:text-[#C6FF33] bg-zinc-900/50 hover:bg-zinc-800 transition-colors cursor-pointer"
             >
               <ChevronRight size={16} />
             </button>
@@ -149,9 +149,9 @@ function ModalDatePicker({
                   onClick={() => handleSelect(cell.date)}
                   className={`text-xs transition-all cursor-pointer ${
                     isSel
-                      ? 'w-9 h-9 flex items-center justify-center !rounded-full bg-[#009175] text-[#EDFF68] font-bold font-mono text-sm shadow-[0_0_10px_rgba(237,255,104,0.4)]'
+                      ? 'w-9 h-9 flex items-center justify-center !rounded-full bg-[#003566] text-[#C6FF33] font-bold font-mono text-sm shadow-[0_0_10px_rgba(198,255,51,0.4)]'
                       : isTod
-                        ? 'w-9 h-9 flex items-center justify-center border border-[#EDFF68]/40 text-white font-medium rounded-xl bg-[#EDFF68]/5'
+                        ? 'w-9 h-9 flex items-center justify-center border border-[#C6FF33]/40 text-white font-medium rounded-xl bg-[#C6FF33]/5'
                         : cell.isCurrentMonth
                           ? 'w-9 h-9 flex items-center justify-center text-white hover:bg-zinc-900 rounded-xl'
                           : 'w-9 h-9 flex items-center justify-center text-stone-600 hover:bg-zinc-900/50 rounded-xl'
@@ -166,7 +166,7 @@ function ModalDatePicker({
 
         <button
           onClick={handleResetToToday}
-          className="w-full py-3 !bg-[#18181b] hover:bg-zinc-800 !rounded-full text-[#EDFF68] font-bold text-center mt-4 transition-colors border !border-zinc-800 cursor-pointer"
+          className="w-full py-3 !bg-[#18181b] hover:bg-zinc-800 !rounded-full text-[#C6FF33] font-bold text-center mt-4 transition-colors border !border-zinc-800 cursor-pointer"
         >
           Сегодня
         </button>
@@ -269,7 +269,7 @@ export default function AdminFinance() {
   if (loading) {
     return (
       <div className="min-h-screen page-root flex items-center justify-center transition-colors duration-300 bg-transparent text-slate-900">
-        <Loader2 className="w-8 h-8 animate-spin text-[#009175]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#C6FF33]" />
       </div>
     );
   }
@@ -289,7 +289,7 @@ export default function AdminFinance() {
           <div className="flex-1 relative h-full">
             <AnimatePresence initial={false} mode="wait">
               {activeSlide === 0 ? (
-                /* СЛАЙД 1: Сводка (#009175 фон, #EDFF68 текст) */
+                /* СЛАЙД 1: Сводка (#003566 фон, #C6FF33 текст) */
                 <motion.div
                   key="finance-slide"
                   drag="x"
@@ -305,20 +305,20 @@ export default function AdminFinance() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#009175', color: '#EDFF68' }}
+                  style={{ backgroundColor: '#003566', color: '#C6FF33' }}
                   className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#EDFF68] leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#C6FF33] leading-tight">
                       Сводка
                     </h2>
                   </div>
 
                   <div className="flex flex-col gap-0 px-0.5">
-                    <span className="text-4xl font-black text-[#EDFF68] font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-[#C6FF33] font-mono tracking-tight leading-none">
                       {displayAmount.toLocaleString('ru-RU')} ₽
                     </span>
-                    <span className="text-[10px] font-bold text-[#EDFF68]/80 uppercase tracking-wide mt-1.5">
+                    <span className="text-[10px] font-bold text-[#C6FF33]/80 uppercase tracking-wide mt-1.5">
                       {summaryMode === 'income' ? 'Доходы' : summaryMode === 'expense' ? 'Расходы' : 'Касса / Баланс'} за {selectedDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
                     </span>
                   </div>
@@ -333,10 +333,10 @@ export default function AdminFinance() {
                           setIsFilterOpen(!isFilterOpen);
                         }}
                         type="button"
-                        className="w-11 h-11 rounded-full bg-[#EDFF68]/20 hover:bg-[#EDFF68]/30 text-[#EDFF68] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                        className="w-11 h-11 rounded-full bg-[#C6FF33]/20 hover:bg-[#C6FF33]/30 text-[#C6FF33] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {summaryMode !== 'income' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#009175] rounded-full bg-[#EDFF68] shrink-0" />}
+                        {summaryMode !== 'income' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#003566] rounded-full bg-[#C6FF33] shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
@@ -381,7 +381,7 @@ export default function AdminFinance() {
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              style={{ backgroundColor: '#009175', color: '#EDFF68' }}
+                              style={{ backgroundColor: '#003566', color: '#C6FF33' }}
                               className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
@@ -404,7 +404,7 @@ export default function AdminFinance() {
                   </div>
                 </motion.div>
               ) : (
-                /* СЛАЙД 2: Касса (#EDFF68 фон, #009175 текст) */
+                /* СЛАЙД 2: Касса (#C6FF33 фон, #003566 текст) */
                 <motion.div
                   key="cashier-slide"
                   drag="x"
@@ -420,11 +420,11 @@ export default function AdminFinance() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#EDFF68', color: '#009175' }}
+                  style={{ backgroundColor: '#C6FF33', color: '#003566' }}
                   className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#009175] leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#003566] leading-tight">
                       Касса студии
                     </h2>
                   </div>
@@ -433,12 +433,12 @@ export default function AdminFinance() {
                   <div className="grid grid-cols-2 gap-3 px-0.5">
                     <button
                       onClick={() => setIsPOSDrawerOpen(true)}
-                      className="bg-[#009175]/15 hover:bg-[#009175]/25 border-none p-3.5 rounded-[24px] shadow-sm flex flex-col items-center justify-center gap-2 transition-all cursor-pointer"
+                      className="bg-[#003566]/15 hover:bg-[#003566]/25 border-none p-3.5 rounded-[24px] shadow-sm flex flex-col items-center justify-center gap-2 transition-all cursor-pointer"
                     >
-                      <div className="w-10 h-10 rounded-full bg-[#009175] text-[#EDFF68] flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-[#003566] text-[#C6FF33] flex items-center justify-center shrink-0">
                         <ShoppingCart size={20} className="stroke-[2.5]" />
                       </div>
-                      <span className="text-[11px] font-black text-[#009175] uppercase tracking-wider text-center leading-tight">
+                      <span className="text-[11px] font-black text-[#003566] uppercase tracking-wider text-center leading-tight">
                         Новая<br/>продажа
                       </span>
                     </button>
@@ -450,7 +450,7 @@ export default function AdminFinance() {
                       <div className="w-10 h-10 rounded-full bg-rose-500/20 text-rose-600 flex items-center justify-center shrink-0">
                         <ArrowDownRight size={20} className="stroke-[2.5]" />
                       </div>
-                      <span className="text-[11px] font-black text-[#009175] uppercase tracking-wider text-center leading-tight">
+                      <span className="text-[11px] font-black text-[#003566] uppercase tracking-wider text-center leading-tight">
                         Внести<br/>расход
                       </span>
                     </button>
@@ -466,7 +466,7 @@ export default function AdminFinance() {
           <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
             <button 
               onClick={() => { setIsFilterOpen(false); setActiveSlide(0); }}
-              style={activeSlide === 0 ? { backgroundColor: '#EDFF68', color: '#009175' } : {}}
+              style={activeSlide === 0 ? { backgroundColor: '#C6FF33', color: '#003566' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 0 
                   ? 'shadow-md scale-100' 
@@ -479,7 +479,7 @@ export default function AdminFinance() {
             
             <button 
               onClick={() => { setIsFilterOpen(false); setActiveSlide(1); }}
-              style={activeSlide === 1 ? { backgroundColor: '#009175', color: '#EDFF68' } : {}}
+              style={activeSlide === 1 ? { backgroundColor: '#003566', color: '#C6FF33' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 1 
                   ? 'shadow-md scale-100' 
@@ -492,7 +492,7 @@ export default function AdminFinance() {
           </div>
         </div>
 
-        {/* ─── СПИСОК ТРАНЗАКЦИЙ С ФИРМЕННЫМ SHADOW-MD И GAP-2.5 ─── */}
+        {/* ─── СПИСОК ТРАНЗАКЦИЙ С GAP-2.5 ─── */}
         <div className="flex flex-col gap-2.5">
           {displayedTransactions.length > 0 ? (
             displayedTransactions.map((t) => (
@@ -501,10 +501,9 @@ export default function AdminFinance() {
                 onClick={() => setSelectedTransactionForDrawer(t)}
                 className="w-full min-h-[86px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[42px] p-2 pl-2.5 pr-5 flex items-center gap-3.5 shadow-md transition group text-left cursor-pointer hover:bg-white/60 dark:hover:bg-black/50"
               >
-                {/* Круглая иконка операции (размер 70px) */}
                 <div className={`w-[70px] h-[70px] rounded-full flex items-center justify-center shrink-0 ${
                   t.type === 'income' 
-                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-[#009175]' 
+                    ? 'bg-[#C6FF33]/20 text-[#003566] dark:text-[#C6FF33]' 
                     : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
                 }`}>
                   {t.type === 'income' ? (
@@ -514,9 +513,8 @@ export default function AdminFinance() {
                   )}
                 </div>
 
-                {/* Название и категория */}
                 <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
-                  <h4 className="font-bold text-base text-slate-950 dark:text-white truncate group-hover:text-[#009175]">
+                  <h4 className="font-bold text-base text-slate-950 dark:text-white truncate group-hover:text-[#003566] dark:group-hover:text-[#C6FF33]">
                     {t.title}
                   </h4>
                   <div className="flex items-center gap-2">
@@ -526,10 +524,9 @@ export default function AdminFinance() {
                   </div>
                 </div>
 
-                {/* Сумма транзакции */}
                 <div className={`text-lg font-black font-mono whitespace-nowrap ml-auto shrink-0 ${
                   t.type === 'income' 
-                    ? 'text-emerald-600 dark:text-[#009175]' 
+                    ? 'text-emerald-600 dark:text-[#C6FF33]' 
                     : 'text-rose-600 dark:text-rose-400'
                 }`}>
                   {t.type === 'income' ? '+' : '-'}{t.amount.toLocaleString('ru-RU')} ₽
@@ -549,8 +546,8 @@ export default function AdminFinance() {
         onClick={() => setIsPOSDrawerOpen(true)}
         ariaLabel="Касса (Продажа)"
         id="floating-add-transaction-btn"
-        style={{ backgroundColor: '#009175', color: '#EDFF68' }}
-        className="!bg-[#009175] !text-[#EDFF68] shadow-lg shadow-[#009175]/30 hover:opacity-95"
+        style={{ backgroundColor: '#003566', color: '#C6FF33' }}
+        className="!bg-[#003566] !text-[#C6FF33] shadow-lg shadow-[#003566]/40 hover:opacity-95"
       />
 
       <ModalDatePicker
@@ -599,7 +596,7 @@ export default function AdminFinance() {
                 <div className="bg-[#1C1C1E] border border-zinc-800 p-5 rounded-[28px] flex flex-col items-center justify-center text-center">
                   <span className="text-[10px] font-black uppercase tracking-wider text-zinc-400">Сумма платежа</span>
                   <span className={`text-3xl font-black font-mono mt-1 ${
-                    selectedTransactionForDrawer.type === 'income' ? 'text-[#EDFF68]' : 'text-rose-400'
+                    selectedTransactionForDrawer.type === 'income' ? 'text-[#C6FF33]' : 'text-rose-400'
                   }`}>
                     {selectedTransactionForDrawer.type === 'income' ? '+' : '-'}{selectedTransactionForDrawer.amount.toLocaleString('ru-RU')} ₽
                   </span>
@@ -621,10 +618,10 @@ export default function AdminFinance() {
 
                 <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px] flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <Receipt size={18} className="text-[#009175]" />
+                    <Receipt size={18} className="text-[#C6FF33]" />
                     <span className="text-xs font-bold text-white">Электронный чек (ОФД)</span>
                   </div>
-                  <span className="text-[10px] font-black uppercase px-2.5 py-1 bg-emerald-500/15 text-emerald-400 rounded-full">
+                  <span className="text-[10px] font-black uppercase px-2.5 py-1 bg-[#C6FF33]/15 text-[#C6FF33] rounded-full">
                     Фискализирован
                   </span>
                 </div>
@@ -635,7 +632,7 @@ export default function AdminFinance() {
                       toast({ title: "Чек отправлен", description: "Электронный чек выслан клиенту" });
                       setSelectedTransactionForDrawer(null);
                     }}
-                    style={{ backgroundColor: '#009175', color: '#EDFF68' }}
+                    style={{ backgroundColor: '#003566', color: '#C6FF33' }}
                     className="w-full h-14 rounded-full font-black text-xs uppercase tracking-wider shadow-md hover:opacity-90 transition-all border-none cursor-pointer"
                   >
                     Отправить чек клиенту
@@ -668,7 +665,7 @@ export default function AdminFinance() {
             >
               <div className="flex items-center justify-between pb-3 border-b border-zinc-800/60">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-[#009175]/30 text-[#EDFF68] flex items-center justify-center font-bold">
+                  <div className="w-9 h-9 rounded-full bg-[#003566] text-[#C6FF33] flex items-center justify-center font-bold">
                     <ShoppingCart size={18} />
                   </div>
                   <div>
@@ -696,7 +693,7 @@ export default function AdminFinance() {
                     value={posData.client}
                     onChange={e => setPosData({ ...posData, client: e.target.value })}
                     placeholder="Имя, телефон или штрихкод..."
-                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-sm font-bold px-4 focus-visible:border-[#009175]"
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-sm font-bold px-4 focus-visible:border-[#003566]"
                   />
                 </div>
 
@@ -706,7 +703,7 @@ export default function AdminFinance() {
                     <select
                       value={posData.itemType}
                       onChange={e => setPosData({ ...posData, itemType: e.target.value })}
-                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#009175]"
+                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#003566]"
                     >
                       <option value="membership">Абонемент</option>
                       <option value="service">Услуга / Аренда</option>
@@ -722,7 +719,7 @@ export default function AdminFinance() {
                       value={posData.amount}
                       onChange={e => setPosData({ ...posData, amount: e.target.value })}
                       placeholder="0"
-                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-[#EDFF68] font-mono text-base font-black px-4 focus-visible:border-[#009175]"
+                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-[#C6FF33] font-mono text-base font-black px-4 focus-visible:border-[#003566]"
                     />
                   </div>
                 </div>
@@ -759,7 +756,7 @@ export default function AdminFinance() {
                   className="bg-black/30 border border-zinc-800 rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:border-zinc-700 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center ${posData.fiscalize ? 'bg-[#009175]/20 text-[#009175]' : 'bg-zinc-800 text-zinc-500'}`}>
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center ${posData.fiscalize ? 'bg-[#C6FF33]/20 text-[#C6FF33]' : 'bg-zinc-800 text-zinc-500'}`}>
                       <Receipt size={18} />
                     </div>
                     <div className="flex flex-col">
@@ -767,7 +764,7 @@ export default function AdminFinance() {
                       <span className="text-[10px] font-medium text-stone-400 uppercase tracking-wider">Отправка в ОФД (ФЗ-54)</span>
                     </div>
                   </div>
-                  <div className={`w-11 h-6 rounded-full p-0.5 transition-colors ${posData.fiscalize ? 'bg-[#009175]' : 'bg-zinc-700'}`}>
+                  <div className={`w-11 h-6 rounded-full p-0.5 transition-colors ${posData.fiscalize ? 'bg-[#003566]' : 'bg-zinc-700'}`}>
                     <div className={`w-5 h-5 rounded-full bg-white transition-transform ${posData.fiscalize ? 'translate-x-5' : 'translate-x-0'}`} />
                   </div>
                 </div>
@@ -775,7 +772,7 @@ export default function AdminFinance() {
                 <div className="pt-2">
                   <Button
                     type="submit"
-                    style={{ backgroundColor: '#009175', color: '#EDFF68' }}
+                    style={{ backgroundColor: '#003566', color: '#C6FF33' }}
                     className="w-full rounded-full h-14 font-black text-xs uppercase tracking-wider shadow-lg hover:opacity-90 border-none cursor-pointer"
                   >
                     Оплатить {posData.amount ? `${Number(posData.amount).toLocaleString('ru-RU')} ₽` : ''}

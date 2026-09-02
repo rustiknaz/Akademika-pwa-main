@@ -157,7 +157,7 @@ export default function AdminStaff() {
   if (loading) {
     return (
       <div className="min-h-screen page-root flex items-center justify-center transition-colors duration-300 bg-transparent text-slate-900">
-        <Loader2 className="w-8 h-8 animate-spin text-[#6EB52F]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#FCA311]" />
       </div>
     );
   }
@@ -177,7 +177,7 @@ export default function AdminStaff() {
           <div className="flex-1 relative h-full">
             <AnimatePresence initial={false} mode="wait">
               {activeSlide === 0 ? (
-                /* СЛАЙД 1: КОМАНДА (#364F41 фон, #6EB52F текст) */
+                /* СЛАЙД 1: КОМАНДА (#14213D фон, #FCA311 текст) */
                 <motion.div
                   key="team-slide"
                   drag="x"
@@ -193,20 +193,20 @@ export default function AdminStaff() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#364F41', color: '#6EB52F' }}
+                  style={{ backgroundColor: '#14213D', color: '#FCA311' }}
                   className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#6EB52F] leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#FCA311] leading-tight">
                       Сотрудники
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-[#6EB52F] font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-[#FCA311] font-mono tracking-tight leading-none">
                       {displayedStaff.length}
                     </span>
-                    <span className="text-[10px] font-bold text-[#6EB52F]/80 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-[#FCA311]/80 uppercase tracking-wide leading-tight">
                       активных<br/>в штате
                     </span>
                   </div>
@@ -220,10 +220,10 @@ export default function AdminStaff() {
                           e.stopPropagation();
                           setIsFilterOpen(!isFilterOpen);
                         }} 
-                        className="w-11 h-11 rounded-full bg-[#6EB52F]/20 hover:bg-[#6EB52F]/30 text-[#6EB52F] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                        className="w-11 h-11 rounded-full bg-[#FCA311]/20 hover:bg-[#FCA311]/30 text-[#FCA311] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {roleFilter !== 'Все сотрудники' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#364F41] rounded-full bg-[#6EB52F] shrink-0" />}
+                        {roleFilter !== 'Все сотрудники' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#14213D] rounded-full bg-[#FCA311] shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
@@ -253,7 +253,7 @@ export default function AdminStaff() {
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              style={{ backgroundColor: '#6EB52F', color: '#364F41' }}
+                              style={{ backgroundColor: '#FCA311', color: '#14213D' }}
                               className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
@@ -279,14 +279,14 @@ export default function AdminStaff() {
                         e.stopPropagation(); 
                         setIsSearchVisible(!isSearchVisible); 
                       }} 
-                      className="w-11 h-11 rounded-full bg-[#6EB52F]/20 hover:bg-[#6EB52F]/30 text-[#6EB52F] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
+                      className="w-11 h-11 rounded-full bg-[#FCA311]/20 hover:bg-[#FCA311]/30 text-[#FCA311] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
                   </div>
                 </motion.div>
               ) : (
-                /* СЛАЙД 2: ЗАРПЛАТЫ (#6EB52F фон, #364F41 текст) */
+                /* СЛАЙД 2: ЗАРПЛАТЫ (#FCA311 фон, #14213D текст) */
                 <motion.div
                   key="payroll-slide"
                   drag="x"
@@ -302,20 +302,20 @@ export default function AdminStaff() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#6EB52F', color: '#364F41' }}
+                  style={{ backgroundColor: '#FCA311', color: '#14213D' }}
                   className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#364F41] leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#14213D] leading-tight">
                       Зарплаты
                     </h2>
                   </div>
 
                   <div className="flex flex-col gap-0 px-0.5">
-                    <span className="text-4xl font-black text-[#364F41] font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-[#14213D] font-mono tracking-tight leading-none">
                       {totalPayroll.toLocaleString('ru-RU')} ₽
                     </span>
-                    <span className="text-[10px] font-bold text-[#364F41]/80 uppercase tracking-wide mt-1.5">
+                    <span className="text-[10px] font-bold text-[#14213D]/80 uppercase tracking-wide mt-1.5">
                       Ожидает выплаты
                     </span>
                   </div>
@@ -328,10 +328,10 @@ export default function AdminStaff() {
                           e.stopPropagation();
                           setIsFilterOpen(!isFilterOpen);
                         }} 
-                        className="w-11 h-11 rounded-full bg-[#364F41]/20 hover:bg-[#364F41]/30 text-[#364F41] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                        className="w-11 h-11 rounded-full bg-[#14213D]/20 hover:bg-[#14213D]/30 text-[#14213D] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {roleFilter !== 'Все сотрудники' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#6EB52F] rounded-full bg-[#364F41] shrink-0" />}
+                        {roleFilter !== 'Все сотрудники' && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#FCA311] rounded-full bg-[#14213D] shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
@@ -361,7 +361,7 @@ export default function AdminStaff() {
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              style={{ backgroundColor: '#364F41', color: '#6EB52F' }}
+                              style={{ backgroundColor: '#14213D', color: '#FCA311' }}
                               className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
@@ -387,7 +387,7 @@ export default function AdminStaff() {
                         e.stopPropagation(); 
                         setIsSearchVisible(!isSearchVisible); 
                       }} 
-                      className="w-11 h-11 rounded-full bg-[#364F41]/20 hover:bg-[#364F41]/30 text-[#364F41] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
+                      className="w-11 h-11 rounded-full bg-[#14213D]/20 hover:bg-[#14213D]/30 text-[#14213D] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
@@ -401,7 +401,7 @@ export default function AdminStaff() {
           <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
             <button 
               onClick={() => { setIsFilterOpen(false); setActiveSlide(0); }}
-              style={activeSlide === 0 ? { backgroundColor: '#6EB52F', color: '#364F41' } : {}}
+              style={activeSlide === 0 ? { backgroundColor: '#FCA311', color: '#14213D' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 0 
                   ? 'shadow-md scale-100' 
@@ -414,7 +414,7 @@ export default function AdminStaff() {
             
             <button 
               onClick={() => { setIsFilterOpen(false); setActiveSlide(1); }}
-              style={activeSlide === 1 ? { backgroundColor: '#364F41', color: '#6EB52F' } : {}}
+              style={activeSlide === 1 ? { backgroundColor: '#14213D', color: '#FCA311' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 1 
                   ? 'shadow-md scale-100' 
@@ -469,7 +469,7 @@ export default function AdminStaff() {
                   </div>
 
                   <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
-                    <h4 className="font-bold text-base text-slate-950 dark:text-white truncate group-hover:text-[#6EB52F]">
+                    <h4 className="font-bold text-base text-slate-950 dark:text-white truncate group-hover:text-[#FCA311]">
                       {staff.name}
                     </h4>
                     <div className="flex items-center gap-2">
@@ -483,7 +483,7 @@ export default function AdminStaff() {
                     <a 
                       href={`tel:${staff.phone}`} 
                       onClick={(e) => e.stopPropagation()}
-                      className="w-11 h-11 rounded-full bg-[#6EB52F]/15 text-[#364F41] dark:text-[#6EB52F] hover:bg-[#6EB52F]/25 flex items-center justify-center transition-all shadow-xs"
+                      className="w-11 h-11 rounded-full bg-[#FCA311]/15 text-[#FCA311] hover:bg-[#FCA311]/25 flex items-center justify-center transition-all shadow-xs"
                       title="Позвонить сотруднику"
                     >
                       <Phone size={18} className="stroke-[2.5]" />
@@ -527,7 +527,7 @@ export default function AdminStaff() {
                         e.stopPropagation();
                         setSelectedPayrollForDrawer(payroll);
                       }}
-                      style={{ backgroundColor: '#6EB52F', color: '#364F41' }}
+                      style={{ backgroundColor: '#FCA311', color: '#14213D' }}
                       className="rounded-full h-10 px-4 text-[11px] font-black uppercase tracking-wider transition-all shadow-xs border-none cursor-pointer hover:opacity-90"
                     >
                       Выплата
@@ -549,8 +549,8 @@ export default function AdminStaff() {
         onClick={() => setIsAddStaffDrawerOpen(true)}
         ariaLabel="Добавить сотрудника"
         id="floating-action-btn"
-        style={{ backgroundColor: '#364F41', color: '#6EB52F' }}
-        className="!bg-[#364F41] !text-[#6EB52F] shadow-lg shadow-[#364F41]/30 hover:opacity-95"
+        style={{ backgroundColor: '#14213D', color: '#FCA311' }}
+        className="!bg-[#14213D] !text-[#FCA311] shadow-lg shadow-[#14213D]/40 hover:opacity-95"
       />
 
       {/* ─── ШТОРКА 1: ПРОФИЛЬ СОТРУДНИКА (BOTTOM SHEET DRAWER) ─── */}
@@ -585,7 +585,7 @@ export default function AdminStaff() {
                 </div>
                 <div className="flex flex-col min-w-0">
                   <h3 className="text-2xl font-black text-white truncate">{selectedStaffForDrawer.name}</h3>
-                  <span className="text-xs font-bold text-[#6EB52F] uppercase tracking-wider mt-0.5">
+                  <span className="text-xs font-bold text-[#FCA311] uppercase tracking-wider mt-0.5">
                     {selectedStaffForDrawer.role === 'trainer' ? 'Преподаватель / Хореограф' : 'Администратор студии'}
                   </span>
                 </div>
@@ -606,13 +606,13 @@ export default function AdminStaff() {
 
                 <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px] flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <Phone size={16} className="text-[#6EB52F]" />
+                    <Phone size={16} className="text-[#FCA311]" />
                     <span className="text-xs font-mono font-bold text-white">{selectedStaffForDrawer.phone}</span>
                   </div>
 
                   <a
                     href={`tel:${selectedStaffForDrawer.phone}`}
-                    style={{ backgroundColor: '#6EB52F', color: '#364F41' }}
+                    style={{ backgroundColor: '#FCA311', color: '#14213D' }}
                     className="px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider shadow-xs"
                   >
                     Позвонить
@@ -625,7 +625,7 @@ export default function AdminStaff() {
                       toast({ title: "Расписание преподавателя", description: "Загрузка календаря смен" });
                       setSelectedStaffForDrawer(null);
                     }}
-                    style={{ backgroundColor: '#364F41', color: '#6EB52F' }}
+                    style={{ backgroundColor: '#14213D', color: '#FCA311' }}
                     className="w-full h-14 rounded-full font-black text-xs uppercase tracking-wider shadow-md hover:opacity-90 transition-all border-none cursor-pointer"
                   >
                     Открыть расписание сотрудника
@@ -675,7 +675,7 @@ export default function AdminStaff() {
               <div className="flex-1 overflow-y-auto scrollbar-none pt-4 pb-6 space-y-4">
                 <div className="bg-[#1C1C1E] border border-zinc-800 p-5 rounded-[28px] flex flex-col items-center justify-center text-center">
                   <span className="text-[10px] font-black uppercase tracking-wider text-zinc-400">Сумма к выплате</span>
-                  <span className="text-3xl font-black font-mono text-[#6EB52F] mt-1">
+                  <span className="text-3xl font-black font-mono text-[#FCA311] mt-1">
                     {selectedPayrollForDrawer.amount.toLocaleString('ru-RU')} ₽
                   </span>
                   <span className="text-xs font-bold text-zinc-400 mt-1 uppercase tracking-wider">
@@ -685,7 +685,7 @@ export default function AdminStaff() {
 
                 <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px] flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <ShieldCheck size={18} className="text-[#6EB52F]" />
+                    <ShieldCheck size={18} className="text-[#FCA311]" />
                     <span className="text-xs font-bold text-white">Учтено часов / смен</span>
                   </div>
                   <span className="text-sm font-black font-mono text-white">
@@ -696,7 +696,7 @@ export default function AdminStaff() {
                 <div className="pt-2">
                   <Button
                     onClick={handlePay}
-                    style={{ backgroundColor: '#6EB52F', color: '#364F41' }}
+                    style={{ backgroundColor: '#FCA311', color: '#14213D' }}
                     className="w-full h-14 rounded-full font-black text-xs uppercase tracking-wider shadow-md hover:opacity-90 transition-all border-none cursor-pointer"
                   >
                     Подтвердить и выплатить
@@ -729,7 +729,7 @@ export default function AdminStaff() {
             >
               <div className="flex items-center justify-between pb-3 border-b border-zinc-800/60">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-[#6EB52F]/20 text-[#6EB52F] flex items-center justify-center font-bold">
+                  <div className="w-9 h-9 rounded-full bg-[#FCA311]/20 text-[#FCA311] flex items-center justify-center font-bold">
                     <UserPlus size={18} />
                   </div>
                   <div>
@@ -758,7 +758,7 @@ export default function AdminStaff() {
                     value={newStaffData.name}
                     onChange={(e) => setNewStaffData({ ...newStaffData, name: e.target.value })}
                     placeholder="Например: Артем Соколов"
-                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-sm font-bold px-4 focus-visible:border-[#6EB52F]"
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-sm font-bold px-4 focus-visible:border-[#FCA311]"
                   />
                 </div>
 
@@ -769,7 +769,7 @@ export default function AdminStaff() {
                     value={newStaffData.phone}
                     onChange={(e) => setNewStaffData({ ...newStaffData, phone: e.target.value })}
                     placeholder="+7 (999) 000-00-00"
-                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-sm font-bold px-4 focus-visible:border-[#6EB52F]"
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-sm font-bold px-4 focus-visible:border-[#FCA311]"
                   />
                 </div>
 
@@ -779,7 +779,7 @@ export default function AdminStaff() {
                     <select
                       value={newStaffData.role}
                       onChange={(e) => setNewStaffData({ ...newStaffData, role: e.target.value })}
-                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#6EB52F]"
+                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#FCA311]"
                     >
                       <option value="trainer">Преподаватель</option>
                       <option value="admin">Администратор</option>
@@ -793,7 +793,7 @@ export default function AdminStaff() {
                       value={newStaffData.rate}
                       onChange={(e) => setNewStaffData({ ...newStaffData, rate: e.target.value })}
                       placeholder="1200 ₽ / час"
-                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-xs font-bold px-4 focus-visible:border-[#6EB52F]"
+                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-xs font-bold px-4 focus-visible:border-[#FCA311]"
                     />
                   </div>
                 </div>
@@ -801,7 +801,7 @@ export default function AdminStaff() {
                 <div className="pt-3">
                   <Button
                     type="submit"
-                    style={{ backgroundColor: '#364F41', color: '#6EB52F' }}
+                    style={{ backgroundColor: '#14213D', color: '#FCA311' }}
                     className="w-full rounded-full h-14 font-black text-xs uppercase tracking-wider shadow-lg hover:opacity-90 border-none cursor-pointer"
                   >
                     Сохранить в штат

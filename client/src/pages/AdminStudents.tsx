@@ -31,7 +31,7 @@ export const STAGES_CONFIG: Record<LeadStage, { label: string; color: string; bg
   new: { label: 'Новая заявка', color: 'text-sky-500 dark:text-sky-400', bg: 'bg-sky-500/10 border-sky-500/20' },
   trial_scheduled: { label: 'Назначен пробный', color: 'text-amber-500 dark:text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' },
   trial_attended: { label: 'Пришел на пробный', color: 'text-violet-500 dark:text-violet-400', bg: 'bg-violet-500/10 border-violet-500/20' },
-  bought: { label: 'Действующий', color: 'text-emerald-600 dark:text-[#CCFF00]', bg: 'bg-emerald-500/10 dark:bg-[#CCFF00]/10 border-emerald-500/20 dark:border-[#CCFF00]/20' },
+  bought: { label: 'Действующий', color: 'text-emerald-600 dark:text-[#F5F5F5]', bg: 'bg-emerald-500/10 dark:bg-[#F5F5F5]/10 border-emerald-500/20 dark:border-[#F5F5F5]/20' },
   lost: { label: 'Отказ', color: 'text-rose-500 dark:text-rose-400', bg: 'bg-rose-500/10 border-rose-500/20' },
 };
 
@@ -101,8 +101,8 @@ function ModalDatePicker({
         <div className="flex justify-between items-center mb-5">
           <h3 className="text-sm font-bold text-white tracking-wide">{viewDate.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }).replace(/\s*г\./, '').toLowerCase()}</h3>
           <div className="flex gap-2">
-            <button onClick={() => setViewDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))} className="w-9 h-9 border border-zinc-800 !rounded-[12px] flex items-center justify-center text-zinc-400 hover:text-[#00BAEF] bg-zinc-900/50 hover:bg-zinc-800 transition-colors cursor-pointer"><ChevronLeft size={16} /></button>
-            <button onClick={() => setViewDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))} className="w-9 h-9 border border-zinc-800 !rounded-[12px] flex items-center justify-center text-zinc-400 hover:text-[#00BAEF] bg-zinc-900/50 hover:bg-zinc-800 transition-colors cursor-pointer"><ChevronRight size={16} /></button>
+            <button onClick={() => setViewDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))} className="w-9 h-9 border border-zinc-800 !rounded-[12px] flex items-center justify-center text-zinc-400 hover:text-[#F5F5F5] bg-zinc-900/50 hover:bg-zinc-800 transition-colors cursor-pointer"><ChevronLeft size={16} /></button>
+            <button onClick={() => setViewDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))} className="w-9 h-9 border border-zinc-800 !rounded-[12px] flex items-center justify-center text-zinc-400 hover:text-[#F5F5F5] bg-zinc-900/50 hover:bg-zinc-800 transition-colors cursor-pointer"><ChevronRight size={16} /></button>
           </div>
         </div>
         <div className="grid grid-cols-7 gap-1 text-center mb-2">
@@ -114,14 +114,14 @@ function ModalDatePicker({
             const isTod = isDateToday(cell.date);
             return (
               <div key={idx} className="h-10 flex items-center justify-center">
-                <button onClick={() => handleSelect(cell.date)} className={`text-xs transition-all cursor-pointer ${isSel ? 'w-9 h-9 flex items-center justify-center !rounded-full bg-[#00548E] text-[#00BAEF] font-bold font-mono text-sm shadow-[0_0_10px_rgba(0,186,239,0.4)]' : isTod ? 'w-9 h-9 flex items-center justify-center border border-[#00BAEF]/40 text-white font-medium rounded-xl bg-[#00BAEF]/5' : cell.isCurrentMonth ? 'w-9 h-9 flex items-center justify-center text-white hover:bg-zinc-900 rounded-xl' : 'w-9 h-9 flex items-center justify-center text-stone-600 hover:bg-zinc-900/50 rounded-xl'}`}>
+                <button onClick={() => handleSelect(cell.date)} className={`text-xs transition-all cursor-pointer ${isSel ? 'w-9 h-9 flex items-center justify-center !rounded-full bg-[#452039] text-[#F5F5F5] font-bold font-mono text-sm shadow-[0_0_10px_rgba(245,245,245,0.35)]' : isTod ? 'w-9 h-9 flex items-center justify-center border border-[#F5F5F5]/40 text-white font-medium rounded-xl bg-[#F5F5F5]/5' : cell.isCurrentMonth ? 'w-9 h-9 flex items-center justify-center text-white hover:bg-zinc-900 rounded-xl' : 'w-9 h-9 flex items-center justify-center text-stone-600 hover:bg-zinc-900/50 rounded-xl'}`}>
                   {cell.date.getDate()}
                 </button>
               </div>
             );
           })}
         </div>
-        <button onClick={handleResetToToday} className="w-full py-3 !bg-[#18181b] hover:bg-zinc-800 !rounded-full text-[#00BAEF] font-bold text-center mt-4 transition-colors border !border-zinc-800 cursor-pointer">Сегодня</button>
+        <button onClick={handleResetToToday} className="w-full py-3 !bg-[#18181b] hover:bg-zinc-800 !rounded-full text-[#F5F5F5] font-bold text-center mt-4 transition-colors border !border-zinc-800 cursor-pointer">Сегодня</button>
       </div>
     </div>
   );
@@ -295,7 +295,7 @@ export default function AdminStudents() {
   if (loading) {
     return (
       <div className="min-h-screen page-root flex items-center justify-center bg-transparent text-slate-900">
-        <Loader2 className="w-8 h-8 animate-spin text-[#00BAEF]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#452039]" />
       </div>
     );
   }
@@ -328,7 +328,7 @@ export default function AdminStudents() {
           <div className="flex-1 relative h-full">
             <AnimatePresence initial={false} mode="wait">
               {activeSlide === 0 ? (
-                /* 1. БАЗА УЧЕНИКОВ (Синий #00548E фон, Голубой #00BAEF текст) */
+                /* 1. БАЗА УЧЕНИКОВ (#452039 фон, #F5F5F5 текст) */
                 <motion.div
                   key="base-slide"
                   drag="x"
@@ -339,21 +339,21 @@ export default function AdminStudents() {
                   animate={{ opacity: 1, x: 0 }} 
                   exit={{ opacity: 0, x: -20 }} 
                   transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#00548E', color: '#00BAEF' }}
+                  style={{ backgroundColor: '#452039', color: '#F5F5F5' }}
                   className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
                 >
                   <div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#00BAEF]/70">
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#F5F5F5]/70">
                       ДЕЙСТВУЮЩИЕ УЧЕНИКИ
                     </span>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#00BAEF] mt-0.5">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#F5F5F5] mt-0.5">
                       База клиентов
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-[#00BAEF] font-mono tracking-tight">{displayedList.length}</span>
-                    <span className="text-[10px] font-bold text-[#00BAEF]/80 uppercase tracking-wide leading-tight">
+                    <span className="text-4xl font-black text-[#F5F5F5] font-mono tracking-tight">{displayedList.length}</span>
+                    <span className="text-[10px] font-bold text-[#F5F5F5]/80 uppercase tracking-wide leading-tight">
                       активных<br/>ученика
                     </span>
                   </div>
@@ -363,10 +363,10 @@ export default function AdminStudents() {
                       <button 
                         onPointerDown={(e) => e.stopPropagation()} 
                         onClick={(e) => { e.stopPropagation(); setIsFilterOpen(!isFilterOpen); }} 
-                        className="w-11 h-11 rounded-full bg-[#00BAEF]/20 hover:bg-[#00BAEF]/30 text-[#00BAEF] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                        className="w-11 h-11 rounded-full bg-[#F5F5F5]/20 hover:bg-[#F5F5F5]/30 text-[#F5F5F5] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {isBaseFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#00548E] rounded-full bg-[#00BAEF] shrink-0" />}
+                        {isBaseFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#452039] rounded-full bg-[#F5F5F5] shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
@@ -396,7 +396,7 @@ export default function AdminStudents() {
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              style={{ backgroundColor: '#00BAEF', color: '#00548E' }}
+                              style={{ backgroundColor: '#F5F5F5', color: '#452039' }}
                               className="flex-1 text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
@@ -421,14 +421,14 @@ export default function AdminStudents() {
                     <button 
                       onPointerDown={(e) => e.stopPropagation()} 
                       onClick={(e) => { e.stopPropagation(); setIsSearchVisible(!isSearchVisible); }} 
-                      className="w-11 h-11 rounded-full bg-[#00BAEF]/20 hover:bg-[#00BAEF]/30 text-[#00BAEF] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
+                      className="w-11 h-11 rounded-full bg-[#F5F5F5]/20 hover:bg-[#F5F5F5]/30 text-[#F5F5F5] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
                   </div>
                 </motion.div>
               ) : (
-                /* 2. ВОРОНКА ЛИДОВ (Голубой #00BAEF фон, Синий #00548E текст) */
+                /* 2. ВОРОНКА ЛИДОВ (Инверсия: #F5F5F5 фон, #452039 текст) */
                 <motion.div
                   key="funnel-slide"
                   drag="x"
@@ -439,22 +439,22 @@ export default function AdminStudents() {
                   animate={{ opacity: 1, x: 0 }} 
                   exit={{ opacity: 0, x: 20 }} 
                   transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#00BAEF', color: '#00548E' }}
+                  style={{ backgroundColor: '#F5F5F5', color: '#452039' }}
                   className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
                 >
                   <div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#00548E]/70">ВОРОНКА ЛИДОВ</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#452039]/70">ВОРОНКА ЛИДОВ</span>
                     <div className="mt-1 flex items-center gap-2">
-                      <span className="text-2xl font-black text-[#00548E] font-mono leading-none">{leadsList.length}</span>
-                      <span className="text-[10px] font-bold text-[#00548E]/80 uppercase tracking-wider">Всего лидов</span>
+                      <span className="text-2xl font-black text-[#452039] font-mono leading-none">{leadsList.length}</span>
+                      <span className="text-[10px] font-bold text-[#452039]/80 uppercase tracking-wider">Всего лидов</span>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-4 gap-2 px-1 py-1">
-                    <div className="flex flex-col"><span className="text-2xl font-black text-[#00548E] font-mono leading-none">{stageCounts.new}</span><span className="text-[9px] font-bold text-[#00548E]/80 uppercase tracking-wider mt-1">Заявка</span></div>
-                    <div className="flex flex-col"><span className="text-2xl font-black text-[#00548E] font-mono leading-none">{stageCounts.trial_scheduled}</span><span className="text-[9px] font-bold text-[#00548E]/80 uppercase tracking-wider mt-1">Записан</span></div>
-                    <div className="flex flex-col"><span className="text-2xl font-black text-[#00548E] font-mono leading-none">{stageCounts.trial_attended}</span><span className="text-[9px] font-bold text-[#00548E]/80 uppercase tracking-wider mt-1">Пришел</span></div>
-                    <div className="flex flex-col"><span className="text-2xl font-black text-[#00548E]/80 font-mono leading-none">{stageCounts.lost}</span><span className="text-[9px] font-bold text-[#00548E]/80 uppercase tracking-wider mt-1">Отказ</span></div>
+                    <div className="flex flex-col"><span className="text-2xl font-black text-[#452039] font-mono leading-none">{stageCounts.new}</span><span className="text-[9px] font-bold text-[#452039]/80 uppercase tracking-wider mt-1">Заявка</span></div>
+                    <div className="flex flex-col"><span className="text-2xl font-black text-[#452039] font-mono leading-none">{stageCounts.trial_scheduled}</span><span className="text-[9px] font-bold text-[#452039]/80 uppercase tracking-wider mt-1">Записан</span></div>
+                    <div className="flex flex-col"><span className="text-2xl font-black text-[#452039] font-mono leading-none">{stageCounts.trial_attended}</span><span className="text-[9px] font-bold text-[#452039]/80 uppercase tracking-wider mt-1">Пришел</span></div>
+                    <div className="flex flex-col"><span className="text-2xl font-black text-[#452039]/80 font-mono leading-none">{stageCounts.lost}</span><span className="text-[9px] font-bold text-[#452039]/80 uppercase tracking-wider mt-1">Отказ</span></div>
                   </div>
 
                   <div className="relative flex items-center justify-between z-[100]">
@@ -462,10 +462,10 @@ export default function AdminStudents() {
                       <button 
                         onPointerDown={(e) => e.stopPropagation()} 
                         onClick={(e) => { e.stopPropagation(); setIsFilterOpen(!isFilterOpen); }} 
-                        className="w-11 h-11 rounded-full bg-[#00548E]/20 hover:bg-[#00548E]/30 text-[#00548E] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                        className="w-11 h-11 rounded-full bg-[#452039]/20 hover:bg-[#452039]/30 text-[#452039] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {isFunnelFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#00BAEF] rounded-full bg-[#00548E] shrink-0" />}
+                        {isFunnelFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#F5F5F5] rounded-full bg-[#452039] shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
@@ -491,7 +491,7 @@ export default function AdminStudents() {
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              style={{ backgroundColor: '#00548E', color: '#00BAEF' }}
+                              style={{ backgroundColor: '#452039', color: '#F5F5F5' }}
                               className="flex-1 text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
@@ -515,7 +515,7 @@ export default function AdminStudents() {
                     <button 
                       onPointerDown={(e) => e.stopPropagation()} 
                       onClick={(e) => { e.stopPropagation(); setIsSearchVisible(!isSearchVisible); }} 
-                      className="w-11 h-11 rounded-full bg-[#00548E]/20 hover:bg-[#00548E]/30 text-[#00548E] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
+                      className="w-11 h-11 rounded-full bg-[#452039]/20 hover:bg-[#452039]/30 text-[#452039] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
                     >
                       <Search size={20} className="stroke-[2.5]" />
                     </button>
@@ -529,7 +529,7 @@ export default function AdminStudents() {
           <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
             <button 
               onClick={() => { setIsFilterOpen(false); setActiveSlide(0); }}
-              style={activeSlide === 0 ? { backgroundColor: '#00BAEF', color: '#00548E' } : {}}
+              style={activeSlide === 0 ? { backgroundColor: '#F5F5F5', color: '#452039' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 0 
                   ? 'shadow-md scale-100' 
@@ -542,7 +542,7 @@ export default function AdminStudents() {
             
             <button 
               onClick={() => { setIsFilterOpen(false); setActiveSlide(1); }}
-              style={activeSlide === 1 ? { backgroundColor: '#00548E', color: '#00BAEF' } : {}}
+              style={activeSlide === 1 ? { backgroundColor: '#452039', color: '#F5F5F5' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 1 
                   ? 'shadow-md scale-100' 
@@ -555,7 +555,7 @@ export default function AdminStudents() {
           </div>
         </div>
 
-        {/* ─── ВЫЕЗЖАЮЩИЙ ПОИСК (ЧИСТАЯ КАПСУЛА-ПИЛЮЛЯ С МАТОВЫМ БЛЮРОМ) ─── */}
+        {/* ─── ВЫЕЗЖАЮЩИЙ ПОИСК ─── */}
         <AnimatePresence>
           {isSearchVisible && (
             <motion.div
@@ -603,7 +603,7 @@ export default function AdminStudents() {
                 </div>
               );
 
-              let badgeClass = "w-9 h-9 rounded-full bg-[#00548E] text-[#00BAEF] font-black flex items-center justify-center text-sm font-mono shadow-sm";
+              let badgeClass = "w-9 h-9 rounded-full bg-[#452039] text-[#F5F5F5] font-black flex items-center justify-center text-sm font-mono shadow-sm";
               if (visits <= 0 || isExpired) badgeClass = "w-9 h-9 rounded-full bg-rose-500 text-white font-black flex items-center justify-center text-sm font-mono shadow-sm";
               else if (visits >= 1 && visits <= 3) badgeClass = "w-9 h-9 rounded-full bg-amber-400 text-black font-black flex items-center justify-center text-sm font-mono shadow-sm";
 
@@ -619,7 +619,7 @@ export default function AdminStudents() {
                   {avatar}
                   <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-base text-slate-950 dark:text-white truncate max-w-[170px] group-hover:text-[#00BAEF]">{student.full_name || 'Без имени'}</span>
+                      <span className="font-bold text-base text-slate-950 dark:text-white truncate max-w-[170px] group-hover:text-[#452039] dark:group-hover:text-[#F5F5F5]">{student.full_name || 'Без имени'}</span>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${sourceInfo.bg} ${sourceInfo.text}`}><span>{sourceInfo.icon}</span><span>{sourceInfo.label}</span></span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -684,7 +684,7 @@ export default function AdminStudents() {
                       <h2 className="text-2xl font-black text-white leading-tight truncate">{selectedStudentForDrawer.full_name || 'Без имени'}</h2>
                       {selectedStudentForDrawer.phone && (
                         <a href={`tel:${selectedStudentForDrawer.phone}`} className="rounded-full bg-zinc-900 border border-zinc-800 px-3.5 py-1 flex items-center gap-2 text-xs font-mono text-zinc-300 w-fit select-none">
-                          <Phone size={13} className="text-[#00BAEF]" />
+                          <Phone size={13} className="text-[#F5F5F5]" />
                           <span className="truncate">{selectedStudentForDrawer.phone}</span>
                         </a>
                       )}
@@ -719,7 +719,7 @@ export default function AdminStudents() {
                   <div className="grid grid-cols-2 gap-3 my-4">
                     <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[24px] flex flex-col gap-1">
                       <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider">Остаток занятий</span>
-                      <span className="text-[#00BAEF] text-2xl font-black font-mono">{selectedStudentForDrawer.subscriptions?.[0]?.visits_left ?? 0}</span>
+                      <span className="text-[#F5F5F5] text-2xl font-black font-mono">{selectedStudentForDrawer.subscriptions?.[0]?.visits_left ?? 0}</span>
                     </div>
                     <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[24px] flex flex-col gap-1 min-w-0">
                       <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider">Источник</span>
@@ -743,7 +743,7 @@ export default function AdminStudents() {
                       onClick={() => { 
                         toast({ title: "История посещений", description: "Раздел истории посещений в разработке" }); 
                       }} 
-                      style={{ backgroundColor: '#00548E', color: '#00BAEF' }}
+                      style={{ backgroundColor: '#452039', color: '#F5F5F5' }}
                       className="flex-1 py-3.5 text-xs font-black uppercase tracking-wider rounded-full transition-all cursor-pointer text-center border-none shadow-md"
                     >
                       История
@@ -776,7 +776,7 @@ export default function AdminStudents() {
             >
               <div className="flex items-center justify-between pb-3 border-b border-zinc-800/60">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-[#00548E]/30 text-[#00BAEF] flex items-center justify-center font-bold">
+                  <div className="w-9 h-9 rounded-full bg-[#452039] text-[#F5F5F5] flex items-center justify-center font-bold">
                     <UserPlus size={18} />
                   </div>
                   <h3 className="text-lg font-black uppercase tracking-wider text-white">
@@ -800,7 +800,7 @@ export default function AdminStudents() {
                     value={newStudent.full_name} 
                     onChange={(e) => setNewStudent({...newStudent, full_name: e.target.value})} 
                     placeholder="Например: Екатерина Смирнова" 
-                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white placeholder:text-zinc-600 text-sm font-bold px-4 focus-visible:border-[#00BAEF]" 
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white placeholder:text-zinc-600 text-sm font-bold px-4 focus-visible:border-[#452039]" 
                   />
                 </div>
 
@@ -811,7 +811,7 @@ export default function AdminStudents() {
                     value={newStudent.phone} 
                     onChange={(e) => setNewStudent({...newStudent, phone: e.target.value.replace(/\D/g, '')})} 
                     placeholder="79991234567" 
-                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white placeholder:text-zinc-600 text-sm font-bold font-mono px-4 focus-visible:border-[#00BAEF]" 
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white placeholder:text-zinc-600 text-sm font-bold font-mono px-4 focus-visible:border-[#452039]" 
                   />
                 </div>
 
@@ -821,7 +821,7 @@ export default function AdminStudents() {
                     <select 
                       value={newStudent.source} 
                       onChange={(e) => setNewStudent({ ...newStudent, source: e.target.value as LeadSource })} 
-                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#00BAEF]"
+                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#452039]"
                     >
                       <option value="instagram">📸 Instagram</option>
                       <option value="site">🌐 Сайт</option>
@@ -835,7 +835,7 @@ export default function AdminStudents() {
                     <select 
                       value={newStudent.stage} 
                       onChange={(e) => setNewStudent({ ...newStudent, stage: e.target.value as LeadStage })} 
-                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#00BAEF]"
+                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#452039]"
                     >
                       <option value="bought">Купил (Действующий)</option>
                       <option value="new">Новая заявка</option>
@@ -853,7 +853,7 @@ export default function AdminStudents() {
                     type="number" 
                     value={newStudent.initial_visits} 
                     onChange={(e) => setNewStudent({...newStudent, initial_visits: parseInt(e.target.value) || 0})} 
-                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-base font-black px-4 focus-visible:border-[#00BAEF]" 
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-base font-black px-4 focus-visible:border-[#452039]" 
                   />
                 </div>
 
@@ -861,7 +861,7 @@ export default function AdminStudents() {
                   <Button 
                     type="submit" 
                     disabled={isCreating} 
-                    style={{ backgroundColor: '#00548E', color: '#00BAEF' }} 
+                    style={{ backgroundColor: '#452039', color: '#F5F5F5' }} 
                     className="w-full rounded-full h-14 font-black text-xs uppercase tracking-wider shadow-lg hover:opacity-90 border-none cursor-pointer"
                   >
                     {isCreating ? "Сохранение..." : "Сохранить клиента"}
@@ -877,8 +877,8 @@ export default function AdminStudents() {
         onClick={() => setIsAddDrawerOpen(true)} 
         ariaLabel={activeSlide === 0 ? "Добавить ученика" : "Добавить лид"} 
         id="floating-add-student-btn"
-        style={{ backgroundColor: '#00548E', color: '#00BAEF' }}
-        className="!bg-[#00548E] !text-[#00BAEF] shadow-lg shadow-[#00548E]/30 hover:opacity-95"
+        style={{ backgroundColor: '#452039', color: '#F5F5F5' }}
+        className="!bg-[#452039] !text-[#F5F5F5] shadow-lg shadow-[#452039]/40 hover:opacity-95"
       />
       <ModalDatePicker isOpen={selectedSubForDatePicker !== null} onClose={() => setSelectedSubForDatePicker(null)} expiresAt={selectedSubForDatePicker?.expiresAt || null} onUpdate={(dateStr) => { if (selectedSubForDatePicker) handleUpdateExpiry(selectedSubForDatePicker.id, dateStr); }} />
     </div>
