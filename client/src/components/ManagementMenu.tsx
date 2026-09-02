@@ -10,12 +10,10 @@ import {
   Ticket, 
   Sliders, 
   MessageSquare, 
-  ShoppingBag,
-  Sparkles
+  ShoppingBag
 } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTheme } from '@/context/ThemeContext';
 import { useRole } from '@/context/RoleContext';
 
 interface ManagementMenuProps {
@@ -26,9 +24,7 @@ interface ManagementMenuProps {
 
 export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose }) => {
   const [location, setLocation] = useLocation();
-  const { accentColor, accentConfig } = useTheme();
   const { currentRole, isAllowed } = useRole();
-  const activeTextColor = accentConfig.textColor === 'text-black' ? '#000000' : '#ffffff';
 
   const [menuView, setMenuView] = useState<'main' | 'settings'>('main');
 
@@ -38,75 +34,94 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
     }
   }, [isOpen]);
 
+  // Основное меню с персональными цветами страниц[cite: 10]
   const mainMenuItems = [
     {
       id: 'finance',
       title: 'Финансы и Касса',
       description: currentRole === 'admin' ? 'Прием оплаты от учеников' : 'Зарплаты, аренда, доходы студии',
       icon: RussianRuble,
-      path: '/admin/finance'
+      path: '/admin/finance',
+      circleBg: '#003566',
+      circleColor: '#C6FF33'
     },
     {
       id: 'staff',
       title: 'Сотрудники',
       description: 'Преподаватели, администраторы',
       icon: Users,
-      path: '/admin/staff'
+      path: '/admin/staff',
+      circleBg: '#14213D',
+      circleColor: '#FCA311'
     },
     {
       id: 'chat_notifications',
-      title: 'Уведомления',
+      title: 'Сообщения',
       description: 'Входящие от лидов и клиентов',
       icon: MessageSquare,
-      path: '/admin/messages'
+      path: '/admin/messages',
+      circleBg: '#262B2B',
+      circleColor: '#E6CCB2'
     },
     {
       id: 'shop',
       title: 'Магазин',
       description: 'Мерч, вода и другие товары',
       icon: ShoppingBag,
-      path: '/admin/shop'
+      path: '/admin/shop',
+      circleBg: '#101010',
+      circleColor: '#FFBE0B'
     },
     {
       id: 'settings_trigger',
       title: 'Настройки',
       description: 'Группы, тарифы, контакты',
       icon: Settings,
-      isSubmenuTrigger: true
+      isSubmenuTrigger: true,
+      circleBg: '#3E3B39',
+      circleColor: '#CAC9CD'
     },
-  ].filter(item => item.isSubmenuTrigger || (item.path && (isAllowed ? isAllowed(item.path) : true)));
+  ].filter(item => item.isSubmenuTrigger || (item.path && (isAllowed ? isAllowed(item.path) : true)));[cite: 10]
 
-  // Вложенный список «Настройки»
+  // Подменю «Настройки» с персональными цветами страниц[cite: 10]
   const settingsSubMenuItems = [
     {
       id: 'directions',
       title: currentRole === 'trainer' ? 'Мои группы' : 'Группы',
       description: currentRole === 'trainer' ? 'Просмотр состава и отметка' : 'Справочник групп, дисциплин',
       icon: Layers,
-      path: '/admin/directions'
+      path: '/admin/directions',
+      circleBg: '#004643',
+      circleColor: '#F0EDE5'
     },
     {
       id: 'services',
       title: 'Абонементы',
       description: 'Прайс-лист, абонементы, аренда',
       icon: Ticket,
-      path: '/admin/services'
+      path: '/admin/services',
+      circleBg: '#101010',
+      circleColor: '#FFBE0B'
     },
     {
       id: 'notifications',
       title: 'Рассылки',
       description: 'Telegram, WhatsApp, авто-триггеры',
       icon: Bell,
-      path: '/admin/notifications'
+      path: '/admin/notifications',
+      circleBg: '#3E3B39',
+      circleColor: '#CAC9CD'
     },
     {
       id: 'main_settings',
       title: 'Основные',
       description: 'Цены, тарифы, контакты',
       icon: Sliders,
-      path: '/admin/settings'
+      path: '/admin/settings',
+      circleBg: '#262B2B',
+      circleColor: '#E6CCB2'
     },
-  ].filter(item => (isAllowed ? isAllowed(item.path) : true));
+  ].filter(item => (isAllowed ? isAllowed(item.path) : true));[cite: 10]
 
   return (
     <AnimatePresence>
@@ -120,7 +135,6 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
             className="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-[70] pointer-events-auto"
           />
 
-          {/* Контейнер расположен симметрично над основной левой пилюлей */}
           <div 
             className="fixed bottom-[calc(max(1.5rem,env(safe-area-inset-bottom))+6.5rem)] w-[260px] z-[80] pointer-events-none"
             style={{ 
@@ -153,30 +167,22 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
                             onClose();
                           }
                         }}
-                        style={isActive ? { borderColor: accentColor } : {}}
-                        className={`w-full flex items-center justify-between p-2.5 rounded-full transition-all duration-200 text-left group cursor-pointer bg-zinc-900/80 backdrop-blur-xl border ${
-                          isActive ? 'border-white/30' : 'border-white/10 hover:bg-zinc-800/80'
+                        style={isActive ? { borderColor: item.circleBg } : {}}
+                        className={`w-full flex items-center justify-between p-2.5 rounded-full transition-all duration-200 text-left group cursor-pointer bg-zinc-900/85 backdrop-blur-xl border ${
+                          isActive ? 'border-white/40 ring-1' : 'border-white/10 hover:bg-zinc-800/80'
                         } text-white shadow-2xl`}
                       >
                         <div className="flex items-center gap-3 min-w-0">
+                          {/* Кружок иконки окрашен в цвет своей страницы */}
                           <div
-                            style={isActive ? { backgroundColor: accentColor, color: activeTextColor } : {}}
-                            className={`flex items-center justify-center w-11 h-11 rounded-full shrink-0 transition-colors duration-300 ${
-                              isActive
-                                ? 'shadow-md'
-                                : 'bg-zinc-950/40 border border-zinc-800/40 text-zinc-400 group-hover:bg-zinc-900/50 group-hover:text-zinc-200'
-                            }`}
+                            style={{ backgroundColor: item.circleBg, color: item.circleColor }}
+                            className="flex items-center justify-center w-11 h-11 rounded-full shrink-0 shadow-sm transition-transform duration-200 group-hover:scale-105"
                           >
-                            <Icon size={20} />
+                            <Icon size={20} className="stroke-[2.5]" />
                           </div>
 
                           <div className="flex flex-col min-w-0">
-                            <span
-                              style={isActive ? { color: accentColor } : {}}
-                              className={`font-bold text-[14px] tracking-wide transition-colors truncate ${
-                                isActive ? '' : 'text-zinc-100'
-                              }`}
-                            >
+                            <span className="font-bold text-[14px] tracking-wide text-zinc-100 truncate">
                               {item.title}
                             </span>
                             <span className="text-xs font-bold leading-tight text-zinc-400 truncate tracking-wide">
@@ -187,10 +193,8 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
 
                         <ChevronRight
                           size={16}
-                          style={isActive ? { color: accentColor } : {}}
-                          className={`ml-1 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5 ${
-                            isActive ? '' : 'text-zinc-500 group-hover:text-zinc-300'
-                          }`}
+                          style={{ color: item.circleBg }}
+                          className="ml-1 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5"
                         />
                       </button>
                     );
@@ -205,7 +209,6 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
                   transition={{ duration: 0.2 }}
                   className="relative flex flex-col gap-2 pointer-events-auto"
                 >
-                  {/* Кнопка «Назад» вынесена вправо и центрирована ровно между Абонементами и Рассылками */}
                   <button
                     onClick={() => setMenuView('main')}
                     className="absolute -right-[76px] top-[154px] -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center text-zinc-400 hover:text-white bg-zinc-900/80 hover:bg-zinc-800/90 border border-white/10 transition-all cursor-pointer shadow-xl backdrop-blur-xl z-10"
@@ -225,30 +228,21 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
                           setLocation(item.path);
                           onClose();
                         }}
-                        style={isActive ? { borderColor: accentColor } : {}}
-                        className={`w-full flex items-center justify-between p-2.5 rounded-full transition-all duration-200 text-left group cursor-pointer bg-zinc-900/80 backdrop-blur-xl border ${
-                          isActive ? 'border-white/30' : 'border-white/10 hover:bg-zinc-800/80'
+                        style={isActive ? { borderColor: item.circleBg } : {}}
+                        className={`w-full flex items-center justify-between p-2.5 rounded-full transition-all duration-200 text-left group cursor-pointer bg-zinc-900/85 backdrop-blur-xl border ${
+                          isActive ? 'border-white/40 ring-1' : 'border-white/10 hover:bg-zinc-800/80'
                         } text-white shadow-2xl`}
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <div
-                            style={isActive ? { backgroundColor: accentColor, color: activeTextColor } : {}}
-                            className={`flex items-center justify-center w-11 h-11 rounded-full shrink-0 transition-colors duration-300 ${
-                              isActive
-                                ? 'shadow-md'
-                                : 'bg-zinc-950/40 border border-zinc-800/40 text-zinc-400 group-hover:bg-zinc-900/50 group-hover:text-zinc-200'
-                            }`}
+                            style={{ backgroundColor: item.circleBg, color: item.circleColor }}
+                            className="flex items-center justify-center w-11 h-11 rounded-full shrink-0 shadow-sm transition-transform duration-200 group-hover:scale-105"
                           >
-                            <Icon size={20} />
+                            <Icon size={20} className="stroke-[2.5]" />
                           </div>
 
                           <div className="flex flex-col min-w-0">
-                            <span
-                              style={isActive ? { color: accentColor } : {}}
-                              className={`font-bold text-[14px] tracking-wide transition-colors truncate ${
-                                isActive ? '' : 'text-zinc-100'
-                              }`}
-                            >
+                            <span className="font-bold text-[14px] tracking-wide text-zinc-100 truncate">
                               {item.title}
                             </span>
                             <span className="text-xs font-bold leading-tight text-zinc-400 truncate tracking-wide">
@@ -259,10 +253,8 @@ export const ManagementMenu: React.FC<ManagementMenuProps> = ({ isOpen, onClose 
 
                         <ChevronRight
                           size={16}
-                          style={isActive ? { color: accentColor } : {}}
-                          className={`ml-1 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5 ${
-                            isActive ? '' : 'text-zinc-500 group-hover:text-zinc-300'
-                          }`}
+                          style={{ color: item.circleBg }}
+                          className="ml-1 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5"
                         />
                       </button>
                     );

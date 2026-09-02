@@ -66,7 +66,7 @@ const INITIAL_SERVICES: ServiceItem[] = [
     freezeDays: 7,
     description: 'Действует на все регулярные классы',
     popular: true,
-    color: '#F93380'
+    color: '#FFBE0B'
   },
   {
     id: '2',
@@ -78,7 +78,7 @@ const INITIAL_SERVICES: ServiceItem[] = [
     durationDays: 30,
     freezeDays: 14,
     description: 'Полный доступ ко всем групповым занятиям студии',
-    color: '#8C0070'
+    color: '#101010'
   },
   {
     id: '3',
@@ -89,7 +89,7 @@ const INITIAL_SERVICES: ServiceItem[] = [
     visitsCount: 1,
     durationDays: 7,
     description: 'Первое знакомство с хореографом и студией',
-    color: '#F93380'
+    color: '#FFBE0B'
   },
   {
     id: '4',
@@ -100,7 +100,7 @@ const INITIAL_SERVICES: ServiceItem[] = [
     durationDays: 1,
     linkedTrainers: 'Любой свободный',
     description: '1 час работы тет-а-тет с хореографом',
-    color: '#8C0070'
+    color: '#101010'
   },
   {
     id: '5',
@@ -110,7 +110,7 @@ const INITIAL_SERVICES: ServiceItem[] = [
     price: 1200,
     durationDays: 1,
     description: 'Большой зал с панорамными зеркалами (1 час)',
-    color: '#F93380'
+    color: '#FFBE0B'
   },
   {
     id: '6',
@@ -123,7 +123,7 @@ const INITIAL_SERVICES: ServiceItem[] = [
     linkedDirections: 'Свадебный танец',
     description: '5 индивидуальных репетиций + подбор музыки',
     popular: true,
-    color: '#8C0070'
+    color: '#101010'
   }
 ];
 
@@ -228,7 +228,7 @@ export default function AdminServices() {
     } else {
       const newItem: ServiceItem = {
         id: Date.now().toString(),
-        color: '#F93380',
+        color: '#FFBE0B',
         ...payload
       };
       setServices(prev => [newItem, ...prev]);
@@ -274,7 +274,7 @@ export default function AdminServices() {
           <div className="flex-1 relative h-full">
             <AnimatePresence initial={false} mode="wait">
               {mainCategory === 'memberships' ? (
-                /* СЛАЙД 1: АБОНЕМЕНТЫ (#8C0070 фон, #F93380 текст) */
+                /* СЛАЙД 1: АБОНЕМЕНТЫ (#101010 фон, #FFBE0B текст) */
                 <motion.div
                   key="memberships-slide"
                   drag="x"
@@ -290,20 +290,20 @@ export default function AdminServices() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#8C0070', color: '#F93380' }}
+                  style={{ backgroundColor: '#101010', color: '#FFBE0B' }}
                   className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#F93380] leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#FFBE0B] leading-tight">
                       Абонементы
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-[#F93380] font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-[#FFBE0B] font-mono tracking-tight leading-none">
                       {filteredServices.length}
                     </span>
-                    <span className="text-[10px] font-bold text-[#F93380]/80 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-[#FFBE0B]/80 uppercase tracking-wide leading-tight">
                       активных<br/>тарифов
                     </span>
                   </div>
@@ -317,10 +317,10 @@ export default function AdminServices() {
                           e.stopPropagation();
                           setIsFilterOpen(!isFilterOpen);
                         }} 
-                        className="w-11 h-11 rounded-full bg-[#F93380]/20 hover:bg-[#F93380]/30 text-[#F93380] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                        className="w-11 h-11 rounded-full bg-[#FFBE0B]/20 hover:bg-[#FFBE0B]/30 text-[#FFBE0B] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#8C0070] rounded-full bg-[#F93380] shrink-0" />}
+                        {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#101010] rounded-full bg-[#FFBE0B] shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
@@ -349,7 +349,7 @@ export default function AdminServices() {
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              style={{ backgroundColor: '#F93380', color: '#8C0070' }}
+                              style={{ backgroundColor: '#FFBE0B', color: '#101010' }}
                               className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
@@ -371,7 +371,7 @@ export default function AdminServices() {
                   </div>
                 </motion.div>
               ) : (
-                /* СЛАЙД 2: УСЛУГИ (#F93380 фон, #8C0070 текст) */
+                /* СЛАЙД 2: УСЛУГИ (Инверсия: #FFBE0B фон, #101010 текст) */
                 <motion.div
                   key="services-slide"
                   drag="x"
@@ -387,20 +387,20 @@ export default function AdminServices() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#F93380', color: '#8C0070' }}
+                  style={{ backgroundColor: '#FFBE0B', color: '#101010' }}
                   className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#8C0070] leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#101010] leading-tight">
                       Каталог услуг
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-[#8C0070] font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-[#101010] font-mono tracking-tight leading-none">
                       {filteredServices.length}
                     </span>
-                    <span className="text-[10px] font-bold text-[#8C0070]/80 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-[#101010]/80 uppercase tracking-wide leading-tight">
                       активных<br/>услуг
                     </span>
                   </div>
@@ -413,10 +413,10 @@ export default function AdminServices() {
                           e.stopPropagation();
                           setIsFilterOpen(!isFilterOpen);
                         }} 
-                        className="w-11 h-11 rounded-full bg-[#8C0070]/20 hover:bg-[#8C0070]/30 text-[#8C0070] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                        className="w-11 h-11 rounded-full bg-[#101010]/20 hover:bg-[#101010]/30 text-[#101010] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#F93380] rounded-full bg-[#8C0070] shrink-0" />}
+                        {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#FFBE0B] rounded-full bg-[#101010] shrink-0" />}
                       </button>
 
                       {isFilterOpen && (
@@ -445,7 +445,7 @@ export default function AdminServices() {
                             <button 
                               type="button" 
                               onClick={() => setIsFilterOpen(false)} 
-                              style={{ backgroundColor: '#8C0070', color: '#F93380' }}
+                              style={{ backgroundColor: '#101010', color: '#FFBE0B' }}
                               className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
@@ -474,7 +474,7 @@ export default function AdminServices() {
           <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
             <button 
               onClick={() => { setIsFilterOpen(false); setMainCategory('memberships'); }}
-              style={mainCategory === 'memberships' ? { backgroundColor: '#F93380', color: '#8C0070' } : {}}
+              style={mainCategory === 'memberships' ? { backgroundColor: '#FFBE0B', color: '#101010' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 mainCategory === 'memberships' 
                   ? 'shadow-md scale-100' 
@@ -487,7 +487,7 @@ export default function AdminServices() {
             
             <button 
               onClick={() => { setIsFilterOpen(false); setMainCategory('services'); }}
-              style={mainCategory === 'services' ? { backgroundColor: '#8C0070', color: '#F93380' } : {}}
+              style={mainCategory === 'services' ? { backgroundColor: '#101010', color: '#FFBE0B' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 mainCategory === 'services' 
                   ? 'shadow-md scale-100' 
@@ -500,7 +500,7 @@ export default function AdminServices() {
           </div>
         </div>
 
-        {/* ─── СПИСОК КАРТОЧЕК С ФИРМЕННЫМ SHADOW-MD И GAP-2.5 ─── */}
+        {/* ─── СПИСОК КАРТОЧЕК С GAP-2.5 ─── */}
         <div className="flex flex-col gap-2.5">
           <AnimatePresence mode="popLayout">
             {filteredServices.length > 0 ? (
@@ -516,7 +516,7 @@ export default function AdminServices() {
                 >
                   {service.popular && (
                     <div 
-                      style={{ backgroundColor: '#F93380', color: '#8C0070' }}
+                      style={{ backgroundColor: '#FFBE0B', color: '#101010' }}
                       className="absolute top-0 right-0 px-4 py-1.5 rounded-bl-[20px] text-[9px] font-black uppercase tracking-widest flex items-center gap-1 shadow-xs"
                     >
                       <Sparkles size={11} className="stroke-[2.5]" />
@@ -526,7 +526,7 @@ export default function AdminServices() {
 
                   <div className="flex justify-between items-start pr-12">
                     <div>
-                      <h3 className="text-base font-bold text-slate-950 dark:text-white group-hover:text-[#F93380] transition-colors">
+                      <h3 className="text-base font-bold text-slate-950 dark:text-white group-hover:text-[#FFBE0B] transition-colors">
                         {service.title}
                       </h3>
                       <p className="text-xs font-medium text-slate-500 dark:text-zinc-400 mt-1 max-w-[280px] leading-relaxed">
@@ -537,19 +537,19 @@ export default function AdminServices() {
 
                   <div className="flex flex-wrap items-center gap-2 mt-3 text-[10px] font-bold tracking-wide">
                     {service.freezeDays ? (
-                      <span className="flex items-center gap-1 bg-[#F93380]/15 text-[#F93380] px-2.5 py-1 rounded-full uppercase">
+                      <span className="flex items-center gap-1 bg-[#FFBE0B]/15 text-[#FFBE0B] px-2.5 py-1 rounded-full uppercase">
                         <Snowflake size={11} /> Заморозка: {service.freezeDays} дн.
                       </span>
                     ) : null}
                     
                     {service.linkedDirections && (
-                      <span className="flex items-center gap-1 bg-[#8C0070]/15 text-[#8C0070] dark:text-pink-300 px-2.5 py-1 rounded-full uppercase truncate max-w-[160px]">
+                      <span className="flex items-center gap-1 bg-[#101010]/20 dark:bg-white/10 text-slate-900 dark:text-zinc-200 px-2.5 py-1 rounded-full uppercase truncate max-w-[160px]">
                         <MapPin size={11} /> {service.linkedDirections}
                       </span>
                     )}
 
                     {service.linkedTrainers && (
-                      <span className="flex items-center gap-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2.5 py-1 rounded-full uppercase truncate max-w-[160px]">
+                      <span className="flex items-center gap-1 bg-[#FFBE0B]/20 text-[#101010] dark:text-[#FFBE0B] px-2.5 py-1 rounded-full uppercase truncate max-w-[160px]">
                         <Users size={11} /> {service.linkedTrainers}
                       </span>
                     )}
@@ -618,8 +618,8 @@ export default function AdminServices() {
         onClick={handleOpenAddModal}
         ariaLabel="Добавить услугу"
         id="floating-add-service-btn"
-        style={{ backgroundColor: '#8C0070', color: '#F93380' }}
-        className="!bg-[#8C0070] !text-[#F93380] shadow-lg shadow-[#8C0070]/30 hover:opacity-95"
+        style={{ backgroundColor: '#101010', color: '#FFBE0B' }}
+        className="!bg-[#101010] !text-[#FFBE0B] shadow-lg shadow-black/40 hover:opacity-95"
       />
 
       {/* ─── ШТОРКА 1: ДЕТАЛИ АБОНЕМЕНТА / УСЛУГИ (BOTTOM SHEET DRAWER) ─── */}
@@ -650,7 +650,7 @@ export default function AdminServices() {
 
               <div className="flex items-start justify-between pb-3 border-b border-zinc-800/60 pr-10">
                 <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-pink-400">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-[#FFBE0B]">
                     {selectedServiceForDrawer.mainCategory === 'memberships' ? 'Тариф абонемента' : 'Услуга студии'}
                   </span>
                   <h3 className="text-xl font-black text-white mt-0.5">{selectedServiceForDrawer.title}</h3>
@@ -660,7 +660,7 @@ export default function AdminServices() {
               <div className="flex-1 overflow-y-auto scrollbar-none pt-4 pb-6 space-y-4">
                 <div className="bg-[#1C1C1E] border border-zinc-800 p-5 rounded-[28px] flex flex-col items-center justify-center text-center">
                   <span className="text-[10px] font-black uppercase tracking-wider text-zinc-400">Стоимость</span>
-                  <span className="text-3xl font-black font-mono text-[#F93380] mt-1">
+                  <span className="text-3xl font-black font-mono text-[#FFBE0B] mt-1">
                     ₽{selectedServiceForDrawer.price.toLocaleString('ru-RU')}
                   </span>
                   <p className="text-xs text-zinc-300 font-medium mt-2 max-w-xs">
@@ -687,7 +687,7 @@ export default function AdminServices() {
                 {selectedServiceForDrawer.freezeDays ? (
                   <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[22px] flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                      <Snowflake size={18} className="text-[#F93380]" />
+                      <Snowflake size={18} className="text-[#FFBE0B]" />
                       <span className="text-xs font-bold text-white">Доступная заморозка</span>
                     </div>
                     <span className="text-xs font-black font-mono text-white">
@@ -699,7 +699,7 @@ export default function AdminServices() {
                 <div className="flex gap-2.5 pt-2">
                   <Button
                     onClick={() => handleOpenEditModal(selectedServiceForDrawer)}
-                    style={{ backgroundColor: '#F93380', color: '#8C0070' }}
+                    style={{ backgroundColor: '#FFBE0B', color: '#101010' }}
                     className="flex-1 h-14 rounded-full font-black text-xs uppercase tracking-wider shadow-md hover:opacity-90 transition-all border-none cursor-pointer"
                   >
                     <Pencil size={15} className="mr-1.5" />
@@ -769,7 +769,7 @@ export default function AdminServices() {
                           subCategory: cat === 'memberships' ? 'limited' : 'private' 
                         });
                       }}
-                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#F93380]"
+                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#FFBE0B]"
                     >
                       <option value="memberships">Абонементы</option>
                       <option value="services">Услуги</option>
@@ -781,7 +781,7 @@ export default function AdminServices() {
                     <select
                       value={formData.subCategory}
                       onChange={e => setFormData({ ...formData, subCategory: e.target.value as SubCategory })}
-                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#F93380]"
+                      className="w-full bg-black/40 border border-zinc-800 rounded-2xl px-3 h-12 text-xs font-bold text-white focus:outline-none focus:border-[#FFBE0B]"
                     >
                       {formData.mainCategory === 'memberships' ? (
                         <>
@@ -809,7 +809,7 @@ export default function AdminServices() {
                     value={formData.title}
                     onChange={e => setFormData({ ...formData, title: e.target.value })}
                     placeholder="Например: Стандарт 8 занятий"
-                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-sm font-bold px-4 focus-visible:border-[#F93380]"
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-sm font-bold px-4 focus-visible:border-[#FFBE0B]"
                   />
                 </div>
 
@@ -822,7 +822,7 @@ export default function AdminServices() {
                       value={formData.price}
                       onChange={e => setFormData({ ...formData, price: e.target.value })}
                       placeholder="4800"
-                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-sm font-bold px-4 focus-visible:border-[#F93380]"
+                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-sm font-bold px-4 focus-visible:border-[#FFBE0B]"
                     />
                   </div>
 
@@ -833,7 +833,7 @@ export default function AdminServices() {
                       value={formData.visitsCount}
                       onChange={e => setFormData({ ...formData, visitsCount: e.target.value })}
                       placeholder="Оставьте пустым если ∞"
-                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-sm font-bold px-4 focus-visible:border-[#F93380]"
+                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-sm font-bold px-4 focus-visible:border-[#FFBE0B]"
                     />
                   </div>
                 </div>
@@ -846,7 +846,7 @@ export default function AdminServices() {
                       value={formData.durationDays}
                       onChange={e => setFormData({ ...formData, durationDays: e.target.value })}
                       placeholder="30"
-                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-sm font-bold px-4 focus-visible:border-[#F93380]"
+                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-sm font-bold px-4 focus-visible:border-[#FFBE0B]"
                     />
                   </div>
                   
@@ -857,7 +857,7 @@ export default function AdminServices() {
                       value={formData.freezeDays}
                       onChange={e => setFormData({ ...formData, freezeDays: e.target.value })}
                       placeholder="7"
-                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-sm font-bold px-4 focus-visible:border-[#F93380]"
+                      className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white font-mono text-sm font-bold px-4 focus-visible:border-[#FFBE0B]"
                     />
                   </div>
                 </div>
@@ -868,7 +868,7 @@ export default function AdminServices() {
                     value={formData.linkedDirections}
                     onChange={e => setFormData({ ...formData, linkedDirections: e.target.value })}
                     placeholder="Например: K-Pop, High Heels"
-                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-xs font-bold px-4 focus-visible:border-[#F93380]"
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-xs font-bold px-4 focus-visible:border-[#FFBE0B]"
                   />
                 </div>
 
@@ -878,7 +878,7 @@ export default function AdminServices() {
                     value={formData.description}
                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                     placeholder="Особенности тарифа..."
-                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-xs font-medium px-4 focus-visible:border-[#F93380]"
+                    className="rounded-2xl border-zinc-800 h-12 bg-black/40 text-white text-xs font-medium px-4 focus-visible:border-[#FFBE0B]"
                   />
                 </div>
 
@@ -887,7 +887,7 @@ export default function AdminServices() {
                     type="checkbox"
                     checked={formData.popular}
                     onChange={e => setFormData({ ...formData, popular: e.target.checked })}
-                    className="w-4 h-4 rounded text-[#F93380] focus:ring-0 cursor-pointer"
+                    className="w-4 h-4 rounded text-[#FFBE0B] focus:ring-0 cursor-pointer"
                   />
                   <span className="text-xs font-bold text-zinc-300">Пометить как «Хит продаж»</span>
                 </div>
@@ -895,7 +895,7 @@ export default function AdminServices() {
                 <div className="pt-3">
                   <Button
                     type="submit"
-                    style={{ backgroundColor: '#8C0070', color: '#F93380' }}
+                    style={{ backgroundColor: '#101010', color: '#FFBE0B' }}
                     className="w-full rounded-full h-14 font-black text-xs uppercase tracking-wider shadow-lg hover:opacity-90 transition-all border-none cursor-pointer"
                   >
                     Сохранить в каталог

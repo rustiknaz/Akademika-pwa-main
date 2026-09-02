@@ -77,13 +77,11 @@ export default function Admin() {
   const [expiringSubsCount, setExpiringSubsCount] = useState(3);
   const [debtorsCount, setDebtorsCount] = useState(1);
 
-  // Quick Actions modal states
   const [isQuickBookOpen, setIsQuickBookOpen] = useState(false);
   const [isSellMembershipOpen, setIsSellMembershipOpen] = useState(false);
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(false);
   
-  // Filter modal states (для расписания)
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedBranch, setSelectedBranch] = useState('Все филиалы');
   const [selectedHall, setSelectedHall] = useState('Все залы');
@@ -91,7 +89,6 @@ export default function Admin() {
   const [selectedAge, setSelectedAge] = useState('Все возраста');
   const [selectedType, setSelectedType] = useState('Все типы');
 
-  // Filter states для активных записей на главной
   const [isHomeBookingsFilterOpen, setIsHomeBookingsFilterOpen] = useState(false);
   const [homeSelectedBranch, setHomeSelectedBranch] = useState('Все филиалы');
   const [homeSelectedHall, setHomeSelectedHall] = useState('Все залы');
@@ -106,7 +103,6 @@ export default function Admin() {
     return 'home';
   });
 
-  // Banner slide state (0 - фин сводка, 1 - операционные задачи)
   const [activeSlide, setActiveSlide] = useState(0);
 
   useEffect(() => {
@@ -122,7 +118,6 @@ export default function Admin() {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [pickerCurrentDate, setPickerCurrentDate] = useState<Date>(new Date());
 
-  // Шторка создания нового занятия
   const [isCreateClassDrawerOpen, setIsCreateClassDrawerOpen] = useState(false);
   const [isCreatingClass, setIsCreatingClass] = useState(false);
   const [newClassData, setNewClassData] = useState({
@@ -194,7 +189,6 @@ export default function Admin() {
            d.getFullYear() === today.getFullYear();
   };
 
-  // Bottom Sheet state
   const [selectedClassForSheet, setSelectedClassForSheet] = useState<any>(null);
   const [isClassSheetOpen, setIsClassSheetOpen] = useState(false);
   const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
@@ -779,7 +773,7 @@ export default function Admin() {
                 </div>
               </div>
 
-              {/* 2. Баннер Финансовой сводки (#009175 / #EDFF68) / Операционных задач (#602BC3 / #F974DC) */}
+              {/* 2. Баннер Сводки: Финансы (#003566 / #C6FF33) и Задачи (#3E3B39 / #CAC9CD) */}
               <div className="relative h-[184px] w-full overflow-hidden rounded-[42px] select-none shadow-md">
                 <AnimatePresence initial={false} mode="wait">
                   {activeSlide === 0 ? (
@@ -796,35 +790,35 @@ export default function Admin() {
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.25 }}
                       onClick={() => setLocation('/admin/finance')}
-                      style={{ backgroundColor: '#009175', color: '#EDFF68' }}
+                      style={{ backgroundColor: '#003566', color: '#C6FF33' }}
                       className="absolute inset-0 p-6 flex flex-col justify-between cursor-grab active:cursor-grabbing"
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#EDFF68]/70">ФИНАНСОВАЯ СВОДКА</span>
-                          <h3 className="text-sm font-bold text-[#EDFF68] mt-0.5">Показатели за сегодня</h3>
+                          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#C6FF33]/70">ФИНАНСОВАЯ СВОДКА</span>
+                          <h3 className="text-sm font-bold text-[#C6FF33] mt-0.5">Показатели за сегодня</h3>
                         </div>
-                        <div className="w-10 h-10 rounded-full bg-[#EDFF68]/20 flex items-center justify-center text-[#EDFF68]">
+                        <div className="w-10 h-10 rounded-full bg-[#C6FF33]/20 flex items-center justify-center text-[#C6FF33]">
                           <Award size={20} />
                         </div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="flex flex-col gap-0.5">
-                          <span className="text-[10px] font-black uppercase tracking-wider text-[#EDFF68]/70">ВЫРУЧКА</span>
-                          <span className="text-3xl font-black text-[#EDFF68] font-mono">₽14 500</span>
+                          <span className="text-[10px] font-black uppercase tracking-wider text-[#C6FF33]/70">ВЫРУЧКА</span>
+                          <span className="text-3xl font-black text-[#C6FF33] font-mono">₽14 500</span>
                         </div>
                         <div className="flex flex-col gap-0.5">
-                          <span className="text-[10px] font-black uppercase tracking-wider text-[#EDFF68]/70">ПРОДАЖИ</span>
+                          <span className="text-[10px] font-black uppercase tracking-wider text-[#C6FF33]/70">ПРОДАЖИ</span>
                           <div className="flex items-baseline gap-1">
-                            <span className="text-3xl font-black text-[#EDFF68] font-mono">3</span>
-                            <span className="text-sm font-bold text-[#EDFF68]/70">абон.</span>
+                            <span className="text-3xl font-black text-[#C6FF33] font-mono">3</span>
+                            <span className="text-sm font-bold text-[#C6FF33]/70">абон.</span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex justify-between items-center pt-2 border-t border-[#EDFF68]/15 text-[11px] font-bold text-[#EDFF68]/80 uppercase tracking-wide">
-                        <span>Средний чек: <span className="text-[#EDFF68] font-mono">₽4 833</span></span>
+                      <div className="flex justify-between items-center pt-2 border-t border-[#C6FF33]/15 text-[11px] font-bold text-[#C6FF33]/80 uppercase tracking-wide">
+                        <span>Средний чек: <span className="text-[#C6FF33] font-mono">₽4 833</span></span>
                         <span>+12% к прошлой пятнице</span>
                       </div>
                     </motion.div>
@@ -842,55 +836,54 @@ export default function Admin() {
                       exit={{ opacity: 0, x: 20 }}
                       transition={{ duration: 0.25 }}
                       onClick={() => setLocation('/admin/notifications')}
-                      style={{ backgroundColor: '#602BC3', color: '#F974DC' }}
+                      style={{ backgroundColor: '#3E3B39', color: '#CAC9CD' }}
                       className="absolute inset-0 p-6 flex flex-col justify-between cursor-grab active:cursor-grabbing"
                     >
                       <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#F974DC]/70">ОПЕРАЦИОННЫЕ ЗАДАЧИ</span>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#F974DC]/70">Сегодня</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#CAC9CD]/70">ОПЕРАЦИОННЫЕ ЗАДАЧИ</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#CAC9CD]/70">Сегодня</span>
                       </div>
                       
                       <div className="flex flex-col gap-2">
-                        <div className="bg-[#F974DC]/15 rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between backdrop-blur-sm shadow-xs">
+                        <div className="bg-[#CAC9CD]/15 rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between backdrop-blur-sm shadow-xs">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-[#F974DC]/20 flex items-center justify-center text-[#F974DC]">
+                            <div className="w-8 h-8 rounded-full bg-[#CAC9CD]/20 flex items-center justify-center text-[#CAC9CD]">
                               <AlertTriangle size={16} />
                             </div>
                             <div className="flex flex-col">
                               <span className="text-[11px] font-bold text-white leading-tight">Заканчиваются абонементы</span>
-                              <span className="text-[10px] font-medium text-[#F974DC]/80">Осталось 1 или меньше занятий</span>
+                              <span className="text-[10px] font-medium text-[#CAC9CD]/80">Осталось 1 или меньше занятий</span>
                             </div>
                           </div>
-                          <span className="bg-[#F974DC] text-[#602BC3] text-[11px] font-black px-3 py-1 rounded-full">{expiringSubsCount}</span>
+                          <span className="bg-[#CAC9CD] text-[#3E3B39] text-[11px] font-black px-3 py-1 rounded-full">{expiringSubsCount}</span>
                         </div>
 
-                        <div className="bg-[#F974DC]/15 rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between backdrop-blur-sm shadow-xs">
+                        <div className="bg-[#CAC9CD]/15 rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between backdrop-blur-sm shadow-xs">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-[#F974DC]/20 flex items-center justify-center text-[#F974DC]">
+                            <div className="w-8 h-8 rounded-full bg-[#CAC9CD]/20 flex items-center justify-center text-[#CAC9CD]">
                               <User size={16} />
                             </div>
                             <div className="flex flex-col">
                               <span className="text-[11px] font-bold text-white leading-tight">Должники</span>
-                              <span className="text-[10px] font-medium text-[#F974DC]/80">Нужно продлить абонемент</span>
+                              <span className="text-[10px] font-medium text-[#CAC9CD]/80">Нужно продлить абонемент</span>
                             </div>
                           </div>
-                          <span className="bg-[#F974DC] text-[#602BC3] text-[11px] font-black px-3 py-1 rounded-full">{debtorsCount}</span>
+                          <span className="bg-[#CAC9CD] text-[#3E3B39] text-[11px] font-black px-3 py-1 rounded-full">{debtorsCount}</span>
                         </div>
                       </div>
 
-                      <div className="pt-1 text-[10px] font-bold text-[#F974DC]/70 uppercase tracking-wider text-right">
+                      <div className="pt-1 text-[10px] font-bold text-[#CAC9CD]/70 uppercase tracking-wider text-right">
                         Смахните для просмотра финансов →
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
 
-                {/* Индикаторы свайпа */}
                 <div className="absolute bottom-3 right-6 flex gap-1.5 z-10">
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); setActiveSlide(0); }}
-                    style={{ backgroundColor: activeSlide === 0 ? '#EDFF68' : 'rgba(237, 255, 104, 0.4)' }}
+                    style={{ backgroundColor: activeSlide === 0 ? '#C6FF33' : 'rgba(198, 255, 51, 0.4)' }}
                     className={`h-1.5 rounded-full transition-all duration-300 border-none p-0 cursor-pointer ${
                       activeSlide === 0 ? 'w-5' : 'w-1.5'
                     }`}
@@ -898,7 +891,7 @@ export default function Admin() {
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); setActiveSlide(1); }}
-                    style={{ backgroundColor: activeSlide === 1 ? '#F974DC' : 'rgba(249, 116, 220, 0.4)' }}
+                    style={{ backgroundColor: activeSlide === 1 ? '#CAC9CD' : 'rgba(202, 201, 205, 0.4)' }}
                     className={`h-1.5 rounded-full transition-all duration-300 border-none p-0 cursor-pointer ${
                       activeSlide === 1 ? 'w-5' : 'w-1.5'
                     }`}
@@ -906,83 +899,97 @@ export default function Admin() {
                 </div>
               </div>
 
-              {/* 3. Баннер быстрых действий (#CCFF00 Lime) */}
+              {/* 3. Баннер быстрых действий */}
               <div 
-                style={{ backgroundColor: '#CCFF00', color: '#000000' }}
-                className="rounded-[42px] p-5 shadow-md flex flex-col"
+                className="rounded-[42px] p-5 shadow-md flex flex-col bg-white/40 dark:bg-black/35 backdrop-blur-md border border-white/10 text-slate-900 dark:text-white"
               >
                 <div className="flex items-center justify-between mb-4 px-1">
-                  <span className="text-[10px] font-black uppercase tracking-[0.15em] text-black/70">
+                  <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 dark:text-zinc-400">
                     Быстрые действия
                   </span>
                 </div>
 
                 <div className="flex justify-between items-start gap-1 px-1">
+                  {/* Записать (Расписание #004643 / #F0EDE5) */}
                   <button 
                     onClick={() => toast({ title: "В разработке", description: "Модуль записи в группу" })}
                     className="flex flex-col items-center justify-start gap-2 group w-[72px] cursor-pointer outline-none border-none bg-transparent p-0"
                   >
-                    <div className="w-14 h-14 rounded-full bg-white dark:bg-black/35 backdrop-blur-md flex items-center justify-center text-slate-900 dark:text-white shadow-xs group-hover:scale-105 transition-all">
+                    <div 
+                      style={{ backgroundColor: '#004643', color: '#F0EDE5' }}
+                      className="w-14 h-14 rounded-full flex items-center justify-center shadow-md group-hover:scale-105 transition-all"
+                    >
                       <CalendarPlus size={24} className="stroke-[2.5]" />
                     </div>
-                    <span className="text-[10px] font-black text-black text-center leading-tight">
+                    <span className="text-[10px] font-bold text-center leading-tight text-slate-900 dark:text-white">
                       Записать
                     </span>
                   </button>
 
+                  {/* Продать абонемент (Услуги #101010 / #FFBE0B) */}
                   <button 
                     onClick={() => setLocation('/admin/services')}
                     className="flex flex-col items-center justify-start gap-2 group w-[72px] cursor-pointer outline-none border-none bg-transparent p-0"
                   >
-                    <div className="w-14 h-14 rounded-full bg-white dark:bg-black/35 backdrop-blur-md flex items-center justify-center text-slate-900 dark:text-white shadow-xs group-hover:scale-105 transition-all">
+                    <div 
+                      style={{ backgroundColor: '#101010', color: '#FFBE0B' }}
+                      className="w-14 h-14 rounded-full flex items-center justify-center shadow-md group-hover:scale-105 transition-all border border-zinc-800"
+                    >
                       <Ticket size={24} className="stroke-[2.5]" />
                     </div>
-                    <span className="text-[10px] font-black text-black text-center leading-tight">
+                    <span className="text-[10px] font-bold text-center leading-tight text-slate-900 dark:text-white">
                       Продать<br/>абонемент
                     </span>
                   </button>
 
+                  {/* Принять оплату (Финансы #003566 / #C6FF33) */}
                   <button 
                     onClick={() => setLocation('/admin/finance')}
                     className="flex flex-col items-center justify-start gap-2 group w-[72px] cursor-pointer outline-none border-none bg-transparent p-0"
                   >
-                    <div className="w-14 h-14 rounded-full bg-white dark:bg-black/35 backdrop-blur-md flex items-center justify-center text-slate-900 dark:text-white shadow-xs group-hover:scale-105 transition-all">
+                    <div 
+                      style={{ backgroundColor: '#003566', color: '#C6FF33' }}
+                      className="w-14 h-14 rounded-full flex items-center justify-center shadow-md group-hover:scale-105 transition-all"
+                    >
                       <Wallet size={24} className="stroke-[2.5]" />
                     </div>
-                    <span className="text-[10px] font-black text-black text-center leading-tight">
+                    <span className="text-[10px] font-bold text-center leading-tight text-slate-900 dark:text-white">
                       Принять<br/>оплату
                     </span>
                   </button>
 
+                  {/* Создать лид (Клиенты #452039 / #F5F5F5) */}
                   <button 
                     onClick={() => toast({ title: "В разработке", description: "Модуль добавления лида" })}
                     className="flex flex-col items-center justify-start gap-2 group w-[72px] cursor-pointer outline-none border-none bg-transparent p-0"
                   >
-                    <div className="w-14 h-14 rounded-full bg-white dark:bg-black/35 backdrop-blur-md flex items-center justify-center text-slate-900 dark:text-white shadow-xs group-hover:scale-105 transition-all">
+                    <div 
+                      style={{ backgroundColor: '#452039', color: '#F5F5F5' }}
+                      className="w-14 h-14 rounded-full flex items-center justify-center shadow-md group-hover:scale-105 transition-all"
+                    >
                       <UserPlus size={24} className="stroke-[2.5]" />
                     </div>
-                    <span className="text-[10px] font-black text-black text-center leading-tight">
+                    <span className="text-[10px] font-bold text-center leading-tight text-slate-900 dark:text-white">
                       Создать<br/>лид
                     </span>
                   </button>
                 </div>
               </div>           
       
-              {/* 4. Баннер: Активные записи (Изумруд #004643 + Крем #F0EDE5) */}
+              {/* 4. Баннер: Активные записи (#452039 / #F5F5F5) */}
               <div
-                style={{ backgroundColor: '#004643', color: '#F0EDE5' }}
+                style={{ backgroundColor: '#452039', color: '#F5F5F5' }}
                 className="p-5 md:p-6 shadow-md overflow-visible rounded-[42px] relative"
               >
                 <div className="flex justify-between items-center mb-4 relative z-20">
                   <div>
-                    <span className="text-[#F0EDE5]/70 text-[10px] font-black uppercase tracking-wider">Активные записи</span>
-                    <h3 className="text-[#F0EDE5] text-base font-black uppercase tracking-wider mt-0.5">
+                    <span className="text-[#F5F5F5]/70 text-[10px] font-black uppercase tracking-wider">Активные записи</span>
+                    <h3 className="text-[#F5F5F5] text-base font-black uppercase tracking-wider mt-0.5">
                       {homeSelectedBranch === 'Все филиалы' ? 'Все филиалы' : homeSelectedBranch.replace('Филиал: ', '')}
                     </h3>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    {/* Фильтр филиалов для Активных записей */}
                     <div className="relative">
                       <button
                         type="button"
@@ -990,11 +997,11 @@ export default function Admin() {
                           e.stopPropagation();
                           setIsHomeBookingsFilterOpen(!isHomeBookingsFilterOpen);
                         }}
-                        className="w-9 h-9 rounded-full bg-[#F0EDE5]/20 hover:bg-[#F0EDE5]/30 text-[#F0EDE5] flex items-center justify-center transition-all cursor-pointer border-none shadow-none relative"
+                        className="w-9 h-9 rounded-full bg-[#F5F5F5]/20 hover:bg-[#F5F5F5]/30 text-[#F5F5F5] flex items-center justify-center transition-all cursor-pointer border-none shadow-none relative"
                       >
                         <SlidersHorizontal size={16} className="stroke-[2.5]" />
                         {(homeSelectedBranch !== 'Все филиалы' || homeSelectedHall !== 'Все залы') && (
-                          <span className="absolute top-0 right-0 w-2.5 h-2.5 border-2 border-[#004643] rounded-full bg-[#F0EDE5] shrink-0" />
+                          <span className="absolute top-0 right-0 w-2.5 h-2.5 border-2 border-[#452039] rounded-full bg-[#F5F5F5] shrink-0" />
                         )}
                       </button>
 
@@ -1030,7 +1037,7 @@ export default function Admin() {
                             <button
                               type="button"
                               onClick={() => setIsHomeBookingsFilterOpen(false)}
-                              style={{ backgroundColor: '#004643', color: '#F0EDE5' }}
+                              style={{ backgroundColor: '#452039', color: '#F5F5F5' }}
                               className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
                             >
                               Применить
@@ -1050,7 +1057,7 @@ export default function Admin() {
                       )}
                     </div>
 
-                    <span className="text-xs font-black px-3 py-1.5 rounded-full uppercase tracking-wider font-mono bg-[#F0EDE5] text-[#004643] shadow-xs">
+                    <span className="text-xs font-black px-3 py-1.5 rounded-full uppercase tracking-wider font-mono bg-[#F5F5F5] text-[#452039] shadow-xs">
                       {todayMainBookings.length} ЗАПИСЕЙ
                     </span>
                   </div>
@@ -1064,17 +1071,17 @@ export default function Admin() {
                       return (
                         <div 
                           key={booking.id}
-                          className="w-full bg-[#F0EDE5]/15 backdrop-blur-sm rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between gap-2 shadow-xs"
+                          className="w-full bg-[#F5F5F5]/15 backdrop-blur-sm rounded-full p-2 pl-3.5 pr-4 flex items-center justify-between gap-2 shadow-xs"
                         >
                           <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${
-                            booking.status === 'completed' ? 'bg-[#F0EDE5]' :
+                            booking.status === 'completed' ? 'bg-[#F5F5F5]' :
                             booking.status === 'missed' ? 'bg-rose-400' : 'bg-amber-300'
                           }`} />
 
                           <div className="space-y-0.5 min-w-0 flex-1 text-white">
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-xs font-black text-[#F0EDE5] font-mono tracking-wide">{classTime}</span>
-                              <span className="text-[#F0EDE5]/60 font-medium">•</span>
+                              <span className="text-xs font-black text-[#F5F5F5] font-mono tracking-wide">{classTime}</span>
+                              <span className="text-[#F5F5F5]/60 font-medium">•</span>
                               <span className="text-xs font-bold text-white/90 truncate max-w-[130px] tracking-wide">{booking.classes.title}</span>
                             </div>
                             
@@ -1089,8 +1096,8 @@ export default function Admin() {
                                 <Button
                                   size="icon"
                                   onClick={() => handleCheckIn(booking.id, booking.user_id)}
-                                  style={{ backgroundColor: '#F0EDE5', color: '#004643' }}
-                                  className="w-8 h-8 rounded-full hover:bg-[#F0EDE5]/90 transition-all flex items-center justify-center focus:outline-none border-none"
+                                  style={{ backgroundColor: '#F5F5F5', color: '#452039' }}
+                                  className="w-8 h-8 rounded-full hover:bg-[#F5F5F5]/90 transition-all flex items-center justify-center focus:outline-none border-none"
                                   title="Отметить визит"
                                 >
                                   <CheckCircle2 className="w-4.5 h-4.5 stroke-[2.5]" />
@@ -1109,7 +1116,7 @@ export default function Admin() {
                               <div className="flex items-center gap-1.5">
                                 <span className={`text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${
                                   booking.status === 'completed' 
-                                    ? 'bg-[#F0EDE5]/25 text-[#F0EDE5]' 
+                                    ? 'bg-[#F5F5F5]/25 text-[#F5F5F5]' 
                                     : 'bg-black/30 text-white'
                                 }`}>
                                   {booking.status === 'completed' ? '✓' : '✖'}
@@ -1117,7 +1124,7 @@ export default function Admin() {
 
                                 <button
                                   onClick={() => handleUndoStatus(booking.id, booking.status, booking.user_id)}
-                                  className="text-xs font-bold text-[#F0EDE5]/80 hover:text-[#F0EDE5] px-2 py-1 rounded-full transition-colors uppercase tracking-wider bg-[#F0EDE5]/10 hover:bg-[#F0EDE5]/20"
+                                  className="text-xs font-bold text-[#F5F5F5]/80 hover:text-[#F5F5F5] px-2 py-1 rounded-full transition-colors uppercase tracking-wider bg-[#F5F5F5]/10 hover:bg-[#F5F5F5]/20"
                                 >
                                   Сбросить
                                 </button>
@@ -1128,25 +1135,25 @@ export default function Admin() {
                       );
                     })
                   ) : (
-                    <div className="w-full bg-[#F0EDE5]/15 py-4 px-6 rounded-full text-center flex items-center justify-center">
-                      <span className="text-[#F0EDE5]/90 font-bold text-xs uppercase tracking-wider">Нет активных записей на сегодня</span>
+                    <div className="w-full bg-[#F5F5F5]/15 py-4 px-6 rounded-full text-center flex items-center justify-center">
+                      <span className="text-[#F5F5F5]/90 font-bold text-xs uppercase tracking-wider">Нет активных записей на сегодня</span>
                     </div>
                   )}
 
                   {todayWaitingBookings.length > 0 && (
-                    <div className="mt-4 pt-4 space-y-2 border-t border-[#F0EDE5]/15">
+                    <div className="mt-4 pt-4 space-y-2 border-t border-[#F5F5F5]/15">
                       <h4 className="text-xs font-bold text-amber-200 uppercase tracking-widest px-1">Очередь ({todayWaitingBookings.length})</h4>
                       {todayWaitingBookings.map((booking) => {
                         const classTime = new Date(booking.classes.start_time).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
                         return (
                           <div 
                             key={booking.id}
-                            className="w-full bg-[#F0EDE5]/15 p-2 pl-4 pr-3 rounded-full flex items-center justify-between gap-2 shadow-xs"
+                            className="w-full bg-[#F5F5F5]/15 p-2 pl-4 pr-3 rounded-full flex items-center justify-between gap-2 shadow-xs"
                           >
                             <div className="space-y-0.5 min-w-0 flex-1 text-white">
                               <div className="flex items-center gap-1 flex-wrap">
-                                <span className="text-xs font-black text-[#F0EDE5] font-mono tracking-wide">{classTime}</span>
-                                <span className="text-[#F0EDE5]/60 font-medium">•</span>
+                                <span className="text-xs font-black text-[#F5F5F5] font-mono tracking-wide">{classTime}</span>
+                                <span className="text-[#F5F5F5]/60 font-medium">•</span>
                                 <span className="text-xs font-bold text-white/90 truncate max-w-[130px] tracking-wide">{booking.classes.title}</span>
                               </div>
                               <h4 className="text-xs font-bold text-white truncate">{booking.profiles.full_name}</h4>
@@ -1154,8 +1161,8 @@ export default function Admin() {
                             <Button
                               size="sm"
                               onClick={() => handlePromoteFromWaiting(booking.id, booking.class_id)}
-                              style={{ backgroundColor: '#F0EDE5', color: '#004643' }}
-                              className="hover:bg-[#F0EDE5]/90 text-xs font-black uppercase tracking-wider px-3 py-1.5 h-auto rounded-full transition-colors shrink-0 border-none"
+                              style={{ backgroundColor: '#F5F5F5', color: '#452039' }}
+                              className="hover:bg-[#F5F5F5]/90 text-xs font-black uppercase tracking-wider px-3 py-1.5 h-auto rounded-full transition-colors shrink-0 border-none"
                             >
                               В основу
                             </Button>
@@ -1179,14 +1186,10 @@ export default function Admin() {
               transition={{ duration: 0.15 }}
               className="flex flex-col gap-2.5 w-full max-w-full overflow-x-hidden"
             >
-              {/* ВЕРХНИЙ БЛОК: Слайдер + Вертикальная навигация */}
               <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
-                
-               {/* Левая карточка: Главный баннер Расписание с симметричным скруглением [42px] */}
                <div className="flex-1 relative h-full">
                   <AnimatePresence initial={false} mode="wait">
                     {viewMode === 'day' ? (
-                      /* 1. РАСПИСАНИЕ НА ДЕНЬ (#004643 фон, #F0EDE5 текст) */
                       <motion.div
                         key="day-schedule-banner"
                         initial={{ opacity: 0, x: -20 }}
@@ -1196,7 +1199,6 @@ export default function Admin() {
                         style={{ backgroundColor: '#004643', color: '#F0EDE5' }}
                         className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between select-none !overflow-visible border-none transition-all"
                       >
-                        {/* ВЕРХНЯЯ СТРОКА: Расписание + Месяц */}
                         <div className="flex items-center justify-between px-1">
                           <h2 className="text-xl font-black uppercase tracking-wider text-[#F0EDE5] leading-tight">
                             Расписание
@@ -1207,7 +1209,6 @@ export default function Admin() {
                           </h2>
                         </div>
 
-                        {/* СРЕДНЯЯ СТРОКА: Полоса дней недели */}
                         <div className="-mx-5 overflow-hidden w-[calc(100%+40px)] select-none">
                           <HorizontalCalendar
                             selectedDate={selectedDate}
@@ -1217,7 +1218,6 @@ export default function Admin() {
                           />
                         </div>
 
-                        {/* НИЖНЯЯ СТРОКА: Фильтр слева, Пилюля с датой справа */}
                         <div className="relative flex items-center justify-between z-[100]">
                           <div className="relative">
                             <button 
@@ -1333,7 +1333,6 @@ export default function Admin() {
                         </div>
                       </motion.div>
                     ) : (
-                      /* 2. РАСПИСАНИЕ НА НЕДЕЛЮ (Инверсия: #F0EDE5 фон, #004643 текст) */
                       <motion.div
                         key="week-schedule-banner"
                         initial={{ opacity: 0, x: 20 }}
@@ -1343,7 +1342,6 @@ export default function Admin() {
                         style={{ backgroundColor: '#F0EDE5', color: '#004643' }}
                         className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between select-none !overflow-visible border-none transition-all"
                       >
-                        {/* ВЕРХНЯЯ СТРОКА */}
                         <div className="flex items-center justify-between px-1">
                           <h2 className="text-xl font-black uppercase tracking-wider text-[#004643] leading-tight">
                             Неделя
@@ -1354,7 +1352,6 @@ export default function Admin() {
                           </h2>
                         </div>
 
-                        {/* СРЕДНЯЯ СТРОКА: Полоса дней недели */}
                         <div className="-mx-5 overflow-hidden w-[calc(100%+40px)] select-none">
                           <HorizontalCalendar
                             selectedDate={selectedDate}
@@ -1364,7 +1361,6 @@ export default function Admin() {
                           />
                         </div>
 
-                        {/* НИЖНЯЯ СТРОКА */}
                         <div className="relative flex items-center justify-between z-[100]">
                           <div className="relative">
                             <button 
@@ -1483,7 +1479,6 @@ export default function Admin() {
                   </AnimatePresence>
                 </div>
 
-                {/* Правая вертикальная пилюля */}
                 <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
                   <button 
                     onClick={() => setViewMode('day')}
@@ -1513,7 +1508,6 @@ export default function Admin() {
                 </div>
               </div>
 
-              {/* Список карточек на день ИЛИ Недельный таймлайн */}
               <AnimatePresence mode="wait">
                 {viewMode === 'day' ? (
                   <motion.div
@@ -1663,7 +1657,7 @@ export default function Admin() {
         />
       )}
 
-      {/* ─── ШТОРКА 1: УПРАВЛЕНИЕ СУЩЕСТВУЮЩИМ ЗАНЯТИЕМ (BOTTOM SHEET DRAWER) ─── */}
+      {/* Шторка управления уроком */}
       <AnimatePresence>
         {isClassSheetOpen && selectedClassForSheet && (
           <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
@@ -1705,7 +1699,6 @@ export default function Admin() {
               </div>
 
               <div className="flex-1 overflow-y-auto scrollbar-none pt-4 pb-8 pr-1 space-y-5">
-                {/* Быстрая продажа / запись */}
                 <div className="bg-[#1C1C1E] border border-zinc-800 p-4 rounded-[24px] space-y-3 shadow-md">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-black text-[#F0EDE5] uppercase tracking-wider">
@@ -1741,7 +1734,6 @@ export default function Admin() {
                   </div>
                 </div>
 
-                {/* Выбор педагога */}
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">Изменить хореографа</label>
                   <div className="relative">
@@ -1761,7 +1753,6 @@ export default function Admin() {
                   </div>
                 </div>
 
-                {/* Опасная зона (Отмена) */}
                 <div className="space-y-2 pt-1">
                   <label className="text-[10px] font-black text-zinc-400 uppercase tracking-wider block">Статус занятия</label>
                   
@@ -1815,7 +1806,6 @@ export default function Admin() {
                   )}
                 </div>
 
-                {/* Отзывы */}
                 {(() => {
                   const sheetClassReviews = reviews.filter(
                     r => r.classId === selectedClassForSheet.id || 
@@ -1860,7 +1850,7 @@ export default function Admin() {
         )}
       </AnimatePresence>
 
-      {/* ─── ШТОРКА 2: СОЗДАНИЕ НОВОГО ЗАНЯТИЯ (BOTTOM SHEET DRAWER) ─── */}
+      {/* Шторка создания нового занятия */}
       <AnimatePresence>
         {isCreateClassDrawerOpen && (
           <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
@@ -2012,7 +2002,6 @@ export default function Admin() {
         )}
       </AnimatePresence>
 
-      {/* Quick Action Modals */}
       <QuickBookModal
         isOpen={isQuickBookOpen}
         onClose={() => setIsQuickBookOpen(false)}

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Calendar, User, Users, Home, LayoutGrid, Settings } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import ManagementMenu from './ManagementMenu';
-import { useTheme } from '@/context/ThemeContext';
 import { useRole } from '@/context/RoleContext';
 import TetMascotButton from './TetMascotButton';
 
@@ -10,7 +9,6 @@ export default function BottomNav() {
   const [location, setLocation] = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAllowed, currentRole } = useRole();
-  const { accentColor } = useTheme();
 
   const menuBtnRef = useRef<HTMLButtonElement | null>(null);
 
@@ -20,13 +18,7 @@ export default function BottomNav() {
 
   const iconClass = "w-7 h-7 stroke-[2]";
   const navBtnClass = "relative w-[64px] h-[64px] rounded-full flex items-center justify-center cursor-pointer group focus:outline-none shrink-0 border-none outline-none bg-transparent p-0 touch-manipulation";
-  const defaultActiveBg = accentColor || '#CCFF00';
 
-  // Фирменные цвета палитры Расписания (#004643 / #F0EDE5)
-  const scheduleActiveBg = '#004643';
-  const scheduleActiveColor = '#F0EDE5';
-
-  // Сбалансированный отступ: 14px в браузере и аккуратный зазор над полоской жестов в PWA
   const floatingBottomStyle = {
     bottom: 'max(14px, calc(env(safe-area-inset-bottom, 0px) + 6px))',
   };
@@ -46,6 +38,20 @@ export default function BottomNav() {
   const isProfileActive = !isMenuOpen && (location === '/profile' || location === '/profile/' || location === '/settings' || location === '/settings/');
   const isMoreActive = isMenuOpen;
 
+  // Определение цвета для кнопки Меню в зависимости от открытой страницы внутри него
+  let moreMenuColor = { bg: '#14213D', color: '#FCA311' };
+  if (location.startsWith('/admin/finance')) {
+    moreMenuColor = { bg: '#003566', color: '#C6FF33' };
+  } else if (location.startsWith('/admin/staff')) {
+    moreMenuColor = { bg: '#14213D', color: '#FCA311' };
+  } else if (location.startsWith('/admin/messages')) {
+    moreMenuColor = { bg: '#262B2B', color: '#E6CCB2' };
+  } else if (location.startsWith('/admin/notifications')) {
+    moreMenuColor = { bg: '#3E3B39', color: '#CAC9CD' };
+  } else if (location.startsWith('/admin/services')) {
+    moreMenuColor = { bg: '#101010', color: '#FFBE0B' };
+  }
+
   if (isAdminMode) {
     return (
       <>
@@ -63,7 +69,7 @@ export default function BottomNav() {
             id="urban-glass-admin-nav"
             className="p-1.5 bg-[#e5e9eb]/85 dark:bg-[#1a1a1e]/85 backdrop-blur-xl shadow-2xl flex gap-1 items-center rounded-full w-max pointer-events-auto border border-white/10"
           >
-            {/* 1. Главная */}
+            {/* 1. Главная (#004643 / #F0EDE5) */}
             <Link
               href="/Admin"
               className={navBtnClass}
@@ -76,18 +82,18 @@ export default function BottomNav() {
             >
               <div
                 style={{
-                  backgroundColor: isHomeActive ? defaultActiveBg : 'transparent',
-                  color: isHomeActive ? '#000000' : undefined
+                  backgroundColor: isHomeActive ? '#004643' : 'transparent',
+                  color: isHomeActive ? '#F0EDE5' : undefined
                 }}
                 className={`w-[64px] h-[64px] rounded-full flex items-center justify-center border-none shadow-none transition-colors duration-150 ${
-                  isHomeActive ? '' : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+                  isHomeActive ? 'shadow-sm' : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
                 }`}
               >
                 <Home size={26} className={iconClass} />
               </div>
             </Link>
 
-            {/* 2. Расписание (Глубокий изумруд #004643 + кремовая иконка #F0EDE5) */}
+            {/* 2. Расписание (#004643 / #F0EDE5) */}
             <Link
               href="/admin/schedule"
               className={navBtnClass}
@@ -100,8 +106,8 @@ export default function BottomNav() {
             >
               <div
                 style={{
-                  backgroundColor: isScheduleActive ? scheduleActiveBg : 'transparent',
-                  color: isScheduleActive ? scheduleActiveColor : undefined
+                  backgroundColor: isScheduleActive ? '#004643' : 'transparent',
+                  color: isScheduleActive ? '#F0EDE5' : undefined
                 }}
                 className={`w-[64px] h-[64px] rounded-full flex items-center justify-center border-none shadow-none transition-colors duration-150 ${
                   isScheduleActive ? 'shadow-sm' : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
@@ -111,7 +117,7 @@ export default function BottomNav() {
               </div>
             </Link>
 
-            {/* 3. Ученики */}
+            {/* 3. Ученики (#452039 / #F5F5F5) */}
             {currentRole !== 'trainer' && isAllowed('/admin/students') && (
               <Link
                 href="/admin/students"
@@ -125,11 +131,11 @@ export default function BottomNav() {
               >
                 <div
                   style={{
-                    backgroundColor: isStudentsActive ? defaultActiveBg : 'transparent',
-                    color: isStudentsActive ? '#000000' : undefined
+                    backgroundColor: isStudentsActive ? '#452039' : 'transparent',
+                    color: isStudentsActive ? '#F5F5F5' : undefined
                   }}
                   className={`w-[64px] h-[64px] rounded-full flex items-center justify-center border-none shadow-none transition-colors duration-150 ${
-                    isStudentsActive ? '' : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+                    isStudentsActive ? 'shadow-sm' : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
                   }`}
                 >
                   <Users size={26} className={iconClass} />
@@ -151,11 +157,11 @@ export default function BottomNav() {
               >
                 <div
                   style={{
-                    backgroundColor: isProfileActive ? defaultActiveBg : 'transparent',
-                    color: isProfileActive ? '#000000' : undefined
+                    backgroundColor: isProfileActive ? '#004643' : 'transparent',
+                    color: isProfileActive ? '#F0EDE5' : undefined
                   }}
                   className={`w-[64px] h-[64px] rounded-full flex items-center justify-center border-none shadow-none transition-colors duration-150 ${
-                    isProfileActive ? '' : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+                    isProfileActive ? 'shadow-sm' : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
                   }`}
                 >
                   <Settings size={26} className={iconClass} />
@@ -174,11 +180,11 @@ export default function BottomNav() {
               >
                 <div
                   style={{
-                    backgroundColor: isMoreActive ? defaultActiveBg : 'transparent',
-                    color: isMoreActive ? '#000000' : undefined
+                    backgroundColor: isMoreActive ? moreMenuColor.bg : 'transparent',
+                    color: isMoreActive ? moreMenuColor.color : undefined
                   }}
                   className={`w-[64px] h-[64px] rounded-full flex items-center justify-center border-none shadow-none transition-colors duration-150 ${
-                    isMoreActive ? '' : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+                    isMoreActive ? 'shadow-sm' : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
                   }`}
                 >
                   <LayoutGrid size={26} className={iconClass} />
@@ -225,11 +231,11 @@ export default function BottomNav() {
         >
           <div
             style={{
-              backgroundColor: isClientHomeActive ? defaultActiveBg : 'transparent',
-              color: isClientHomeActive ? '#000000' : undefined
+              backgroundColor: isClientHomeActive ? '#004643' : 'transparent',
+              color: isClientHomeActive ? '#F0EDE5' : undefined
             }}
             className={`w-[64px] h-[64px] rounded-full flex items-center justify-center border-none shadow-none ${
-              isClientHomeActive ? '' : 'text-slate-600 dark:text-zinc-400'
+              isClientHomeActive ? 'shadow-sm' : 'text-slate-600 dark:text-zinc-400'
             }`}
           >
             <Home size={26} className={iconClass} />
@@ -245,8 +251,8 @@ export default function BottomNav() {
         >
           <div
             style={{
-              backgroundColor: isClientScheduleActive ? scheduleActiveBg : 'transparent',
-              color: isClientScheduleActive ? scheduleActiveColor : undefined
+              backgroundColor: isClientScheduleActive ? '#004643' : 'transparent',
+              color: isClientScheduleActive ? '#F0EDE5' : undefined
             }}
             className={`w-[64px] h-[64px] rounded-full flex items-center justify-center border-none shadow-none ${
               isClientScheduleActive ? 'shadow-sm' : 'text-slate-600 dark:text-zinc-400'
@@ -265,11 +271,11 @@ export default function BottomNav() {
         >
           <div
             style={{
-              backgroundColor: isClientProfileActive ? defaultActiveBg : 'transparent',
-              color: isClientProfileActive ? '#000000' : undefined
+              backgroundColor: isClientProfileActive ? '#452039' : 'transparent',
+              color: isClientProfileActive ? '#F5F5F5' : undefined
             }}
             className={`w-[64px] h-[64px] rounded-full flex items-center justify-center border-none shadow-none ${
-              isClientProfileActive ? '' : 'text-slate-600 dark:text-zinc-400'
+              isClientProfileActive ? 'shadow-sm' : 'text-slate-600 dark:text-zinc-400'
             }`}
           >
             <User size={26} className={iconClass} />

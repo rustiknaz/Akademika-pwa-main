@@ -149,7 +149,7 @@ export default function AdminNotifications() {
           <div className="flex-1 relative h-full">
             <AnimatePresence initial={false} mode="wait">
               {activeSlide === 0 ? (
-                /* СЛАЙД 0: КАНАЛЫ (#602BC3 фон, #F974DC текст) */
+                /* СЛАЙД 0: КАНАЛЫ (#3E3B39 фон, #CAC9CD текст) */
                 <motion.div
                   key="channels-slide"
                   drag="x"
@@ -162,32 +162,32 @@ export default function AdminNotifications() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#602BC3', color: '#F974DC' }}
+                  style={{ backgroundColor: '#3E3B39', color: '#CAC9CD' }}
                   className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#F974DC] leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#CAC9CD] leading-tight">
                       Каналы связи
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-[#F974DC] font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-[#CAC9CD] font-mono tracking-tight leading-none">
                       {(isTgConnected ? 1 : 0) + (isWaConnected ? 1 : 0)}
                     </span>
-                    <span className="text-[10px] font-bold text-[#F974DC]/80 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-[#CAC9CD]/80 uppercase tracking-wide leading-tight">
                       активных<br/>канала
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-[#F974DC]/20 text-[#F974DC] backdrop-blur-sm">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-[#CAC9CD]/20 text-[#CAC9CD] backdrop-blur-sm">
                       Telegram • WhatsApp
                     </span>
                   </div>
                 </motion.div>
               ) : activeSlide === 1 ? (
-                /* СЛАЙД 1: РАССЫЛКА (#F974DC фон, #602BC3 текст) */
+                /* СЛАЙД 1: РАССЫЛКА (Инверсия: #CAC9CD фон, #3E3B39 текст) */
                 <motion.div
                   key="broadcast-slide"
                   drag="x"
@@ -201,32 +201,32 @@ export default function AdminNotifications() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#F974DC', color: '#602BC3' }}
+                  style={{ backgroundColor: '#CAC9CD', color: '#3E3B39' }}
                   className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#602BC3] leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#3E3B39] leading-tight">
                       Рассылка
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-[#602BC3] font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-[#3E3B39] font-mono tracking-tight leading-none">
                       184
                     </span>
-                    <span className="text-[10px] font-bold text-[#602BC3]/80 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-[#3E3B39]/80 uppercase tracking-wide leading-tight">
                       получателя<br/>в базе
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-[#602BC3]/20 text-[#602BC3]">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-[#3E3B39]/15 text-[#3E3B39]">
                       Мгновенная отправка
                     </span>
                   </div>
                 </motion.div>
               ) : (
-                /* СЛАЙД 2: ТРИГГЕРЫ (#602BC3 фон, #F974DC текст) */
+                /* СЛАЙД 2: ТРИГГЕРЫ (#3E3B39 фон, #CAC9CD текст) */
                 <motion.div
                   key="triggers-slide"
                   drag="x"
@@ -239,26 +239,26 @@ export default function AdminNotifications() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#602BC3', color: '#F974DC' }}
+                  style={{ backgroundColor: '#3E3B39', color: '#CAC9CD' }}
                   className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between select-none border-none"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#F974DC] leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#CAC9CD] leading-tight">
                       Авто-триггеры
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-[#F974DC] font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-[#CAC9CD] font-mono tracking-tight leading-none">
                       {(t1Enabled ? 1 : 0) + (t2Enabled ? 1 : 0) + (t3Enabled ? 1 : 0)}
                     </span>
-                    <span className="text-[10px] font-bold text-[#F974DC]/80 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-[#CAC9CD]/80 uppercase tracking-wide leading-tight">
                       активных<br/>правила
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-[#F974DC]/20 text-[#F974DC]">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-[#CAC9CD]/20 text-[#CAC9CD]">
                       Сервисные уведомления
                     </span>
                   </div>
@@ -271,7 +271,7 @@ export default function AdminNotifications() {
           <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
             <button 
               onClick={() => setActiveSlide(1)}
-              style={activeSlide === 1 ? { backgroundColor: '#F974DC', color: '#602BC3' } : {}}
+              style={activeSlide === 1 ? { backgroundColor: '#CAC9CD', color: '#3E3B39' } : {}}
               className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 1 
                   ? 'shadow-md scale-100' 
@@ -284,7 +284,7 @@ export default function AdminNotifications() {
 
             <button 
               onClick={() => setActiveSlide(2)}
-              style={activeSlide === 2 ? { backgroundColor: '#602BC3', color: '#F974DC' } : {}}
+              style={activeSlide === 2 ? { backgroundColor: '#3E3B39', color: '#CAC9CD' } : {}}
               className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 2 
                   ? 'shadow-md scale-100' 
@@ -297,7 +297,7 @@ export default function AdminNotifications() {
 
             <button 
               onClick={() => setActiveSlide(0)}
-              style={activeSlide === 0 ? { backgroundColor: '#602BC3', color: '#F974DC' } : {}}
+              style={activeSlide === 0 ? { backgroundColor: '#3E3B39', color: '#CAC9CD' } : {}}
               className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 0 
                   ? 'shadow-md scale-100' 
@@ -348,7 +348,7 @@ export default function AdminNotifications() {
                     value={tgToken}
                     onChange={(e) => setTgToken(e.target.value)}
                     placeholder="Введите API Token ботa"
-                    className="w-full h-12 rounded-2xl pl-4 pr-12 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-[#602BC3] transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                    className="w-full h-12 rounded-2xl pl-4 pr-12 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-[#3E3B39] transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                   />
                   <button
                     onClick={() => setShowTgToken(!showTgToken)}
@@ -406,7 +406,7 @@ export default function AdminNotifications() {
                   value={waApiKey}
                   onChange={(e) => setWaApiKey(e.target.value)}
                   placeholder="Ключ шлюза WhatsApp"
-                  className="w-full h-12 rounded-2xl px-4 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-[#602BC3] transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                  className="w-full h-12 rounded-2xl px-4 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-[#3E3B39] transition-colors bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                 />
 
                 <div className="flex items-center justify-between pt-1">
@@ -414,7 +414,7 @@ export default function AdminNotifications() {
                     onClick={() => setShowQrModal(true)}
                     className="h-10 px-4 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 text-slate-900 dark:text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer"
                   >
-                    <QrCode size={14} style={{ color: '#602BC3' }} className="dark:text-pink-300" />
+                    <QrCode size={14} style={{ color: '#CAC9CD' }} />
                     QR-связка
                   </button>
 
@@ -446,7 +446,7 @@ export default function AdminNotifications() {
                     key={aud.id}
                     type="button"
                     onClick={() => setAudience(aud.id as any)}
-                    style={audience === aud.id ? { backgroundColor: '#602BC3', color: '#F974DC', borderColor: '#602BC3' } : {}}
+                    style={audience === aud.id ? { backgroundColor: '#3E3B39', color: '#CAC9CD', borderColor: '#3E3B39' } : {}}
                     className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                       audience === aud.id
                         ? 'shadow-sm font-bold'
@@ -454,7 +454,7 @@ export default function AdminNotifications() {
                     }`}
                   >
                     <span className="text-xs font-bold block">{aud.label}</span>
-                    <span className={`text-[10px] block mt-0.5 ${audience === aud.id ? 'text-[#F974DC]/80 font-bold' : 'text-zinc-400'}`}>
+                    <span className={`text-[10px] block mt-0.5 ${audience === aud.id ? 'text-[#CAC9CD]/80 font-bold' : 'text-zinc-400'}`}>
                       {aud.count}
                     </span>
                   </button>
@@ -466,7 +466,7 @@ export default function AdminNotifications() {
                   <select
                     value={selectedGroup}
                     onChange={(e) => setSelectedGroup(e.target.value)}
-                    className="w-full h-11 rounded-2xl px-3.5 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-[#602BC3] transition-colors cursor-pointer bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                    className="w-full h-11 rounded-2xl px-3.5 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-[#3E3B39] transition-colors cursor-pointer bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                   >
                     {groupsList.map((g) => (
                       <option key={g} value={g}>{g}</option>
@@ -490,7 +490,7 @@ export default function AdminNotifications() {
                     key={ch.id}
                     type="button"
                     onClick={() => setBroadcastChannel(ch.id as any)}
-                    style={broadcastChannel === ch.id ? { backgroundColor: '#602BC3', color: '#F974DC' } : {}}
+                    style={broadcastChannel === ch.id ? { backgroundColor: '#3E3B39', color: '#CAC9CD' } : {}}
                     className={`text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-full border transition-all cursor-pointer ${
                       broadcastChannel === ch.id
                         ? 'border-transparent shadow-sm'
@@ -512,14 +512,14 @@ export default function AdminNotifications() {
                 value={broadcastMessage}
                 onChange={(e) => setBroadcastMessage(e.target.value)}
                 placeholder="Введите новость, анонс мастер-класса или важное объявление..."
-                className="w-full rounded-2xl p-4 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#602BC3] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white placeholder:text-zinc-400"
+                className="w-full rounded-2xl p-4 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#3E3B39] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white placeholder:text-zinc-400"
               />
             </div>
 
             <button
               onClick={handleSendBroadcast}
               disabled={isSendingBroadcast}
-              style={{ backgroundColor: '#602BC3', color: '#F974DC' }}
+              style={{ backgroundColor: '#3E3B39', color: '#CAC9CD' }}
               className="w-full h-14 font-black text-xs uppercase tracking-wider rounded-full flex items-center justify-center gap-2 shadow-md hover:opacity-90 active:scale-[0.99] transition-all cursor-pointer border-none disabled:opacity-50"
             >
               {isSendingBroadcast ? (
@@ -541,7 +541,7 @@ export default function AdminNotifications() {
               <button
                 onClick={handleSaveTriggers}
                 disabled={isSavingTriggers}
-                style={{ backgroundColor: '#602BC3', color: '#F974DC' }}
+                style={{ backgroundColor: '#3E3B39', color: '#CAC9CD' }}
                 className="h-10 px-5 font-black text-xs uppercase tracking-wider rounded-full flex items-center gap-2 shadow-sm cursor-pointer hover:opacity-90 transition-all border-none"
               >
                 {isSavingTriggers ? <RefreshCw size={13} className="animate-spin" /> : <Save size={14} />}
@@ -554,8 +554,8 @@ export default function AdminNotifications() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <div 
-                    style={{ backgroundColor: 'rgba(96, 43, 195, 0.15)', color: '#602BC3' }}
-                    className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 shadow-xs dark:text-pink-300"
+                    style={{ backgroundColor: 'rgba(202, 201, 205, 0.15)', color: '#CAC9CD' }}
+                    className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 shadow-xs"
                   >
                     <Clock size={18} />
                   </div>
@@ -569,7 +569,7 @@ export default function AdminNotifications() {
                     onChange={(e) => setT1Enabled(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-9 h-5 bg-zinc-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#602BC3] relative" />
+                  <div className="w-9 h-5 bg-zinc-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#3E3B39] relative" />
                 </label>
               </div>
 
@@ -585,7 +585,7 @@ export default function AdminNotifications() {
                         key={t.id}
                         type="button"
                         onClick={() => setT1Timing(t.id as any)}
-                        style={t1Timing === t.id ? { backgroundColor: '#602BC3', color: '#F974DC', borderColor: '#602BC3' } : {}}
+                        style={t1Timing === t.id ? { backgroundColor: '#3E3B39', color: '#CAC9CD', borderColor: '#3E3B39' } : {}}
                         className={`text-[11px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border transition-all cursor-pointer ${
                           t1Timing === t.id
                             ? 'shadow-sm'
@@ -601,7 +601,7 @@ export default function AdminNotifications() {
                     rows={2}
                     value={t1Template}
                     onChange={(e) => setT1Template(e.target.value)}
-                    className="w-full rounded-2xl p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#602BC3] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                    className="w-full rounded-2xl p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#3E3B39] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                   />
                 </div>
               )}
@@ -624,7 +624,7 @@ export default function AdminNotifications() {
                     onChange={(e) => setT2Enabled(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-9 h-5 bg-zinc-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#602BC3] relative" />
+                  <div className="w-9 h-5 bg-zinc-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#3E3B39] relative" />
                 </label>
               </div>
 
@@ -639,7 +639,7 @@ export default function AdminNotifications() {
                         key={c.id}
                         type="button"
                         onClick={() => setT2Condition(c.id as any)}
-                        style={t2Condition === c.id ? { backgroundColor: '#602BC3', color: '#F974DC', borderColor: '#602BC3' } : {}}
+                        style={t2Condition === c.id ? { backgroundColor: '#3E3B39', color: '#CAC9CD', borderColor: '#3E3B39' } : {}}
                         className={`text-[11px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border transition-all cursor-pointer ${
                           t2Condition === c.id
                             ? 'shadow-sm'
@@ -655,7 +655,7 @@ export default function AdminNotifications() {
                     rows={2}
                     value={t2Template}
                     onChange={(e) => setT2Template(e.target.value)}
-                    className="w-full rounded-2xl p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#602BC3] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                    className="w-full rounded-2xl p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#3E3B39] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                   />
                 </div>
               )}
@@ -666,8 +666,8 @@ export default function AdminNotifications() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <div 
-                    style={{ backgroundColor: 'rgba(96, 43, 195, 0.15)', color: '#602BC3' }}
-                    className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 shadow-xs dark:text-pink-300"
+                    style={{ backgroundColor: 'rgba(202, 201, 205, 0.15)', color: '#CAC9CD' }}
+                    className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 shadow-xs"
                   >
                     <Sparkles size={18} />
                   </div>
@@ -681,7 +681,7 @@ export default function AdminNotifications() {
                     onChange={(e) => setT3Enabled(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-9 h-5 bg-zinc-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#602BC3] relative" />
+                  <div className="w-9 h-5 bg-zinc-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#3E3B39] relative" />
                 </label>
               </div>
 
@@ -691,7 +691,7 @@ export default function AdminNotifications() {
                     rows={2}
                     value={t3Template}
                     onChange={(e) => setT3Template(e.target.value)}
-                    className="w-full rounded-2xl p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#602BC3] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
+                    className="w-full rounded-2xl p-3.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#3E3B39] transition-colors resize-none bg-white/60 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-black dark:text-white"
                   />
                 </div>
               )}
@@ -765,7 +765,7 @@ export default function AdminNotifications() {
                     description: "WhatsApp шлюз успешно привязан."
                   });
                 }}
-                style={{ backgroundColor: '#602BC3', color: '#F974DC' }}
+                style={{ backgroundColor: '#3E3B39', color: '#CAC9CD' }}
                 className="w-full h-11 font-black uppercase text-xs rounded-full shadow-md hover:opacity-90 transition-all cursor-pointer border-none"
               >
                 Готово
