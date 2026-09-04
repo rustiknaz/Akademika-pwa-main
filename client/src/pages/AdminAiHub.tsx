@@ -85,114 +85,92 @@ export default function AdminAiHub() {
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНИЙ БЛОК: Слайдер + Вертикальная навигация ─── */}
-        <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
-          
-          {/* Левый баннер со свайпом */}
-          <div className="flex-1 relative h-full">
-            <AnimatePresence initial={false} mode="wait">
+        {/* ─── ВЕРХНИЙ БЛОК: СТАТИЧНЫЙ БАННЕР С ПАРЯЩИМИ КНОПКАМИ СПРАВА ─── */}
+        <div 
+          style={{ backgroundColor: accentColor || '#CCFF00', color: '#000000' }}
+          className="relative min-h-[184px] h-[184px] w-full select-none z-30 p-5 rounded-[42px] shadow-md flex flex-col justify-between border-none overflow-visible"
+        >
+          {/* Анимируемая текстовая информация внутри баннера */}
+          <div className="relative flex-1 flex flex-col justify-between pr-[68px] pointer-events-none">
+            <AnimatePresence mode="wait" initial={false}>
               {activeSlide === 0 ? (
-                /* СЛАЙД 1: МАРКЕТОЛОГ */
                 <motion.div
-                  key="marketing-slide"
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => { if (info.offset.x < -40) setActiveSlide(1); }}
-                  initial={{ opacity: 0, x: -20 }}
+                  key="content-marketing"
+                  initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: accentColor || '#CCFF00' }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none"
+                  exit={{ opacity: 0, x: 16 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-full flex flex-col justify-between pointer-events-auto"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 leading-tight">
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-black/70">
+                      ГЕНЕРАТОР КОНТЕНТА
+                    </span>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-black truncate mt-0.5">
                       AI Маркетолог
                     </h2>
                   </div>
+
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-slate-900 font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-black font-mono tracking-tight leading-none">
                       PRO
                     </span>
-                    <span className="text-[10px] font-bold text-slate-900/70 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-black/70 uppercase tracking-wide leading-tight">
                       генератор постов<br/>и сценариев reels
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/10 text-slate-900 backdrop-blur-sm">
-                      Офферы • Воронки • Трафик
                     </span>
                   </div>
                 </motion.div>
               ) : activeSlide === 1 ? (
-                /* СЛАЙД 2: АВТОПИЛОТ */
                 <motion.div
-                  key="sales-slide"
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => {
-                    if (info.offset.x > 40) setActiveSlide(0);
-                    else if (info.offset.x < -40) setActiveSlide(2);
-                  }}
-                  initial={{ opacity: 0, x: 20 }}
+                  key="content-sales"
+                  initial={{ opacity: 0, x: 16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between bg-[#DDE2E5] dark:bg-[#161618] border border-slate-300/40 dark:border-white/10 cursor-grab active:cursor-grabbing !overflow-visible select-none"
+                  exit={{ opacity: 0, x: -16 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-full flex flex-col justify-between pointer-events-auto"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 dark:text-white leading-tight">
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-black/70">
+                      АВТОМАТИЗАЦИЯ ПРОДАЖ
+                    </span>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-black mt-0.5 truncate">
                       AI Автопилот
                     </h2>
                   </div>
+
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-slate-900 dark:text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-black font-mono tracking-tight leading-none">
                       {isAutopilotEnabled ? 'ON' : 'OFF'}
                     </span>
-                    <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-black/70 uppercase tracking-wide leading-tight">
                       обработка лидов<br/>в Telegram & WA
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full ${
-                      isAutopilotEnabled ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'bg-zinc-500/20 text-zinc-400'
-                    }`}>
-                      {isAutopilotEnabled ? 'Сейлз активен 24/7' : 'Только подсказки'}
                     </span>
                   </div>
                 </motion.div>
               ) : (
-                /* СЛАЙД 3: БАЗА ЗНАНИЙ */
                 <motion.div
-                  key="kb-slide"
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => { if (info.offset.x > 40) setActiveSlide(1); }}
-                  initial={{ opacity: 0, x: 20 }}
+                  key="content-kb"
+                  initial={{ opacity: 0, x: 16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.25 }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between bg-[#DDE2E5] dark:bg-[#161618] border border-slate-300/40 dark:border-white/10 cursor-grab active:cursor-grabbing !overflow-visible select-none"
+                  exit={{ opacity: 0, x: -16 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-full flex flex-col justify-between pointer-events-auto"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-slate-900 dark:text-white leading-tight">
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-black/70">
+                      БАЗА ЗНАНИЙ АГЕНТА
+                    </span>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-black mt-0.5 truncate">
                       База Знаний
                     </h2>
                   </div>
+
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-slate-900 dark:text-white font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-black font-mono tracking-tight leading-none">
                       SYNC
                     </span>
-                    <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-black/70 uppercase tracking-wide leading-tight">
                       правила, цены<br/>и характер агента
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-slate-600 dark:text-zinc-400">
-                      Промпты & Скрипты
                     </span>
                   </div>
                 </motion.div>
@@ -200,38 +178,60 @@ export default function AdminAiHub() {
             </AnimatePresence>
           </div>
 
-          {/* Правая вертикальная пилюля */}
-          <div className="w-[64px] bg-white/40 dark:bg-[#161618]/90 border border-black/5 dark:border-white/10 rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-sm shrink-0 backdrop-blur-md">
+          <div className="relative z-[100] pr-[68px]">
+            <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-black/15 text-black backdrop-blur-sm">
+              {activeSlide === 0 ? 'Офферы • Воронки • Трафик' : activeSlide === 1 ? 'Сейлз активен 24/7' : 'Промпты & Скрипты'}
+            </span>
+          </div>
+
+          {/* 
+            ПРАВАЯ КОЛОНКА ПАРЯЩИХ КНОПОК:
+            - top-5, bottom-5, right-5 (выровнены по стандарту)
+            - активная кнопка подсвечивается кружком #000000 / #CCFF00
+          */}
+          <div className="absolute right-5 top-5 bottom-5 flex flex-col justify-between items-center z-[200] pointer-events-auto">
+            {/* 1. Верх: Маркетолог */}
             <button 
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onClick={() => setActiveSlide(0)}
-              className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+              style={activeSlide === 0 ? { backgroundColor: '#000000', color: accentColor || '#CCFF00' } : {}}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 0 
-                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                  ? 'shadow-md scale-100' 
+                  : 'bg-transparent text-black/70 hover:text-black opacity-80 hover:opacity-100'
               }`}
               title="Маркетолог"
             >
               <TrendingUp size={20} className="stroke-[2.5]" />
             </button>
             
+            {/* 2. Середина: Автопилот */}
             <button 
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onClick={() => setActiveSlide(1)}
-              className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+              style={activeSlide === 1 ? { backgroundColor: '#000000', color: accentColor || '#CCFF00' } : {}}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 1 
-                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                  ? 'shadow-md scale-100' 
+                  : 'bg-transparent text-black/70 hover:text-black opacity-80 hover:opacity-100'
               }`}
               title="Сейлз и Автопилот"
             >
               <Bot size={20} className="stroke-[2.5]" />
             </button>
 
+            {/* 3. Низ: База знаний */}
             <button 
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onClick={() => setActiveSlide(2)}
-              className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+              style={activeSlide === 2 ? { backgroundColor: '#000000', color: accentColor || '#CCFF00' } : {}}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 2 
-                  ? 'bg-[#CCFF00] text-black shadow-md scale-100' 
-                  : 'bg-transparent text-slate-400 dark:text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                  ? 'shadow-md scale-100' 
+                  : 'bg-transparent text-black/70 hover:text-black opacity-80 hover:opacity-100'
               }`}
               title="База знаний"
             >
