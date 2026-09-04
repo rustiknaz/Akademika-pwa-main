@@ -18,6 +18,7 @@ import {
   MapPin,
   Users,
   SlidersHorizontal,
+  Search,
   X,
   Check
 } from 'lucide-react';
@@ -136,6 +137,10 @@ export default function AdminServices() {
   const [serviceFilter, setServiceFilter] = useState<string>('all');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   
+  // Поиск
+  const [search, setSearch] = useState('');
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+
   const [services, setServices] = useState<ServiceItem[]>(INITIAL_SERVICES);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedServiceForDrawer, setSelectedServiceForDrawer] = useState<ServiceItem | null>(null);
@@ -248,15 +253,29 @@ export default function AdminServices() {
     } else {
       if (serviceFilter !== 'all' && s.subCategory !== serviceFilter) return false;
     }
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      const matchTitle = s.title.toLowerCase().includes(q);
+      const matchDesc = s.description.toLowerCase().includes(q);
+      const matchPrice = s.price.toString().includes(q);
+      if (!matchTitle && !matchDesc && !matchPrice) return false;
+    }
     return true;
   });
 
   const filterPopupStyle: React.CSSProperties = {
     backdropFilter: 'blur(40px)',
     WebkitBackdropFilter: 'blur(40px)',
-    backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(18, 18, 20, 0.88)',
-    boxShadow: '0 20px 50px rgba(0, 0, 0, 0.35)',
+    backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.96)' : 'rgba(20, 20, 22, 0.96)',
+    boxShadow: '0 24px 60px rgba(0, 0, 0, 0.55)',
     borderRadius: '36px'
+  };
+
+  const searchInputStyle: React.CSSProperties = {
+    backdropFilter: 'blur(30px)',
+    WebkitBackdropFilter: 'blur(30px)',
+    backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(24, 24, 28, 0.85)',
+    borderRadius: '9999px'
   };
 
   return (
@@ -264,37 +283,44 @@ export default function AdminServices() {
       theme === 'light' ? 'text-black' : 'text-white'
     }`}>
 
+      {/* Оверлей закрытия фильтра кликом вне области */}
+      <AnimatePresence>
+        {isFilterOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onPointerDown={() => setIsFilterOpen(false)}
+            className="fixed inset-0 z-[190] bg-transparent cursor-default pointer-events-auto"
+          />
+        )}
+      </AnimatePresence>
+
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНИЙ БЛОК: С баннером и боковой пилюлей ─── */}
-        <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
-          
-          {/* Левый баннер со свайпом с симметричным скруглением [42px] */}
-          <div className="flex-1 relative h-full">
-            <AnimatePresence initial={false} mode="wait">
+        {/* ─── ВЕРХНИЙ БЛОК: СТАТИЧНЫЙ БАННЕР В ЦВЕТАХ ONYX ─── */}
+        <div 
+          style={{ backgroundColor: '#101010', color: '#FFBE0B' }}
+          className="relative min-h-[184px] h-[184px] w-full select-none z-30 p-5 rounded-[42px] shadow-md flex flex-col justify-between border-none overflow-visible"
+        >
+          {/* Анимируемая текстовая информация: Абонементы ↔ Услуги */}
+          <div className="relative flex-1 flex flex-col justify-between pr-[68px] pointer-events-none">
+            <AnimatePresence mode="wait" initial={false}>
               {mainCategory === 'memberships' ? (
-                /* СЛАЙД 1: АБОНЕМЕНТЫ (#101010 фон, #FFBE0B текст) */
                 <motion.div
-                  key="memberships-slide"
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => {
-                    if (info.offset.x < -40) {
-                      setIsFilterOpen(false);
-                      setMainCategory('services');
-                    }
-                  }}
-                  initial={{ opacity: 0, x: -20 }}
+                  key="content-memberships"
+                  initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#101010', color: '#FFBE0B' }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
+                  exit={{ opacity: 0, x: 16 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-full flex flex-col justify-between pointer-events-auto"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#FFBE0B] leading-tight">
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#FFBE0B]/70">
+                      ТАРИФНЫЕ ПЛАНЫ
+                    </span>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#FFBE0B] mt-0.5 truncate">
                       Абонементы
                     </h2>
                   </div>
@@ -307,198 +333,223 @@ export default function AdminServices() {
                       активных<br/>тарифов
                     </span>
                   </div>
-
-                  {/* Низ баннера: Круглая кнопка Фильтров */}
-                  <div className="relative flex items-center justify-between z-[100]">
-                    <div className="relative">
-                      <button 
-                        onPointerDown={(e) => e.stopPropagation()}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsFilterOpen(!isFilterOpen);
-                        }} 
-                        className="w-11 h-11 rounded-full bg-[#FFBE0B]/20 hover:bg-[#FFBE0B]/30 text-[#FFBE0B] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
-                      >
-                        <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#101010] rounded-full bg-[#FFBE0B] shrink-0" />}
-                      </button>
-
-                      {isFilterOpen && (
-                        <div 
-                          onPointerDown={(e) => e.stopPropagation()} 
-                          onClick={(e) => e.stopPropagation()} 
-                          style={filterPopupStyle}
-                          className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-64 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
-                        >
-                          <div>
-                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Категория тарифов</label>
-                            <select
-                              value={membershipFilter}
-                              onChange={(e) => setMembershipFilter(e.target.value)}
-                              className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
-                            >
-                              <option value="all">Все категории</option>
-                              <option value="unlimited">Безлимитные</option>
-                              <option value="limited">С ограничением</option>
-                              <option value="time_based">Временные</option>
-                              <option value="single">Разовые визиты</option>
-                            </select>
-                          </div>
-
-                          <div className="flex gap-2 pt-2 border-t border-black/5 dark:border-white/10">
-                            <button 
-                              type="button" 
-                              onClick={() => setIsFilterOpen(false)} 
-                              style={{ backgroundColor: '#FFBE0B', color: '#101010' }}
-                              className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
-                            >
-                              Применить
-                            </button>
-                            <button 
-                              type="button" 
-                              onClick={() => { 
-                                setMembershipFilter('all');
-                                setIsFilterOpen(false);
-                              }} 
-                              className="px-4 bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 text-xs font-bold rounded-full border-none hover:bg-black/10 dark:hover:bg-white/20 transition-all cursor-pointer outline-none"
-                            >
-                              Сброс
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
                 </motion.div>
               ) : (
-                /* СЛАЙД 2: УСЛУГИ (Инверсия: #FFBE0B фон, #101010 текст) */
                 <motion.div
-                  key="services-slide"
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => {
-                    if (info.offset.x > 40) {
-                      setIsFilterOpen(false);
-                      setMainCategory('memberships');
-                    }
-                  }}
-                  initial={{ opacity: 0, x: 20 }}
+                  key="content-services"
+                  initial={{ opacity: 0, x: 16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#FFBE0B', color: '#101010' }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
+                  exit={{ opacity: 0, x: -16 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-full flex flex-col justify-between pointer-events-auto"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#101010] leading-tight">
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#FFBE0B]/70">
+                      ДОПОЛНИТЕЛЬНЫЕ ОПЦИИ
+                    </span>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#FFBE0B] mt-0.5 truncate">
                       Каталог услуг
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-[#101010] font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-[#FFBE0B] font-mono tracking-tight leading-none">
                       {filteredServices.length}
                     </span>
-                    <span className="text-[10px] font-bold text-[#101010]/80 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-[#FFBE0B]/80 uppercase tracking-wide leading-tight">
                       активных<br/>услуг
                     </span>
-                  </div>
-
-                  <div className="relative flex items-center justify-between z-[100]">
-                    <div className="relative">
-                      <button 
-                        onPointerDown={(e) => e.stopPropagation()} 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsFilterOpen(!isFilterOpen);
-                        }} 
-                        className="w-11 h-11 rounded-full bg-[#101010]/20 hover:bg-[#101010]/30 text-[#101010] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
-                      >
-                        <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#FFBE0B] rounded-full bg-[#101010] shrink-0" />}
-                      </button>
-
-                      {isFilterOpen && (
-                        <div 
-                          onPointerDown={(e) => e.stopPropagation()} 
-                          onClick={(e) => e.stopPropagation()} 
-                          style={filterPopupStyle}
-                          className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-64 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
-                        >
-                          <div>
-                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Категория услуг</label>
-                            <select
-                              value={serviceFilter}
-                              onChange={(e) => setServiceFilter(e.target.value)}
-                              className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
-                            >
-                              <option value="all">Все услуги</option>
-                              <option value="private">Индивидуальные</option>
-                              <option value="rent">Аренда залов</option>
-                              <option value="choreography">Постановка</option>
-                              <option value="additional">Доп. сервисы</option>
-                            </select>
-                          </div>
-
-                          <div className="flex gap-2 pt-2 border-t border-black/5 dark:border-white/10">
-                            <button 
-                              type="button" 
-                              onClick={() => setIsFilterOpen(false)} 
-                              style={{ backgroundColor: '#101010', color: '#FFBE0B' }}
-                              className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
-                            >
-                              Применить
-                            </button>
-                            <button 
-                              type="button" 
-                              onClick={() => { 
-                                setServiceFilter('all');
-                                setIsFilterOpen(false);
-                              }} 
-                              className="px-4 bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 text-xs font-bold rounded-full border-none hover:bg-black/10 dark:hover:bg-white/20 transition-all cursor-pointer outline-none"
-                            >
-                              Сброс
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
-          {/* Правая вертикальная пилюля */}
-          <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
+          {/* Левая нижняя кнопка фильтра: кружок появляется ТОЛЬКО при нажатии или активном фильтре */}
+          <div className="relative z-[200] pointer-events-auto">
             <button 
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsFilterOpen(prev => !prev);
+              }} 
+              style={(isFilterOpen || isFilterActive) ? { backgroundColor: '#FFBE0B', color: '#101010' } : {}}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none relative ${
+                (isFilterOpen || isFilterActive)
+                  ? 'shadow-md scale-100'
+                  : 'bg-transparent text-white/70 hover:text-white opacity-80 hover:opacity-100'
+              }`}
+              title="Фильтры каталога"
+            >
+              <SlidersHorizontal size={20} className="stroke-[2.5]" />
+              {isFilterActive && !isFilterOpen && (
+                <span className="absolute top-1 right-1 w-2.5 h-2.5 border-2 border-[#101010] rounded-full bg-[#FFBE0B] shrink-0" />
+              )}
+            </button>
+
+            {/* Всплывающее меню фильтров поверх всех слоев */}
+            {isFilterOpen && (
+              <div 
+                onPointerDown={(e) => e.stopPropagation()} 
+                onClick={(e) => e.stopPropagation()} 
+                style={filterPopupStyle}
+                className="absolute top-[calc(100%+12px)] left-0 z-[300] border-none p-5 flex flex-col gap-3.5 w-64 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
+              >
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">
+                    {mainCategory === 'memberships' ? 'Категория тарифов' : 'Категория услуг'}
+                  </label>
+                  {mainCategory === 'memberships' ? (
+                    <select
+                      value={membershipFilter}
+                      onChange={(e) => setMembershipFilter(e.target.value)}
+                      className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
+                    >
+                      <option value="all">Все категории</option>
+                      <option value="unlimited">Безлимитные</option>
+                      <option value="limited">С ограничением</option>
+                      <option value="time_based">Временные</option>
+                      <option value="single">Разовые визиты</option>
+                    </select>
+                  ) : (
+                    <select
+                      value={serviceFilter}
+                      onChange={(e) => setServiceFilter(e.target.value)}
+                      className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
+                    >
+                      <option value="all">Все услуги</option>
+                      <option value="private">Индивидуальные</option>
+                      <option value="rent">Аренда залов</option>
+                      <option value="choreography">Постановка</option>
+                      <option value="additional">Доп. сервисы</option>
+                    </select>
+                  )}
+                </div>
+
+                <div className="flex gap-2 pt-2 border-t border-black/5 dark:border-white/10">
+                  <button 
+                    type="button" 
+                    onClick={() => setIsFilterOpen(false)} 
+                    style={{ backgroundColor: '#FFBE0B', color: '#101010' }}
+                    className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                  >
+                    Применить
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => { 
+                      if (mainCategory === 'memberships') {
+                        setMembershipFilter('all');
+                      } else {
+                        setServiceFilter('all');
+                      }
+                    }} 
+                    className="px-4 bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 text-xs font-bold rounded-full border-none hover:bg-black/10 dark:hover:bg-white/20 transition-all cursor-pointer outline-none"
+                  >
+                    Сброс
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 
+            ПРАВАЯ КОЛОНКА ПАРЯЩИХ КНОПОК:
+            - top-5, bottom-5, right-5
+            - активная кнопка подсвечивается кружком #FFBE0B / #101010
+          */}
+          <div className="absolute right-5 top-5 bottom-5 flex flex-col justify-between items-center z-[200] pointer-events-auto">
+            {/* 1. Верх: Абонементы */}
+            <button 
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onClick={() => { setIsFilterOpen(false); setMainCategory('memberships'); }}
               style={mainCategory === 'memberships' ? { backgroundColor: '#FFBE0B', color: '#101010' } : {}}
-              className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 mainCategory === 'memberships' 
                   ? 'shadow-md scale-100' 
-                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
+                  : 'bg-transparent text-white/70 hover:text-white opacity-80 hover:opacity-100'
               }`}
               title="Абонементы"
             >
               <Ticket size={20} className="stroke-[2.5]" />
             </button>
             
+            {/* 2. Середина: Услуги */}
             <button 
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onClick={() => { setIsFilterOpen(false); setMainCategory('services'); }}
-              style={mainCategory === 'services' ? { backgroundColor: '#101010', color: '#FFBE0B' } : {}}
-              className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+              style={mainCategory === 'services' ? { backgroundColor: '#FFBE0B', color: '#101010' } : {}}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 mainCategory === 'services' 
                   ? 'shadow-md scale-100' 
-                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
+                  : 'bg-transparent text-white/70 hover:text-white opacity-80 hover:opacity-100'
               }`}
               title="Услуги"
             >
               <Sparkles size={20} className="stroke-[2.5]" />
             </button>
+
+            {/* 3. Низ: Поиск (на одной высоте с фильтром) */}
+            <button 
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={() => { 
+                e.stopPropagation(); 
+                setIsFilterOpen(false);
+                setIsSearchVisible(prev => !prev); 
+              }} 
+              style={isSearchVisible ? { backgroundColor: '#FFBE0B', color: '#101010' } : {}}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+                isSearchVisible 
+                  ? 'shadow-md scale-100' 
+                  : 'bg-transparent text-white/70 hover:text-white opacity-80 hover:opacity-100'
+              }`}
+              title="Поиск тарифов"
+            >
+              <Search size={20} className="stroke-[2.5]" />
+            </button>
           </div>
         </div>
+
+        {/* ─── ВЫЕЗЖАЮЩАЯ СТРОКА ПОИСКА ─── */}
+        <AnimatePresence>
+          {isSearchVisible && (
+            <motion.div
+              initial={{ opacity: 0, height: 0, y: -4 }}
+              animate={{ opacity: 1, height: 'auto', y: 0 }}
+              exit={{ opacity: 0, height: 0, y: -4 }}
+              transition={{ duration: 0.18 }}
+              className="z-20 relative overflow-visible"
+            >
+              <div 
+                style={searchInputStyle} 
+                className="w-full h-14 flex items-center gap-3 px-5 shadow-md border border-white/10"
+              >
+                <Search size={20} className="text-slate-500 dark:text-zinc-400 stroke-[2.5] shrink-0" />
+                <input
+                  autoFocus
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Поиск по названию, описанию или стоимости..."
+                  className="flex-1 h-full bg-transparent text-sm font-bold text-slate-950 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none border-none p-0 m-0"
+                />
+                {search && (
+                  <button
+                    type="button"
+                    onClick={() => setSearch('')}
+                    className="w-6 h-6 rounded-full bg-black/10 dark:bg-white/10 text-slate-500 dark:text-zinc-400 hover:text-black dark:hover:text-white flex items-center justify-center transition-colors border-none cursor-pointer shrink-0"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* ─── СПИСОК КАРТОЧЕК С GAP-2.5 ─── */}
         <div className="flex flex-col gap-2.5">
@@ -625,7 +676,7 @@ export default function AdminServices() {
       {/* ─── ШТОРКА 1: ДЕТАЛИ АБОНЕМЕНТА / УСЛУГИ (BOTTOM SHEET DRAWER) ─── */}
       <AnimatePresence>
         {selectedServiceForDrawer && (
-          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
+          <div className="fixed inset-0 z-[250] flex items-end justify-center px-3">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -722,7 +773,7 @@ export default function AdminServices() {
       {/* ─── ШТОРКА 2: СОЗДАНИЕ / РЕДАКТИРОВАНИЕ ПОЗИЦИИ (BOTTOM SHEET DRAWER) ─── */}
       <AnimatePresence>
         {isDrawerOpen && (
-          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
+          <div className="fixed inset-0 z-[250] flex items-end justify-center px-3">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

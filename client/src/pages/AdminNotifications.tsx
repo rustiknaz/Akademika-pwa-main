@@ -142,108 +142,57 @@ export default function AdminNotifications() {
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНИЙ БЛОК: С баннером и боковой пилюлей ─── */}
-        <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
-          
-          {/* Левый баннер со свайпом */}
-          <div className="flex-1 relative h-full">
-            <AnimatePresence initial={false} mode="wait">
-              {activeSlide === 0 ? (
-                /* СЛАЙД 0: КАНАЛЫ (#3E3B39 фон, #CAC9CD текст) */
+        {/* ─── ВЕРХНИЙ БЛОК: СТАТИЧНЫЙ БАННЕР В ЦВЕТАХ KIRGINA ─── */}
+        <div 
+          style={{ backgroundColor: '#3E3B39', color: '#CAC9CD' }}
+          className="relative min-h-[184px] h-[184px] w-full select-none z-30 p-5 rounded-[42px] shadow-md flex flex-col justify-between border-none overflow-visible"
+        >
+          {/* Анимируемая область: Рассылка ↔ Триггеры ↔ Каналы */}
+          <div className="relative flex-1 flex flex-col justify-between pr-[68px] pointer-events-none">
+            <AnimatePresence mode="wait" initial={false}>
+              {activeSlide === 1 ? (
+                /* СЛАЙД 1: РАССЫЛКА */
                 <motion.div
-                  key="channels-slide"
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => {
-                    if (info.offset.x < -40) setActiveSlide(1);
-                  }}
-                  initial={{ opacity: 0, x: -20 }}
+                  key="content-broadcast"
+                  initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#3E3B39', color: '#CAC9CD' }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
+                  exit={{ opacity: 0, x: 16 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-full flex flex-col justify-between pointer-events-auto"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#CAC9CD] leading-tight">
-                      Каналы связи
-                    </h2>
-                  </div>
-
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-[#CAC9CD] font-mono tracking-tight leading-none">
-                      {(isTgConnected ? 1 : 0) + (isWaConnected ? 1 : 0)}
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#CAC9CD]/70">
+                      МАССОВЫЕ СООБЩЕНИЯ
                     </span>
-                    <span className="text-[10px] font-bold text-[#CAC9CD]/80 uppercase tracking-wide leading-tight">
-                      активных<br/>канала
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-[#CAC9CD]/20 text-[#CAC9CD] backdrop-blur-sm">
-                      Telegram • WhatsApp
-                    </span>
-                  </div>
-                </motion.div>
-              ) : activeSlide === 1 ? (
-                /* СЛАЙД 1: РАССЫЛКА (Инверсия: #CAC9CD фон, #3E3B39 текст) */
-                <motion.div
-                  key="broadcast-slide"
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => {
-                    if (info.offset.x > 40) setActiveSlide(0);
-                    else if (info.offset.x < -40) setActiveSlide(2);
-                  }}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#CAC9CD', color: '#3E3B39' }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between select-none border-none"
-                >
-                  <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#3E3B39] leading-tight">
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#CAC9CD] mt-0.5 truncate">
                       Рассылка
                     </h2>
                   </div>
 
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-[#3E3B39] font-mono tracking-tight leading-none">
+                    <span className="text-4xl font-black text-[#CAC9CD] font-mono tracking-tight leading-none">
                       184
                     </span>
-                    <span className="text-[10px] font-bold text-[#3E3B39]/80 uppercase tracking-wide leading-tight">
+                    <span className="text-[10px] font-bold text-[#CAC9CD]/80 uppercase tracking-wide leading-tight">
                       получателя<br/>в базе
                     </span>
                   </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-[#3E3B39]/15 text-[#3E3B39]">
-                      Мгновенная отправка
-                    </span>
-                  </div>
                 </motion.div>
-              ) : (
-                /* СЛАЙД 2: ТРИГГЕРЫ (#3E3B39 фон, #CAC9CD текст) */
+              ) : activeSlide === 2 ? (
+                /* СЛАЙД 2: ТРИГГЕРЫ */
                 <motion.div
-                  key="triggers-slide"
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => {
-                    if (info.offset.x > 40) setActiveSlide(1);
-                  }}
-                  initial={{ opacity: 0, x: 20 }}
+                  key="content-triggers"
+                  initial={{ opacity: 0, x: 16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#3E3B39', color: '#CAC9CD' }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between select-none border-none"
+                  exit={{ opacity: 0, x: -16 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-full flex flex-col justify-between pointer-events-auto"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#CAC9CD] leading-tight">
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#CAC9CD]/70">
+                      АВТОМАТИЗАЦИЯ
+                    </span>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#CAC9CD] mt-0.5 truncate">
                       Авто-триггеры
                     </h2>
                   </div>
@@ -256,10 +205,32 @@ export default function AdminNotifications() {
                       активных<br/>правила
                     </span>
                   </div>
+                </motion.div>
+              ) : (
+                /* СЛАЙД 0: КАНАЛЫ */
+                <motion.div
+                  key="content-channels"
+                  initial={{ opacity: 0, x: -16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 16 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-full flex flex-col justify-between pointer-events-auto"
+                >
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#CAC9CD]/70">
+                      ШЛЮЗЫ И БОТЫ
+                    </span>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#CAC9CD] mt-0.5 truncate">
+                      Каналы связи
+                    </h2>
+                  </div>
 
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-[#CAC9CD]/20 text-[#CAC9CD]">
-                      Сервисные уведомления
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-black text-[#CAC9CD] font-mono tracking-tight leading-none">
+                      {(isTgConnected ? 1 : 0) + (isWaConnected ? 1 : 0)}
+                    </span>
+                    <span className="text-[10px] font-bold text-[#CAC9CD]/80 uppercase tracking-wide leading-tight">
+                      активных<br/>канала
                     </span>
                   </div>
                 </motion.div>
@@ -267,41 +238,61 @@ export default function AdminNotifications() {
             </AnimatePresence>
           </div>
 
-          {/* Правая вертикальная пилюля */}
-          <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
+          {/* Левый нижний бейдж текущего раздела */}
+          <div className="relative z-[100] pr-[68px]">
+            <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-[#CAC9CD]/20 text-[#CAC9CD] backdrop-blur-sm">
+              {activeSlide === 1 ? 'Мгновенная отправка' : activeSlide === 2 ? 'Сервисные уведомления' : 'Telegram • WhatsApp'}
+            </span>
+          </div>
+
+          {/* 
+            ПРАВАЯ КОЛОНКА ПАРЯЩИХ КНОПОК:
+            - top-5, bottom-5, right-5 (выровнены строго по стандарту)
+            - активная кнопка подсвечивается контрастным кружком #CAC9CD / #3E3B39
+          */}
+          <div className="absolute right-5 top-5 bottom-5 flex flex-col justify-between items-center z-[200] pointer-events-auto">
+            {/* 1. Верх: Рассылка */}
             <button 
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onClick={() => setActiveSlide(1)}
               style={activeSlide === 1 ? { backgroundColor: '#CAC9CD', color: '#3E3B39' } : {}}
-              className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 1 
                   ? 'shadow-md scale-100' 
-                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                  : 'bg-transparent text-white/70 hover:text-white opacity-80 hover:opacity-100'
               }`}
               title="Рассылка"
             >
               <Send size={19} className="stroke-[2.5]" />
             </button>
 
+            {/* 2. Середина: Триггеры */}
             <button 
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onClick={() => setActiveSlide(2)}
-              style={activeSlide === 2 ? { backgroundColor: '#3E3B39', color: '#CAC9CD' } : {}}
-              className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+              style={activeSlide === 2 ? { backgroundColor: '#CAC9CD', color: '#3E3B39' } : {}}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 2 
                   ? 'shadow-md scale-100' 
-                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                  : 'bg-transparent text-white/70 hover:text-white opacity-80 hover:opacity-100'
               }`}
               title="Триггеры"
             >
               <Zap size={20} className="stroke-[2.5]" />
             </button>
 
+            {/* 3. Низ: Каналы */}
             <button 
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onClick={() => setActiveSlide(0)}
-              style={activeSlide === 0 ? { backgroundColor: '#3E3B39', color: '#CAC9CD' } : {}}
-              className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+              style={activeSlide === 0 ? { backgroundColor: '#CAC9CD', color: '#3E3B39' } : {}}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 0 
                   ? 'shadow-md scale-100' 
-                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 scale-95'
+                  : 'bg-transparent text-white/70 hover:text-white opacity-80 hover:opacity-100'
               }`}
               title="Каналы"
             >

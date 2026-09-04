@@ -23,7 +23,8 @@ import {
   SlidersHorizontal, 
   Settings,
   CalendarPlus,
-  Ticket
+  Ticket,
+  Search
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import FloatingActionButton from "../components/FloatingActionButton";
@@ -283,7 +284,9 @@ export function DirectionsAndGroupsManager() {
   // Active Tab inside settings: 'directions' | 'ages' | 'levels'
   const [activeTab, setActiveTab] = useState<'directions' | 'groups' | 'ages' | 'levels'>('groups');
 
-  // Filter States
+  // Search & Filters
+  const [search, setSearch] = useState('');
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedBranch, setSelectedBranch] = useState('Все филиалы');
   const [selectedHall, setSelectedHall] = useState('Все залы');
@@ -299,7 +302,7 @@ export function DirectionsAndGroupsManager() {
   const [ages, setAges] = useState<AgeCategoryItem[]>(DEFAULT_AGES);
   const [levels, setLevels] = useState<LevelItem[]>(DEFAULT_LEVELS);
 
-  // Шторка просмотра существующей группы
+  // Шторка просмотра группы
   const [selectedGroupForDrawer, setSelectedGroupForDrawer] = useState<GroupItem | null>(null);
 
   // Шторка создания / редактирования
@@ -602,6 +605,13 @@ export function DirectionsAndGroupsManager() {
     if (selectedDirection !== 'Все направления' && g.direction !== selectedDirection) return false;
     if (selectedAge !== 'Все возраста' && g.age && !g.age.includes(selectedAge.split(' ')[0])) return false;
     if (selectedCoach !== 'Все педагоги' && g.coach !== selectedCoach) return false;
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      const matchName = g.name.toLowerCase().includes(q);
+      const matchDir = g.direction.toLowerCase().includes(q);
+      const matchCoach = g.coach.toLowerCase().includes(q);
+      if (!matchName && !matchDir && !matchCoach) return false;
+    }
     return true;
   });
 
@@ -610,9 +620,16 @@ export function DirectionsAndGroupsManager() {
   const filterPopupStyle: React.CSSProperties = {
     backdropFilter: 'blur(40px)',
     WebkitBackdropFilter: 'blur(40px)',
-    backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(18, 18, 20, 0.88)',
-    boxShadow: '0 20px 50px rgba(0, 0, 0, 0.35)',
+    backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.96)' : 'rgba(20, 20, 22, 0.96)',
+    boxShadow: '0 24px 60px rgba(0, 0, 0, 0.55)',
     borderRadius: '36px'
+  };
+
+  const searchInputStyle: React.CSSProperties = {
+    backdropFilter: 'blur(30px)',
+    WebkitBackdropFilter: 'blur(30px)',
+    backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(24, 24, 28, 0.85)',
+    borderRadius: '9999px'
   };
 
   if (loading) {
@@ -628,38 +645,44 @@ export function DirectionsAndGroupsManager() {
       theme === 'light' ? 'text-black' : 'text-white'
     }`}>
       
+      {/* Оверлей закрытия фильтра кликом вне его области */}
+      <AnimatePresence>
+        {isFilterOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onPointerDown={() => setIsFilterOpen(false)}
+            className="fixed inset-0 z-[190] bg-transparent cursor-default pointer-events-auto"
+          />
+        )}
+      </AnimatePresence>
+
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНИЙ БЛОК: С баннером и боковой пилюлей ─── */}
-        <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
-          
-          {/* Левый баннер со свайпом с симметричным скруглением [42px] */}
-          <div className="flex-1 relative h-full">
-            <AnimatePresence initial={false} mode="wait">
+        {/* ─── ВЕРХНИЙ БЛОК: СТАТИЧНЫЙ БАННЕР В ЦВЕТАХ DIRECTIONS ─── */}
+        <div 
+          style={{ backgroundColor: '#362486', color: '#00E96E' }}
+          className="relative min-h-[184px] h-[184px] w-full select-none z-30 p-5 rounded-[42px] shadow-md flex flex-col justify-between border-none overflow-visible"
+        >
+          {/* Анимируемая текстовая информация: Группы ↔ Настройки */}
+          <div className="relative flex-1 flex flex-col justify-between pr-[68px] pointer-events-none">
+            <AnimatePresence mode="wait" initial={false}>
               {mainView === 'groups' ? (
-                /* СЛАЙД 1: ГРУППЫ (#362486 фон, #00E96E текст) */
                 <motion.div
-                  key="groups-slide"
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => {
-                    if (info.offset.x < -40) {
-                      setIsFilterOpen(false);
-                      setMainView('settings');
-                      setActiveTab('directions');
-                    }
-                  }}
-                  initial={{ opacity: 0, x: -20 }}
+                  key="content-groups"
+                  initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#362486', color: '#00E96E' }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
+                  exit={{ opacity: 0, x: 16 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-full flex flex-col justify-between pointer-events-auto"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#00E96E] leading-tight">
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#00E96E]/70">
+                      РАСПИСАНИЕ СТУДИИ
+                    </span>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#00E96E] mt-0.5 truncate">
                       Группы
                     </h2>
                   </div>
@@ -672,207 +695,272 @@ export function DirectionsAndGroupsManager() {
                       активных<br/>групп
                     </span>
                   </div>
-
-                  <div className="relative flex items-center justify-between z-[100]">
-                    <div className="relative">
-                      <button 
-                        onPointerDown={(e) => e.stopPropagation()}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsFilterOpen(!isFilterOpen);
-                        }} 
-                        className="w-11 h-11 rounded-full bg-[#00E96E]/20 hover:bg-[#00E96E]/30 text-[#00E96E] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
-                      >
-                        <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {isFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#362486] rounded-full bg-[#00E96E] shrink-0" />}
-                      </button>
-
-                      {isFilterOpen && (
-                        <div 
-                          onPointerDown={(e) => e.stopPropagation()} 
-                          onClick={(e) => e.stopPropagation()} 
-                          style={filterPopupStyle}
-                          className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
-                        >
-                          <div>
-                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Филиал</label>
-                            <select
-                              value={selectedBranch}
-                              onChange={(e) => setSelectedBranch(e.target.value)}
-                              className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
-                            >
-                              <option value="Все филиалы">Все филиалы</option>
-                              {branchesList.map(b => <option key={b} value={b}>{b}</option>)}
-                            </select>
-                          </div>
-
-                          <div>
-                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Зал</label>
-                            <select
-                              value={selectedHall}
-                              onChange={(e) => setSelectedHall(e.target.value)}
-                              className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
-                            >
-                              <option value="Все залы">Все залы</option>
-                              {HALLS_LIST.map(h => <option key={h} value={h}>{h}</option>)}
-                            </select>
-                          </div>
-
-                          <div>
-                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Направление</label>
-                            <select
-                              value={selectedDirection}
-                              onChange={(e) => setSelectedDirection(e.target.value)}
-                              className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
-                            >
-                              <option value="Все направления">Все направления</option>
-                              {directions.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
-                            </select>
-                          </div>
-
-                          <div>
-                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Возраст</label>
-                            <select
-                              value={selectedAge}
-                              onChange={(e) => setSelectedAge(e.target.value)}
-                              className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
-                            >
-                              <option value="Все возраста">Все возраста</option>
-                              {ages.map(a => <option key={a.id} value={a.name}>{a.name} ({a.range})</option>)}
-                            </select>
-                          </div>
-
-                          <div>
-                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Педагог</label>
-                            <select
-                              value={selectedCoach}
-                              onChange={(e) => setSelectedCoach(e.target.value)}
-                              className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
-                            >
-                              <option value="Все педагоги">Все педагоги</option>
-                              {COACHES_LIST.map(c => <option key={c} value={c}>{c}</option>)}
-                            </select>
-                          </div>
-
-                          <div className="flex gap-2 pt-2 border-t border-black/5 dark:border-white/10">
-                            <button 
-                              type="button" 
-                              onClick={() => setIsFilterOpen(false)} 
-                              style={{ backgroundColor: '#00E96E', color: '#362486' }}
-                              className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
-                            >
-                              Применить
-                            </button>
-                            <button 
-                              type="button" 
-                              onClick={() => { 
-                                setSelectedBranch('Все филиалы'); 
-                                setSelectedHall('Все залы'); 
-                                setSelectedDirection('Все направления'); 
-                                setSelectedAge('Все возраста'); 
-                                setSelectedCoach('Все педагоги'); 
-                              }} 
-                              className="px-4 bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 text-xs font-bold rounded-full border-none hover:bg-black/10 dark:hover:bg-white/20 transition-all cursor-pointer outline-none"
-                            >
-                              Сброс
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
                 </motion.div>
               ) : (
-                /* СЛАЙД 2: НАСТРОЙКИ (#00E96E фон, #362486 текст) */
                 <motion.div
-                  key="settings-slide"
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => {
-                    if (info.offset.x > 40) {
-                      setIsFilterOpen(false);
-                      setMainView('groups');
-                      setActiveTab('groups');
-                    }
-                  }}
-                  initial={{ opacity: 0, x: 20 }}
+                  key="content-settings"
+                  initial={{ opacity: 0, x: 16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#00E96E', color: '#362486' }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible select-none border-none"
+                  exit={{ opacity: 0, x: -16 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-full flex flex-col justify-between pointer-events-auto"
                 >
                   <div>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#362486] leading-tight">
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#00E96E]/70">
+                      СПРАВОЧНИК СТУДИИ
+                    </span>
+                    <h2 className="text-xl font-black uppercase tracking-wider text-[#00E96E] mt-0.5 truncate">
                       Настройки
                     </h2>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 bg-[#362486]/10 rounded-2xl p-3 backdrop-blur-sm">
+                  <div className="grid grid-cols-3 gap-2 bg-[#00E96E]/10 rounded-2xl p-2.5 backdrop-blur-sm">
                     <div className="flex flex-col">
-                      <span className="text-2xl font-black text-[#362486] font-mono leading-none">
+                      <span className="text-2xl font-black text-[#00E96E] font-mono leading-none">
                         {directions.length}
                       </span>
-                      <span className="text-[9px] font-bold text-[#362486]/80 uppercase tracking-wider mt-1 leading-tight">
+                      <span className="text-[9px] font-bold text-[#00E96E]/80 uppercase tracking-wider mt-1 leading-tight">
                         Направлений
                       </span>
                     </div>
 
                     <div className="flex flex-col">
-                      <span className="text-2xl font-black text-[#362486] font-mono leading-none">
+                      <span className="text-2xl font-black text-[#00E96E] font-mono leading-none">
                         {ages.length}
                       </span>
-                      <span className="text-[9px] font-bold text-[#362486]/80 uppercase tracking-wider mt-1 leading-tight">
+                      <span className="text-[9px] font-bold text-[#00E96E]/80 uppercase tracking-wider mt-1 leading-tight">
                         Возрастов
                       </span>
                     </div>
 
                     <div className="flex flex-col">
-                      <span className="text-2xl font-black text-[#362486] font-mono leading-none">
+                      <span className="text-2xl font-black text-[#00E96E] font-mono leading-none">
                         {levels.length}
                       </span>
-                      <span className="text-[9px] font-bold text-[#362486]/80 uppercase tracking-wider mt-1 leading-tight">
+                      <span className="text-[9px] font-bold text-[#00E96E]/80 uppercase tracking-wider mt-1 leading-tight">
                         Уровней
                       </span>
                     </div>
                   </div>
-
-                  <div className="h-2" />
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
-          {/* Правая вертикальная пилюля */}
-          <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
+          {/* Левая нижняя кнопка фильтра: кружок появляется ТОЛЬКО при нажатии или активном фильтре */}
+          <div className="relative z-[200] pointer-events-auto">
             <button 
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsFilterOpen(prev => !prev);
+              }} 
+              style={(isFilterOpen || isFilterActive) ? { backgroundColor: '#00E96E', color: '#362486' } : {}}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none relative ${
+                (isFilterOpen || isFilterActive)
+                  ? 'shadow-md scale-100'
+                  : 'bg-transparent text-white/70 hover:text-white opacity-80 hover:opacity-100'
+              }`}
+              title="Фильтры групп"
+            >
+              <SlidersHorizontal size={20} className="stroke-[2.5]" />
+              {isFilterActive && !isFilterOpen && (
+                <span className="absolute top-1 right-1 w-2.5 h-2.5 border-2 border-[#362486] rounded-full bg-[#00E96E] shrink-0" />
+              )}
+            </button>
+
+            {/* Всплывающее меню фильтров поверх всех слоев */}
+            {isFilterOpen && (
+              <div 
+                onPointerDown={(e) => e.stopPropagation()} 
+                onClick={(e) => e.stopPropagation()} 
+                style={filterPopupStyle}
+                className="absolute top-[calc(100%+12px)] left-0 z-[300] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
+              >
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Филиал</label>
+                  <select
+                    value={selectedBranch}
+                    onChange={(e) => setSelectedBranch(e.target.value)}
+                    className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
+                  >
+                    <option value="Все филиалы">Все филиалы</option>
+                    {branchesList.map(b => <option key={b} value={b}>{b}</option>)}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Зал</label>
+                  <select
+                    value={selectedHall}
+                    onChange={(e) => setSelectedHall(e.target.value)}
+                    className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
+                  >
+                    <option value="Все залы">Все залы</option>
+                    {HALLS_LIST.map(h => <option key={h} value={h}>{h}</option>)}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Направление</label>
+                  <select
+                    value={selectedDirection}
+                    onChange={(e) => setSelectedDirection(e.target.value)}
+                    className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
+                  >
+                    <option value="Все направления">Все направления</option>
+                    {directions.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Возраст</label>
+                  <select
+                    value={selectedAge}
+                    onChange={(e) => setSelectedAge(e.target.value)}
+                    className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
+                  >
+                    <option value="Все возраста">Все возраста</option>
+                    {ages.map(a => <option key={a.id} value={a.name}>{a.name} ({a.range})</option>)}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Педагог</label>
+                  <select
+                    value={selectedCoach}
+                    onChange={(e) => setSelectedCoach(e.target.value)}
+                    className="w-full bg-black/5 dark:bg-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white border-none outline-none cursor-pointer"
+                  >
+                    <option value="Все педагоги">Все педагоги</option>
+                    {COACHES_LIST.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+
+                <div className="flex gap-2 pt-2 border-t border-black/5 dark:border-white/10">
+                  <button 
+                    type="button" 
+                    onClick={() => setIsFilterOpen(false)} 
+                    style={{ backgroundColor: '#00E96E', color: '#362486' }}
+                    className="flex-1 text-xs font-black py-2.5 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                  >
+                    Применить
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => { 
+                      setSelectedBranch('Все филиалы'); 
+                      setSelectedHall('Все залы'); 
+                      setSelectedDirection('Все направления'); 
+                      setSelectedAge('Все возраста'); 
+                      setSelectedCoach('Все педагоги'); 
+                    }} 
+                    className="px-4 bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 text-xs font-bold rounded-full border-none hover:bg-black/10 dark:hover:bg-white/20 transition-all cursor-pointer outline-none"
+                  >
+                    Сброс
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 
+            ПРАВАЯ КОЛОНКА ПАРЯЩИХ КНОПОК:
+            - top-5, bottom-5, right-5 (выровнены по левой кнопке)
+            - активная кнопка подсвечивается кружком #00E96E / #362486
+          */}
+          <div className="absolute right-5 top-5 bottom-5 flex flex-col justify-between items-center z-[200] pointer-events-auto">
+            {/* 1. Верх: Группы */}
+            <button 
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onClick={() => { setMainView('groups'); setActiveTab('groups'); }}
               style={mainView === 'groups' ? { backgroundColor: '#00E96E', color: '#362486' } : {}}
-              className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 mainView === 'groups' 
                   ? 'shadow-md scale-100' 
-                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
+                  : 'bg-transparent text-white/70 hover:text-white opacity-80 hover:opacity-100'
               }`}
               title="Группы"
             >
               <Calendar size={20} className="stroke-[2.5]" />
             </button>
             
+            {/* 2. Середина: Настройки */}
             <button 
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onClick={() => { setMainView('settings'); setActiveTab('directions'); }}
-              style={mainView === 'settings' ? { backgroundColor: '#362486', color: '#00E96E' } : {}}
-              className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+              style={mainView === 'settings' ? { backgroundColor: '#00E96E', color: '#362486' } : {}}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 mainView === 'settings' 
                   ? 'shadow-md scale-100' 
-                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
+                  : 'bg-transparent text-white/70 hover:text-white opacity-80 hover:opacity-100'
               }`}
               title="Настройки"
             >
               <Settings size={20} className="stroke-[2.5]" />
             </button>
+
+            {/* 3. Низ: Поиск (на одной высоте с фильтром) */}
+            <button 
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={() => { 
+                e.stopPropagation(); 
+                setIsFilterOpen(false);
+                setIsSearchVisible(prev => !prev); 
+              }}
+              style={isSearchVisible ? { backgroundColor: '#00E96E', color: '#362486' } : {}}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+                isSearchVisible 
+                  ? 'shadow-md scale-100' 
+                  : 'bg-transparent text-white/70 hover:text-white opacity-80 hover:opacity-100'
+              }`}
+              title="Поиск групп"
+            >
+              <Search size={20} className="stroke-[2.5]" />
+            </button>
           </div>
         </div>
+
+        {/* ─── ВЫЕЗЖАЮЩАЯ СТРОКА ПОИСКА ─── */}
+        <AnimatePresence>
+          {isSearchVisible && (
+            <motion.div
+              initial={{ opacity: 0, height: 0, y: -4 }}
+              animate={{ opacity: 1, height: 'auto', y: 0 }}
+              exit={{ opacity: 0, height: 0, y: -4 }}
+              transition={{ duration: 0.18 }}
+              className="z-20 relative overflow-visible"
+            >
+              <div 
+                style={searchInputStyle} 
+                className="w-full h-14 flex items-center gap-3 px-5 shadow-md border border-white/10"
+              >
+                <Search size={20} className="text-slate-500 dark:text-zinc-400 stroke-[2.5] shrink-0" />
+                <input
+                  autoFocus
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Поиск по названию, стилю или педагогу..."
+                  className="flex-1 h-full bg-transparent text-sm font-bold text-slate-950 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none border-none p-0 m-0"
+                />
+                {search && (
+                  <button
+                    type="button"
+                    onClick={() => setSearch('')}
+                    className="w-6 h-6 rounded-full bg-black/10 dark:bg-white/10 text-slate-500 dark:text-zinc-400 hover:text-black dark:hover:text-white flex items-center justify-center transition-colors border-none cursor-pointer shrink-0"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* ─── ВНУТРЕННИЕ ТАБЫ НАСТРОЕК ─── */}
         {mainView === 'settings' && (
@@ -1242,7 +1330,7 @@ export function DirectionsAndGroupsManager() {
       {/* ─── ШТОРКА 1: ДЕТАЛИ ГРУППЫ (BOTTOM SHEET DRAWER) ─── */}
       <AnimatePresence>
         {selectedGroupForDrawer && (
-          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
+          <div className="fixed inset-0 z-[250] flex items-end justify-center px-3">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -1338,7 +1426,7 @@ export function DirectionsAndGroupsManager() {
       {/* ─── ШТОРКА 2: СОЗДАНИЕ / РЕДАКТИРОВАНИЕ (BOTTOM SHEET DRAWER) ─── */}
       <AnimatePresence>
         {isDrawerOpen && (
-          <div className="fixed inset-0 z-[200] flex items-end justify-center px-3">
+          <div className="fixed inset-0 z-[250] flex items-end justify-center px-3">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

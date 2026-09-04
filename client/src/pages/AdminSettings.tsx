@@ -195,25 +195,22 @@ export default function AdminSettings() {
 
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ВЕРХНИЙ БАННЕР */}
-        <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
-          <div className="flex-1 relative h-full">
-            <AnimatePresence initial={false} mode="wait">
+        {/* ─── ВЕРХНИЙ БЛОК: СТАТИЧНЫЙ БАННЕР С ПАРЯЩИМИ КНОПКАМИ СПРАВА ─── */}
+        <div 
+          style={{ backgroundColor: '#A86C78', color: '#FFFFFF' }}
+          className="relative min-h-[184px] h-[184px] w-full select-none z-30 p-5 rounded-[42px] shadow-md flex flex-col justify-between border-none overflow-visible"
+        >
+          {/* Анимируемая текстовая информация внутри баннера */}
+          <div className="relative flex-1 flex flex-col justify-between pr-[68px] pointer-events-none">
+            <AnimatePresence mode="wait" initial={false}>
               {activeSlide === 0 ? (
                 <motion.div
-                  key="studio-slide"
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => {
-                    if (info.offset.x < -40) setActiveSlide(1);
-                  }}
-                  initial={{ opacity: 0, x: -20 }}
+                  key="content-studio"
+                  initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#A86C78', color: '#FFFFFF' }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
+                  exit={{ opacity: 0, x: 16 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-full flex flex-col justify-between pointer-events-auto"
                 >
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">
@@ -229,31 +226,15 @@ export default function AdminSettings() {
                       {branches.length} ФИЛИАЛА • 3 ЗАЛА АКТИВНЫ
                     </span>
                   </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/20 text-white backdrop-blur-sm">
-                      Основной профиль
-                    </span>
-                    <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider">
-                      Смахните для доступов →
-                    </span>
-                  </div>
                 </motion.div>
               ) : (
                 <motion.div
-                  key="roles-slide"
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => {
-                    if (info.offset.x > 40) setActiveSlide(0);
-                  }}
-                  initial={{ opacity: 0, x: 20 }}
+                  key="content-roles"
+                  initial={{ opacity: 0, x: 16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#A86C78', color: '#FFFFFF' }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
+                  exit={{ opacity: 0, x: -16 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-full flex flex-col justify-between pointer-events-auto"
                 >
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">
@@ -269,41 +250,49 @@ export default function AdminSettings() {
                       Owner & Admin
                     </span>
                   </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/20 text-white">
-                      Максимальный уровень
-                    </span>
-                    <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider">
-                      ← Назад к студии
-                    </span>
-                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
-          <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
+          <div className="relative z-[100] pr-[68px]">
+            <span className="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/20 text-white backdrop-blur-sm">
+              {activeSlide === 0 ? 'Основной профиль' : 'Максимальный уровень'}
+            </span>
+          </div>
+
+          {/* 
+            ПРАВАЯ КОЛОНКА ПАРЯЩИХ КНОПОК:
+            - top-5, bottom-5, right-5 (выровнены по стандарту)
+            - активная кнопка подсвечивается кружком #FFFFFF / #A86C78
+          */}
+          <div className="absolute right-5 top-5 bottom-5 flex flex-col justify-between items-center z-[200] pointer-events-auto">
+            {/* 1. Верх: Студия */}
             <button 
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onClick={() => setActiveSlide(0)}
-              style={activeSlide === 0 ? { backgroundColor: '#A86C78', color: '#FFFFFF' } : {}}
-              className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+              style={activeSlide === 0 ? { backgroundColor: '#FFFFFF', color: '#A86C78' } : {}}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 0 
                   ? 'shadow-md scale-100' 
-                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
+                  : 'bg-transparent text-white/70 hover:text-white opacity-80 hover:opacity-100'
               }`}
               title="Студия"
             >
               <Building2 size={20} className="stroke-[2.5]" />
             </button>
             
+            {/* 2. Низ: Безопасность */}
             <button 
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onClick={() => setActiveSlide(1)}
-              style={activeSlide === 1 ? { backgroundColor: '#A86C78', color: '#FFFFFF' } : {}}
-              className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+              style={activeSlide === 1 ? { backgroundColor: '#FFFFFF', color: '#A86C78' } : {}}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 1 
                   ? 'shadow-md scale-100' 
-                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
+                  : 'bg-transparent text-white/70 hover:text-white opacity-80 hover:opacity-100'
               }`}
               title="Безопасность"
             >

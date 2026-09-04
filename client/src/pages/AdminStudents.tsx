@@ -319,7 +319,11 @@ export default function AdminStudents() {
   return (
     <div className={`min-h-screen min-h-[100dvh] page-root flex flex-col font-sans relative transition-colors duration-300 bg-transparent ${theme === 'light' ? 'text-black' : 'text-white'}`}>
       
-      {/* ─── КЛИК ВНЕ ФИЛЬТРА ДЛЯ ЕГО ЗАКРЫТИЯ ─── */}
+      {/* 
+        Оверлей для клика вне фильтра:
+        Находится строго НАД фоном страницы (z-[190]), но ПОД выпадающим окном фильтра (z-[220]).
+        Закрывает фильтр только при клике вне его области.
+      */}
       <AnimatePresence>
         {isFilterOpen && (
           <motion.div
@@ -421,13 +425,16 @@ export default function AdminStudents() {
               )}
             </button>
 
-            {/* Всплывающее меню фильтров поверх всех элементов */}
+            {/* 
+              Всплывающее меню фильтров:
+              Имеет z-[220] и stopPropagation, чтобы клики ВНУТРИ фильтра не закрывали его
+            */}
             {isFilterOpen && (
               <div 
                 onPointerDown={(e) => e.stopPropagation()} 
                 onClick={(e) => e.stopPropagation()} 
                 style={filterPopupStyle}
-                className="absolute top-[calc(100%+12px)] left-0 z-[300] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
+                className="absolute top-[calc(100%+12px)] left-0 z-[220] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
               >
                 {activeSlide === 0 ? (
                   <>
@@ -504,7 +511,7 @@ export default function AdminStudents() {
               type="button"
               onPointerDown={(e) => e.stopPropagation()}
               onClick={(e) => { 
-                e.stopPropagation();
+                e.stopPropagation(); 
                 setIsFilterOpen(false); 
                 setActiveSlide(0); 
               }}
@@ -524,7 +531,7 @@ export default function AdminStudents() {
               type="button"
               onPointerDown={(e) => e.stopPropagation()}
               onClick={(e) => { 
-                e.stopPropagation();
+                e.stopPropagation(); 
                 setIsFilterOpen(false); 
                 setActiveSlide(1); 
               }}
@@ -544,7 +551,7 @@ export default function AdminStudents() {
               type="button"
               onPointerDown={(e) => e.stopPropagation()}
               onClick={(e) => { 
-                e.stopPropagation();
+                e.stopPropagation(); 
                 setIsFilterOpen(false);
                 setIsSearchVisible(prev => !prev); 
               }}
