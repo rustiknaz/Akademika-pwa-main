@@ -321,236 +321,258 @@ export default function AdminStudents() {
       {/* ─── ЕДИНЫЙ КОНТЕЙНЕР: PX-3, PT-3 И GAP-2.5 ─── */}
       <div className="flex-1 px-3 pt-3 pb-32 flex flex-col gap-2.5">
         
-        {/* ─── ВЕРХНИЙ БЛОК: С баннером и боковой пилюлей ─── */}
-        <div className="flex gap-2.5 h-[184px] w-full select-none z-30">
+        {/* ─── ВЕРХНИЙ БЛОК: ШИРОКИЙ БАННЕР С ПАРАЛЛЕЛЬНОЙ ПИЛЮЛЕЙ ─── */}
+        <div className="relative h-[184px] w-full select-none z-30 overflow-visible">
           
-          {/* Левая карточка со свайпом с симметричным скруглением [42px] */}
-          <div className="flex-1 relative h-full">
-            <AnimatePresence initial={false} mode="wait">
-              {activeSlide === 0 ? (
-                /* 1. БАЗА УЧЕНИКОВ (#452039 фон, #F5F5F5 текст) */
-                <motion.div
-                  key="base-slide"
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => { if (info.offset.x < -40) { setIsFilterOpen(false); setActiveSlide(1); } }}
-                  initial={{ opacity: 0, x: -20 }} 
-                  animate={{ opacity: 1, x: 0 }} 
-                  exit={{ opacity: 0, x: -20 }} 
-                  transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#452039', color: '#F5F5F5' }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
-                >
-                  <div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#F5F5F5]/70">
-                      ДЕЙСТВУЮЩИЕ УЧЕНИКИ
-                    </span>
-                    <h2 className="text-xl font-black uppercase tracking-wider text-[#F5F5F5] mt-0.5">
-                      База клиентов
-                    </h2>
-                  </div>
+          <AnimatePresence initial={false} mode="wait">
+            {activeSlide === 0 ? (
+              /* 1. БАЗА УЧЕНИКОВ (#452039 фон, #F5F5F5 текст) */
+              <motion.div
+                key="base-slide"
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={(_, info) => { if (info.offset.x < -40) { setIsFilterOpen(false); setActiveSlide(1); } }}
+                initial={{ opacity: 0, x: -20 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                exit={{ opacity: 0, x: -20 }} 
+                transition={{ duration: 0.25 }}
+                style={{ backgroundColor: '#452039', color: '#F5F5F5' }}
+                className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
+              >
+                {/* Отступ справа pr-[76px] под пилюлю */}
+                <div className="pr-[76px]">
+                  <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#F5F5F5]/70">
+                    ДЕЙСТВУЮЩИЕ УЧЕНИКИ
+                  </span>
+                  <h2 className="text-xl font-black uppercase tracking-wider text-[#F5F5F5] mt-0.5 truncate">
+                    База клиентов
+                  </h2>
+                </div>
 
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-[#F5F5F5] font-mono tracking-tight">{displayedList.length}</span>
-                    <span className="text-[10px] font-bold text-[#F5F5F5]/80 uppercase tracking-wide leading-tight">
-                      активных<br/>ученика
-                    </span>
-                  </div>
+                <div className="flex items-baseline gap-2 pr-[76px]">
+                  <span className="text-4xl font-black text-[#F5F5F5] font-mono tracking-tight">{displayedList.length}</span>
+                  <span className="text-[10px] font-bold text-[#F5F5F5]/80 uppercase tracking-wide leading-tight">
+                    активных<br/>ученика
+                  </span>
+                </div>
 
-                  <div className="relative flex items-center justify-between z-[100]">
-                    <div className="relative">
-                      <button 
-                        onPointerDown={(e) => e.stopPropagation()} 
-                        onClick={(e) => { e.stopPropagation(); setIsFilterOpen(!isFilterOpen); }} 
-                        className="w-11 h-11 rounded-full bg-[#F5F5F5]/20 hover:bg-[#F5F5F5]/30 text-[#F5F5F5] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
-                      >
-                        <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {isBaseFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#452039] rounded-full bg-[#F5F5F5] shrink-0" />}
-                      </button>
-
-                      {isFilterOpen && (
-                        <div 
-                          onPointerDown={(e) => e.stopPropagation()} 
-                          onClick={(e) => e.stopPropagation()} 
-                          style={filterPopupStyle}
-                          className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
-                        >
-                          <div>
-                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Филиал</label>
-                            <CustomFilterDropdown value={selectedBranch} options={['Все филиалы', ...branchesList]} onChange={(newBranch) => { setSelectedBranch(newBranch); setSelectedHall('Все залы'); }} />
-                          </div>
-                          <div>
-                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Зал</label>
-                            <CustomFilterDropdown value={selectedHall} options={['Все залы', 'Зал 1 (Main Glass)', 'Зал 2 (Light Studio)', 'Зал 3 (VIP Room)']} onChange={(newHall) => setSelectedHall(newHall)} />
-                          </div>
-                          <div>
-                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Направление</label>
-                            <CustomFilterDropdown value={selectedDirection} options={['Все направления', ...directionsList]} onChange={(newDir) => setSelectedDirection(newDir)} />
-                          </div>
-                          <div>
-                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Возраст</label>
-                            <CustomFilterDropdown value={selectedAge} options={['Все возраста', ...agesList]} onChange={(newAge) => setSelectedAge(newAge)} />
-                          </div>
-                          <div className="flex gap-2 pt-2 border-t border-black/5 dark:border-white/10">
-                            <button 
-                              type="button" 
-                              onClick={() => setIsFilterOpen(false)} 
-                              style={{ backgroundColor: '#F5F5F5', color: '#452039' }}
-                              className="flex-1 text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
-                            >
-                              Применить
-                            </button>
-                            <button 
-                              type="button" 
-                              onClick={() => { 
-                                setSelectedBranch('Все филиалы'); 
-                                setSelectedHall('Все залы'); 
-                                setSelectedDirection('Все направления'); 
-                                setSelectedAge('Все возраста'); 
-                              }} 
-                              className="px-4 bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 text-xs font-bold rounded-full border-none hover:bg-black/10 dark:hover:bg-white/20 transition-all cursor-pointer outline-none"
-                            >
-                              Сброс
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
+                <div className="relative flex items-center justify-start z-[100] pr-[76px]">
+                  <div className="relative">
                     <button 
                       onPointerDown={(e) => e.stopPropagation()} 
-                      onClick={(e) => { e.stopPropagation(); setIsSearchVisible(!isSearchVisible); }} 
-                      className="w-11 h-11 rounded-full bg-[#F5F5F5]/20 hover:bg-[#F5F5F5]/30 text-[#F5F5F5] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
+                      onClick={(e) => { e.stopPropagation(); setIsFilterOpen(!isFilterOpen); }} 
+                      className="w-11 h-11 rounded-full bg-[#F5F5F5]/20 hover:bg-[#F5F5F5]/30 text-[#F5F5F5] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                     >
-                      <Search size={20} className="stroke-[2.5]" />
+                      <SlidersHorizontal size={20} className="stroke-[2.5]" />
+                      {isBaseFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#452039] rounded-full bg-[#F5F5F5] shrink-0" />}
                     </button>
-                  </div>
-                </motion.div>
-              ) : (
-                /* 2. ВОРОНКА ЛИДОВ (Инверсия: #F5F5F5 фон, #452039 текст) */
-                <motion.div
-                  key="funnel-slide"
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => { if (info.offset.x > 40) { setIsFilterOpen(false); setActiveSlide(0); } }}
-                  initial={{ opacity: 0, x: 20 }} 
-                  animate={{ opacity: 1, x: 0 }} 
-                  exit={{ opacity: 0, x: 20 }} 
-                  transition={{ duration: 0.25 }}
-                  style={{ backgroundColor: '#F5F5F5', color: '#452039' }}
-                  className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
-                >
-                  <div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#452039]/70">ВОРОНКА ЛИДОВ</span>
-                    <div className="mt-1 flex items-center gap-2">
-                      <span className="text-2xl font-black text-[#452039] font-mono leading-none">{leadsList.length}</span>
-                      <span className="text-[10px] font-bold text-[#452039]/80 uppercase tracking-wider">Всего лидов</span>
-                    </div>
-                  </div>
 
-                  <div className="grid grid-cols-4 gap-2 px-1 py-1">
-                    <div className="flex flex-col"><span className="text-2xl font-black text-[#452039] font-mono leading-none">{stageCounts.new}</span><span className="text-[9px] font-bold text-[#452039]/80 uppercase tracking-wider mt-1">Заявка</span></div>
-                    <div className="flex flex-col"><span className="text-2xl font-black text-[#452039] font-mono leading-none">{stageCounts.trial_scheduled}</span><span className="text-[9px] font-bold text-[#452039]/80 uppercase tracking-wider mt-1">Записан</span></div>
-                    <div className="flex flex-col"><span className="text-2xl font-black text-[#452039] font-mono leading-none">{stageCounts.trial_attended}</span><span className="text-[9px] font-bold text-[#452039]/80 uppercase tracking-wider mt-1">Пришел</span></div>
-                    <div className="flex flex-col"><span className="text-2xl font-black text-[#452039]/80 font-mono leading-none">{stageCounts.lost}</span><span className="text-[9px] font-bold text-[#452039]/80 uppercase tracking-wider mt-1">Отказ</span></div>
-                  </div>
-
-                  <div className="relative flex items-center justify-between z-[100]">
-                    <div className="relative">
-                      <button 
+                    {isFilterOpen && (
+                      <div 
                         onPointerDown={(e) => e.stopPropagation()} 
-                        onClick={(e) => { e.stopPropagation(); setIsFilterOpen(!isFilterOpen); }} 
-                        className="w-11 h-11 rounded-full bg-[#452039]/20 hover:bg-[#452039]/30 text-[#452039] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
+                        onClick={(e) => e.stopPropagation()} 
+                        style={filterPopupStyle}
+                        className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
                       >
-                        <SlidersHorizontal size={20} className="stroke-[2.5]" />
-                        {isFunnelFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#F5F5F5] rounded-full bg-[#452039] shrink-0" />}
-                      </button>
-
-                      {isFilterOpen && (
-                        <div 
-                          onPointerDown={(e) => e.stopPropagation()} 
-                          onClick={(e) => e.stopPropagation()} 
-                          style={filterPopupStyle}
-                          className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
-                        >
-                          <div>
-                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Этап воронки</label>
-                            <CustomFilterDropdown value={selectedFunnelStage} options={funnelStagesList} onChange={(newStage) => setSelectedFunnelStage(newStage)} />
-                          </div>
-                          <div>
-                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Источник лида</label>
-                            <CustomFilterDropdown value={selectedFunnelSource} options={funnelSourcesList} onChange={(newSrc) => setSelectedFunnelSource(newSrc)} />
-                          </div>
-                          <div>
-                            <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Филиал</label>
-                            <CustomFilterDropdown value={selectedBranch} options={['Все филиалы', ...branchesList]} onChange={(newBranch) => setSelectedBranch(newBranch)} />
-                          </div>
-                          <div className="flex gap-2 pt-2 border-t border-black/5 dark:border-white/10">
-                            <button 
-                              type="button" 
-                              onClick={() => setIsFilterOpen(false)} 
-                              style={{ backgroundColor: '#452039', color: '#F5F5F5' }}
-                              className="flex-1 text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
-                            >
-                              Применить
-                            </button>
-                            <button 
-                              type="button" 
-                              onClick={() => { 
-                                setSelectedFunnelStage('Все этапы'); 
-                                setSelectedFunnelSource('Все источники'); 
-                                setSelectedBranch('Все филиалы'); 
-                              }} 
-                              className="px-4 bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 text-xs font-bold rounded-full border-none hover:bg-black/10 dark:hover:bg-white/20 transition-all cursor-pointer outline-none"
-                            >
-                              Сброс
-                            </button>
-                          </div>
+                        <div>
+                          <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Филиал</label>
+                          <CustomFilterDropdown value={selectedBranch} options={['Все филиалы', ...branchesList]} onChange={(newBranch) => { setSelectedBranch(newBranch); setSelectedHall('Все залы'); }} />
                         </div>
-                      )}
-                    </div>
+                        <div>
+                          <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Зал</label>
+                          <CustomFilterDropdown value={selectedHall} options={['Все залы', 'Зал 1 (Main Glass)', 'Зал 2 (Light Studio)', 'Зал 3 (VIP Room)']} onChange={(newHall) => setSelectedHall(newHall)} />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Направление</label>
+                          <CustomFilterDropdown value={selectedDirection} options={['Все направления', ...directionsList]} onChange={(newDir) => setSelectedDirection(newDir)} />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Возраст</label>
+                          <CustomFilterDropdown value={selectedAge} options={['Все возраста', ...agesList]} onChange={(newAge) => setSelectedAge(newAge)} />
+                        </div>
+                        <div className="flex gap-2 pt-2 border-t border-black/5 dark:border-white/10">
+                          <button 
+                            type="button" 
+                            onClick={() => setIsFilterOpen(false)} 
+                            style={{ backgroundColor: '#F5F5F5', color: '#452039' }}
+                            className="flex-1 text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                          >
+                            Применить
+                          </button>
+                          <button 
+                            type="button" 
+                            onClick={() => { 
+                              setSelectedBranch('Все филиалы'); 
+                              setSelectedHall('Все залы'); 
+                              setSelectedDirection('Все направления'); 
+                              setSelectedAge('Все возраста'); 
+                            }} 
+                            className="px-4 bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 text-xs font-bold rounded-full border-none hover:bg-black/10 dark:hover:bg-white/20 transition-all cursor-pointer outline-none"
+                          >
+                            Сброс
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ) : (
+              /* 2. ВОРОНКА ЛИДОВ (#F5F5F5 фон, #452039 текст) */
+              <motion.div
+                key="funnel-slide"
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={(_, info) => { if (info.offset.x > 40) { setIsFilterOpen(false); setActiveSlide(0); } }}
+                initial={{ opacity: 0, x: 20 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                exit={{ opacity: 0, x: 20 }} 
+                transition={{ duration: 0.25 }}
+                style={{ backgroundColor: '#F5F5F5', color: '#452039' }}
+                className="absolute inset-0 p-5 rounded-[42px] shadow-md flex flex-col justify-between cursor-grab active:cursor-grabbing !overflow-visible border-none"
+              >
+                <div className="pr-[76px]">
+                  <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#452039]/70">ВОРОНКА ЛИДОВ</span>
+                  <div className="mt-1 flex items-center gap-2">
+                    <span className="text-2xl font-black text-[#452039] font-mono leading-none">{leadsList.length}</span>
+                    <span className="text-[10px] font-bold text-[#452039]/80 uppercase tracking-wider">Всего лидов</span>
+                  </div>
+                </div>
 
+                <div className="grid grid-cols-4 gap-2 px-1 py-1 pr-[76px]">
+                  <div className="flex flex-col"><span className="text-2xl font-black text-[#452039] font-mono leading-none">{stageCounts.new}</span><span className="text-[9px] font-bold text-[#452039]/80 uppercase tracking-wider mt-1">Заявка</span></div>
+                  <div className="flex flex-col"><span className="text-2xl font-black text-[#452039] font-mono leading-none">{stageCounts.trial_scheduled}</span><span className="text-[9px] font-bold text-[#452039]/80 uppercase tracking-wider mt-1">Записан</span></div>
+                  <div className="flex flex-col"><span className="text-2xl font-black text-[#452039] font-mono leading-none">{stageCounts.trial_attended}</span><span className="text-[9px] font-bold text-[#452039]/80 uppercase tracking-wider mt-1">Пришел</span></div>
+                  <div className="flex flex-col"><span className="text-2xl font-black text-[#452039]/80 font-mono leading-none">{stageCounts.lost}</span><span className="text-[9px] font-bold text-[#452039]/80 uppercase tracking-wider mt-1">Отказ</span></div>
+                </div>
+
+                <div className="relative flex items-center justify-start z-[100] pr-[76px]">
+                  <div className="relative">
                     <button 
                       onPointerDown={(e) => e.stopPropagation()} 
-                      onClick={(e) => { e.stopPropagation(); setIsSearchVisible(!isSearchVisible); }} 
-                      className="w-11 h-11 rounded-full bg-[#452039]/20 hover:bg-[#452039]/30 text-[#452039] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none"
+                      onClick={(e) => { e.stopPropagation(); setIsFilterOpen(!isFilterOpen); }} 
+                      className="w-11 h-11 rounded-full bg-[#452039]/20 hover:bg-[#452039]/30 text-[#452039] flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border-none shadow-none relative"
                     >
-                      <Search size={20} className="stroke-[2.5]" />
+                      <SlidersHorizontal size={20} className="stroke-[2.5]" />
+                      {isFunnelFilterActive && <span className="absolute top-0 right-0 w-3 h-3 border-2 border-[#F5F5F5] rounded-full bg-[#452039] shrink-0" />}
                     </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
 
-          {/* Правая вертикальная пилюля */}
-          <div className="w-[64px] h-[184px] bg-white/40 dark:bg-black/35 backdrop-blur-md border-none rounded-[32px] flex flex-col justify-between items-center py-2.5 shadow-md shrink-0 select-none">
+                    {isFilterOpen && (
+                      <div 
+                        onPointerDown={(e) => e.stopPropagation()} 
+                        onClick={(e) => e.stopPropagation()} 
+                        style={filterPopupStyle}
+                        className="absolute top-[calc(100%+10px)] left-0 z-[200] border-none p-5 flex flex-col gap-3.5 w-72 origin-top-left pointer-events-auto select-none text-slate-900 dark:text-white"
+                      >
+                        <div>
+                          <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Этап воронки</label>
+                          <CustomFilterDropdown value={selectedFunnelStage} options={funnelStagesList} onChange={(newStage) => setSelectedFunnelStage(newStage)} />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Источник лида</label>
+                          <CustomFilterDropdown value={selectedFunnelSource} options={funnelSourcesList} onChange={(newSrc) => setSelectedFunnelSource(newSrc)} />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 mb-1.5 block">Филиал</label>
+                          <CustomFilterDropdown value={selectedBranch} options={['Все филиалы', ...branchesList]} onChange={(newBranch) => setSelectedBranch(newBranch)} />
+                        </div>
+                        <div className="flex gap-2 pt-2 border-t border-black/5 dark:border-white/10">
+                          <button 
+                            type="button" 
+                            onClick={() => setIsFilterOpen(false)} 
+                            style={{ backgroundColor: '#452039', color: '#F5F5F5' }}
+                            className="flex-1 text-xs font-black py-3 rounded-full hover:opacity-90 transition-all cursor-pointer border-none outline-none shadow-sm"
+                          >
+                            Применить
+                          </button>
+                          <button 
+                            type="button" 
+                            onClick={() => { 
+                              setSelectedFunnelStage('Все этапы'); 
+                              setSelectedFunnelSource('Все источники'); 
+                              setSelectedBranch('Все филиалы'); 
+                            }} 
+                            className="px-4 bg-black/5 dark:bg-white/10 text-slate-700 dark:text-zinc-300 text-xs font-bold rounded-full border-none hover:bg-black/10 dark:hover:bg-white/20 transition-all cursor-pointer outline-none"
+                          >
+                            Сброс
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* 
+            ПРАВАЯ ВЕРТИКАЛЬНАЯ ПИЛЮЛЯ:
+            1. Высота h-[172px], зазор ровно 6px сверху, снизу и справа (концентрические дуги с радиусом 36px).
+            2. 3 полноразмерные кнопки 46px.
+          */}
+          <div 
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+            className="absolute right-[6px] top-[6px] bottom-[6px] w-[60px] bg-black/25 dark:bg-white/10 backdrop-blur-2xl border border-white/15 rounded-[36px] flex flex-col justify-between items-center py-2 shadow-xl shrink-0 select-none z-50 pointer-events-auto"
+          >
+            {/* 1. База учеников */}
             <button 
-              onClick={() => { setIsFilterOpen(false); setActiveSlide(0); }}
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => { 
+                e.stopPropagation();
+                setIsFilterOpen(false); 
+                setActiveSlide(0); 
+              }}
               style={activeSlide === 0 ? { backgroundColor: '#F5F5F5', color: '#452039' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 0 
                   ? 'shadow-md scale-100' 
-                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
+                  : 'bg-transparent text-white/70 hover:text-white opacity-80 hover:opacity-100 hover:bg-white/10 scale-95'
               }`}
               title="База учеников"
             >
               <Users size={20} className="stroke-[2.5]" />
             </button>
             
+            {/* 2. Воронка лидов */}
             <button 
-              onClick={() => { setIsFilterOpen(false); setActiveSlide(1); }}
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => { 
+                e.stopPropagation();
+                setIsFilterOpen(false); 
+                setActiveSlide(1); 
+              }}
               style={activeSlide === 1 ? { backgroundColor: '#452039', color: '#F5F5F5' } : {}}
               className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
                 activeSlide === 1 
                   ? 'shadow-md scale-100' 
-                  : 'bg-transparent text-slate-950 dark:text-white opacity-45 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 scale-95'
+                  : 'bg-transparent text-white/70 hover:text-white opacity-80 hover:opacity-100 hover:bg-white/10 scale-95'
               }`}
               title="Воронка продаж"
             >
               <Filter size={20} className="stroke-[2.5]" />
+            </button>
+
+            {/* 3. Поиск */}
+            <button 
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => { 
+                e.stopPropagation();
+                setIsSearchVisible(!isSearchVisible); 
+              }}
+              className={`w-[46px] h-[46px] rounded-full flex items-center justify-center transition-all cursor-pointer border-none outline-none ${
+                isSearchVisible 
+                  ? 'bg-white/30 text-white scale-100' 
+                  : 'bg-transparent text-white/70 hover:text-white opacity-80 hover:opacity-100 hover:bg-white/10 scale-95'
+              }`}
+              title="Поиск"
+            >
+              <Search size={20} className="stroke-[2.5]" />
             </button>
           </div>
         </div>
